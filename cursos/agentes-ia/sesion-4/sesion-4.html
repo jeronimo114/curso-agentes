@@ -181,6 +181,11 @@
         .flow-bar-inner span { font-size: 0.85rem; color: var(--text-secondary); }
         .flow-bar-inner .arrow { color: rgba(255,255,255,0.15); font-size: 0.75rem; }
 
+        /* ── IMAGE CENTERED ── */
+        .layout-image-centered { text-align: center; justify-content: center; align-items: center; background: #000; }
+        .layout-image-centered img { max-width: 38%; max-height: 85vh; border-radius: 20px; box-shadow: 0 0 80px rgba(0,0,0,0.6); object-fit: contain; }
+        .layout-image-centered .image-caption { font-size: 1rem; color: var(--text-secondary); margin-top: 1.5rem; }
+
         /* ── NAV ── */
         .nav-btn { position: fixed; bottom: 50%; transform: translateY(50%); width: 48px; height: 48px; border-radius: 50%; border: none; background: rgba(255,255,255,0.07); color: white; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; z-index: 1000; opacity: 0; }
         body:hover .nav-btn { opacity: 1; }
@@ -201,7 +206,7 @@
 <body>
 <div id="deck-container">
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    <span class="slide-counter" id="counter">1 / 24</span>
+    <span class="slide-counter" id="counter">1 / 25</span>
 
     <!-- ==============================
          PORTADA
@@ -213,8 +218,14 @@
         <h1 class="animate-in">Cierre Curso <span style="color:var(--accent-yellow);">de Agentes</span></h1>
     </section>
 
-    <!-- Slide 2: Agenda -->
-    <section class="slide layout-cheatsheet" data-slide="1">
+    <!-- Slide 2: Tweet Mathias -->
+    <section class="slide layout-image-centered" data-slide="1">
+        <img src="images/mathias-tweet.jpeg" alt="Tweet @MathiasChu — 84% nunca uso IA" class="animate-in">
+        <p class="image-caption animate-in">@MathiasChu · Feb 2026 · 71K impresiones</p>
+    </section>
+
+    <!-- Slide 3: Agenda -->
+    <section class="slide layout-cheatsheet" data-slide="3">
         <span class="section-label">Programacion</span>
         <div class="cheatsheet-title animate-in">
             Agenda <span class="badge badge-yellow">2h 45 min</span>
@@ -261,13 +272,13 @@
     ============================== -->
 
     <!-- Slide 3: Divider -->
-    <section class="slide layout-divider" data-slide="2">
+    <section class="slide layout-divider" data-slide="3">
         <div class="module-number" style="color:var(--accent-red);">1</div>
         <h1 class="animate-in"><span style="color:var(--accent-red);">Seguridad</span></h1>
     </section>
 
     <!-- Slide 4: Regla 1 — .env -->
-    <section class="slide layout-rule" data-slide="3">
+    <section class="slide layout-rule" data-slide="4">
         <span class="section-label">Seguridad · 01</span>
         <div class="rule-number animate-in">Regla 01</div>
         <h1 class="animate-in">Nunca subas<br>un .env a GitHub</h1>
@@ -275,7 +286,7 @@
     </section>
 
     <!-- Slide 5: Regla 2 — Env vars -->
-    <section class="slide layout-rule" data-slide="4">
+    <section class="slide layout-rule" data-slide="5">
         <span class="section-label">Seguridad · 02</span>
         <div class="rule-number animate-in">Regla 02</div>
         <h1 class="animate-in">Variables de entorno,<br>siempre</h1>
@@ -283,7 +294,7 @@
     </section>
 
     <!-- Slide 6: Regla 3 — Datos reales -->
-    <section class="slide layout-rule" data-slide="5">
+    <section class="slide layout-rule" data-slide="6">
         <span class="section-label">Seguridad · 03</span>
         <div class="rule-number animate-in">Regla 03</div>
         <h1 class="animate-in">Sin datos reales<br>en demos</h1>
@@ -291,7 +302,7 @@
     </section>
 
     <!-- Slide 7: Regla 4 — RLS -->
-    <section class="slide layout-rule" data-slide="6">
+    <section class="slide layout-rule" data-slide="7">
         <span class="section-label">Seguridad · 04</span>
         <div class="rule-number animate-in">Regla 04</div>
         <h1 class="animate-in">Activa Row<br>Level Security</h1>
@@ -299,7 +310,7 @@
     </section>
 
     <!-- Slide 8: Regla 5 — Billing -->
-    <section class="slide layout-rule" data-slide="7">
+    <section class="slide layout-rule" data-slide="8">
         <span class="section-label">Seguridad · 05</span>
         <div class="rule-number animate-in">Regla 05</div>
         <h1 class="animate-in">Pon limites de gasto<br>en las APIs</h1>
@@ -307,7 +318,7 @@
     </section>
 
     <!-- Slide 9: Herramientas -->
-    <section class="slide layout-cheatsheet" data-slide="8">
+    <section class="slide layout-cheatsheet" data-slide="9">
         <span class="section-label">Herramientas</span>
         <div class="cheatsheet-title animate-in">
             El ecosistema de Vibe Coding <span class="badge badge-purple">2025–2026</span>
@@ -392,7 +403,7 @@
     </section>
 
     <!-- Slide 10: Vercel + Supabase -->
-    <section class="slide layout-cheatsheet" data-slide="9">
+    <section class="slide layout-cheatsheet" data-slide="10">
         <span class="section-label">Stack gratuito</span>
         <div class="cheatsheet-title animate-in">
             Deploy y base de datos: <span style="color:var(--accent-green);">gratis</span>
@@ -477,13 +488,13 @@
     ============================== -->
 
     <!-- Slide 11: Divider -->
-    <section class="slide layout-divider" data-slide="10">
+    <section class="slide layout-divider" data-slide="11">
         <div class="module-number" style="color:var(--accent-blue);">2</div>
         <h1 class="animate-in"><span style="color:var(--accent-blue);">Recap</span></h1>
     </section>
 
     <!-- Slide 12: Las 3 sesiones -->
-    <section class="slide layout-cheatsheet" data-slide="11">
+    <section class="slide layout-cheatsheet" data-slide="12">
         <span class="section-label">Recap</span>
         <div class="cheatsheet-title animate-in">Lo que construimos juntos</div>
         <div class="recap-grid animate-in">
@@ -526,7 +537,7 @@
     </section>
 
     <!-- Slide 13: Preguntas -->
-    <section class="slide layout-big-statement" data-slide="12">
+    <section class="slide layout-big-statement" data-slide="13">
         <span class="section-label">Recap</span>
         <h1 class="animate-in">Antes de construir,<br><span class="accent">preguntas</span></h1>
         <p class="support animate-in">Este es el momento.<br>Despues, manos a la obra.</p>
@@ -537,13 +548,13 @@
     ============================== -->
 
     <!-- Slide 14: Divider -->
-    <section class="slide layout-divider" data-slide="13">
+    <section class="slide layout-divider" data-slide="14">
         <div class="module-number" style="color:var(--accent-yellow);">3</div>
         <h1 class="animate-in"><span style="color:var(--accent-yellow);">Desarrollo</span></h1>
     </section>
 
     <!-- Slide 15: Instrucciones -->
-    <section class="slide layout-cheatsheet" data-slide="14">
+    <section class="slide layout-cheatsheet" data-slide="15">
         <span class="section-label">Desarrollo</span>
         <div class="cheatsheet-title animate-in">
             1h 30min para construir tu app <span class="badge badge-yellow">1:30 — 3:00</span>
@@ -588,7 +599,7 @@ Stack: React + Supabase + Vercel.</code>
     </section>
 
     <!-- Slide 16: Stop BUILD -->
-    <section class="slide layout-stop" data-slide="15">
+    <section class="slide layout-stop" data-slide="16">
         <div class="stop-sign-container">
             <div class="stop-sign animate-in" style="background:var(--accent-yellow);box-shadow:0 0 60px rgba(255,214,10,0.35);">
                 <span style="color:#000;">BUILD</span>
@@ -598,7 +609,7 @@ Stack: React + Supabase + Vercel.</code>
     </section>
 
     <!-- Slide 17: Break -->
-    <section class="slide layout-break" data-slide="16">
+    <section class="slide layout-break" data-slide="17">
         <svg class="break-mark animate-in" viewBox="0 0 80 80" fill="none">
             <circle cx="40" cy="40" r="36" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
             <path d="M40 20 L40 40 L54 54" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
@@ -612,13 +623,13 @@ Stack: React + Supabase + Vercel.</code>
     ============================== -->
 
     <!-- Slide 18: Divider -->
-    <section class="slide layout-divider" data-slide="17">
+    <section class="slide layout-divider" data-slide="18">
         <div class="module-number" style="color:var(--accent-purple);">4</div>
         <h1 class="animate-in"><span style="color:var(--accent-purple);">Showcase</span></h1>
     </section>
 
     <!-- Slide 19: Stop SHOW -->
-    <section class="slide layout-stop" data-slide="18">
+    <section class="slide layout-stop" data-slide="19">
         <div class="stop-sign-container">
             <div class="stop-sign animate-in" style="background:var(--accent-purple);box-shadow:0 0 60px rgba(191,90,242,0.4);">
                 <span>SHOW</span>
@@ -628,7 +639,7 @@ Stack: React + Supabase + Vercel.</code>
     </section>
 
     <!-- Slide 20: Estructura presentacion -->
-    <section class="slide layout-cheatsheet" data-slide="19">
+    <section class="slide layout-cheatsheet" data-slide="20">
         <span class="section-label">Showcase</span>
         <div class="cheatsheet-title animate-in">
             3 minutos por persona <span class="badge badge-purple">Estructura</span>
@@ -654,7 +665,7 @@ Stack: React + Supabase + Vercel.</code>
     </section>
 
     <!-- Slide 21: Preguntas grupales -->
-    <section class="slide layout-3lines" data-slide="20">
+    <section class="slide layout-3lines" data-slide="21">
         <h2 class="animate-in">Hallazgos del grupo</h2>
         <div class="line animate-in">
             <div class="line-number" style="background:var(--accent-yellow);color:#000;">?</div>
@@ -671,13 +682,13 @@ Stack: React + Supabase + Vercel.</code>
     </section>
 
     <!-- Slide 22: El cambio -->
-    <section class="slide layout-big-statement" data-slide="21">
+    <section class="slide layout-big-statement" data-slide="22">
         <h1 class="animate-in">Entraron sin saber<br><span class="accent-yellow">construir software</span></h1>
         <p class="support animate-in">Hoy tienen una app con URL real.<br>Eso no lo hace casi nadie.</p>
     </section>
 
     <!-- Slide 23: Lo que se llevan -->
-    <section class="slide layout-3lines" data-slide="22">
+    <section class="slide layout-3lines" data-slide="23">
         <h2 class="animate-in">Se van con</h2>
         <div class="line animate-in">
             <div class="line-number">1</div>
