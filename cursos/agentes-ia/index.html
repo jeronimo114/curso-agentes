@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentes de IA en Acción</title>
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --bg-card: #1a1a1a;
+            --bg-card-hover: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-blue: #007AFF;
+            --accent-green: #30D158;
+            --accent-yellow: #FFD60A;
+            --accent-red: #FF453A;
+            --accent-purple: #BF5AF2;
+            --border: rgba(255,255,255,0.08);
+            --font: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            padding: clamp(80px, 12vw, 140px) clamp(24px, 6vw, 80px) clamp(60px, 8vw, 100px);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0,122,255,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-label {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--accent-blue);
+            margin-bottom: 24px;
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 7vw, 5.5rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -0.03em;
+            margin-bottom: 20px;
+        }
+
+        .hero-title span {
+            background: linear-gradient(135deg, #007AFF, #BF5AF2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.35rem);
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        /* ── STATS ── */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: clamp(32px, 6vw, 80px);
+            padding: 0 24px 60px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: -0.02em;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            letter-spacing: 0.04em;
+        }
+
+        /* ── SESSIONS GRID ── */
+        .sessions {
+            padding: 0 clamp(24px, 6vw, 80px) 100px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .sessions-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+        }
+
+        .sessions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+            gap: 16px;
+        }
+
+        @media (max-width: 520px) {
+            .sessions-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 36px;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            background: var(--bg-card-hover);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+
+        .card.disabled {
+            cursor: default;
+            opacity: 0.55;
+        }
+
+        .card.disabled:hover {
+            background: var(--bg-card);
+            border-color: var(--border);
+            transform: none;
+        }
+
+        .card-accent {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+
+        .session-number {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        .badge-done {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .badge-today {
+            background: rgba(255, 214, 10, 0.15);
+            color: var(--accent-yellow);
+        }
+
+        .badge-soon {
+            background: rgba(255,255,255,0.06);
+            color: var(--text-secondary);
+        }
+
+        .card-title {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+            margin-bottom: 10px;
+        }
+
+        .card-description {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 28px;
+        }
+
+        .card-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .topic-tag {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 6px;
+            padding: 4px 10px;
+            letter-spacing: 0.02em;
+        }
+
+        .card-arrow {
+            position: absolute;
+            bottom: 36px;
+            right: 36px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.06);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .card:hover .card-arrow {
+            background: rgba(255,255,255,0.12);
+            transform: translate(2px, -2px);
+        }
+
+        .card.disabled .card-arrow {
+            display: none;
+        }
+
+        .card-arrow svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--text-secondary);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 40px clamp(24px, 6vw, 80px);
+            text-align: center;
+        }
+
+        footer p {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="hero">
+        <div class="hero-label">Curso intensivo · 4 sesiones</div>
+        <h1 class="hero-title">Agentes de IA<br><span>en Acción</span></h1>
+        <p class="hero-subtitle">De los fundamentos de LLMs a la construcción de agentes autónomos. Práctico, en español, para perfiles semi-técnicos.</p>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <div class="stat-number">4</div>
+            <div class="stat-label">Sesiones</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">4.5h</div>
+            <div class="stat-label">Por sesión</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">60%</div>
+            <div class="stat-label">Práctica</div>
+        </div>
+        <div class="stat">
+            <div class="stat-number">n8n</div>
+            <div class="stat-label">Herramienta principal</div>
+        </div>
+    </div>
+
+    <div class="sessions">
+        <div class="sessions-label">Programa</div>
+        <div class="sessions-grid">
+
+            <!-- Sesión 1 -->
+            <a href="sesion-1/sesion-1.html" class="card">
+                <div class="card-accent" style="background: var(--accent-blue);"></div>
+                <div class="card-header">
+                    <span class="session-number">Sesión 01</span>
+                    <span class="badge badge-done">Completada</span>
+                </div>
+                <h2 class="card-title">Fundamentos LLM<br>+ Automatización</h2>
+                <p class="card-description">Cómo funcionan los modelos de lenguaje, tokens, contexto y tu primer workflow automatizado con Gmail y Google Sheets.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">LLMs</span>
+                    <span class="topic-tag">Tokens</span>
+                    <span class="topic-tag">Prompts</span>
+                    <span class="topic-tag">n8n básico</span>
+                    <span class="topic-tag">Gmail → Sheets</span>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </div>
+            </a>
+
+            <!-- Sesión 2 -->
+            <a href="sesion-2/sesion-2.html" class="card">
+                <div class="card-accent" style="background: var(--accent-purple);"></div>
+                <div class="card-header">
+                    <span class="session-number">Sesión 02</span>
+                    <span class="badge badge-done">Completada</span>
+                </div>
+                <h2 class="card-title">IA en Workflows</h2>
+                <p class="card-description">Nodos de IA en n8n, memoria de conversación, herramientas externas y construcción de chatbots con casos de uso reales.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">AI Nodes</span>
+                    <span class="topic-tag">Memoria</span>
+                    <span class="topic-tag">APIs</span>
+                    <span class="topic-tag">Chatbots</span>
+                    <span class="topic-tag">HTTP Request</span>
+                </div>
+                <div class="card-arrow">
+                    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                </div>
+            </a>
+
+            <!-- Sesión 3 -->
+            <div class="card disabled">
+                <div class="card-accent" style="background: var(--accent-green);"></div>
+                <div class="card-header">
+                    <span class="session-number">Sesión 03</span>
+                    <span class="badge badge-soon">Próximamente</span>
+                </div>
+                <h2 class="card-title">Agentes Básicos</h2>
+                <p class="card-description">RAG, memoria persistente, herramientas personalizadas y construcción de agentes simples que actúan de forma autónoma.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">RAG</span>
+                    <span class="topic-tag">Embeddings</span>
+                    <span class="topic-tag">Tools</span>
+                    <span class="topic-tag">Agentes</span>
+                </div>
+            </div>
+
+            <!-- Sesión 4 -->
+            <div class="card disabled">
+                <div class="card-accent" style="background: var(--accent-yellow);"></div>
+                <div class="card-header">
+                    <span class="session-number">Sesión 04</span>
+                    <span class="badge badge-today">Hoy</span>
+                </div>
+                <h2 class="card-title">Agentes Avanzados</h2>
+                <p class="card-description">Arquitecturas multi-agente, orquestación, debugging y deployment. Proyecto final: sistema autónomo funcional.</p>
+                <div class="card-topics">
+                    <span class="topic-tag">Multi-agente</span>
+                    <span class="topic-tag">Orquestación</span>
+                    <span class="topic-tag">Debugging</span>
+                    <span class="topic-tag">Deployment</span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        <p>Curso diseñado y dictado en vivo · 2026</p>
+    </footer>
+
+</body>
+</html>
