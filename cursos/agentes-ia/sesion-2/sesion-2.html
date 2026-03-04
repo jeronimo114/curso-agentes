@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión 2: IA en Workflows | Taller de Agentes</title>
+    <style>
+        :root {
+            /* Colors */
+            --bg-primary: #000000;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --accent-blue: #007AFF;
+            --accent-blue-dim: rgba(0, 122, 255, 0.3);
+            --accent-green: #30D158;
+            --accent-red: #FF453A;
+            --accent-yellow: #FFD60A;
+            --accent-purple: #BF5AF2;
+
+            /* Typography */
+            --font-primary: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'SF Mono', 'Menlo', 'Monaco', monospace;
+
+            /* Sizes */
+            --h1-size: clamp(3rem, 8vw, 6rem);
+            --h2-size: clamp(2rem, 5vw, 3.5rem);
+            --support-size: clamp(1.25rem, 3vw, 1.75rem);
+            --body-size: clamp(1rem, 2vw, 1.25rem);
+
+            /* Spacing */
+            --slide-padding: clamp(2rem, 5vw, 6rem);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-primary);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* ==================== PRESENTATION CONTAINER ==================== */
+        #deck-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ==================== PROGRESS BAR ==================== */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--bg-secondary);
+            z-index: 1000;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--accent-blue);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 12px;
+            right: 24px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            z-index: 1000;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* ==================== SLIDES ==================== */
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            visibility: hidden;
+            opacity: 0;
+            padding: var(--slide-padding);
+            overflow: hidden;
+        }
+
+        .slide.active {
+            display: flex;
+            visibility: visible;
+            opacity: 1;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .slide.entering {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .slide.leaving {
+            display: flex;
+            visibility: visible;
+            opacity: 1;
+            flex-direction: column;
+            justify-content: center;
+            animation: slideOut 0.3s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideOut {
+            from { opacity: 1; }
+            to { opacity: 0; visibility: hidden; }
+        }
+
+        /* ==================== LAYOUT: DIVIDER ==================== */
+        .layout-divider {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, #0a0a0a 100%);
+        }
+
+        .layout-divider .module-number {
+            font-size: 8rem;
+            font-weight: 800;
+            color: var(--accent-blue);
+            opacity: 0.3;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -70%);
+        }
+
+        .layout-divider h1 {
+            font-size: var(--h1-size);
+            font-weight: 700;
+            position: relative;
+            z-index: 1;
+        }
+
+        .layout-divider .subtitle {
+            font-size: var(--support-size);
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+
+        /* ==================== LAYOUT: VIDEO WITH CONTROLS ==================== */
+        .layout-video-controls {
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+            position: relative;
+        }
+
+        .layout-video-controls .video-wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .layout-video-controls video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+
+        /* Custom video controls overlay */
+        .video-controls {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            z-index: 10;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .video-controls:hover {
+            opacity: 1;
+        }
+
+        .ctrl-btn {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .ctrl-btn:hover {
+            background: rgba(0, 122, 255, 0.4);
+            border-color: var(--accent-blue);
+        }
+
+        .ctrl-btn:active {
+            transform: scale(0.95);
+        }
+
+        .ctrl-btn.play-pause {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+            font-size: 1.75rem;
+        }
+
+        .ctrl-btn.play-pause:hover {
+            background: #0066CC;
+        }
+
+        /* Video title overlay */
+        .video-title-overlay {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.25rem;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 8px 24px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10;
+            opacity: 0.7;
+            font-weight: 500;
+        }
+
+        /* ==================== LAYOUT: STOP SIGN ==================== */
+        .layout-stop {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-primary);
+        }
+
+        .stop-sign {
+            width: 280px;
+            height: 280px;
+            background: var(--accent-red);
+            clip-path: polygon(
+                30% 0%, 70% 0%,
+                100% 30%, 100% 70%,
+                70% 100%, 30% 100%,
+                0% 70%, 0% 30%
+            );
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: stopBounceIn 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            box-shadow: 0 0 60px rgba(255, 69, 58, 0.4);
+            position: relative;
+        }
+
+        .stop-sign::before {
+            content: '';
+            position: absolute;
+            inset: 8px;
+            border: 4px solid rgba(255, 255, 255, 0.4);
+            clip-path: polygon(
+                30% 0%, 70% 0%,
+                100% 30%, 100% 70%,
+                70% 100%, 30% 100%,
+                0% 70%, 0% 30%
+            );
+        }
+
+        .stop-sign span {
+            font-family: var(--font-primary);
+            font-size: 4.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes stopBounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            60% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .stop-sign-container {
+            animation: stopPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes stopPulse {
+            0%, 100% {
+                filter: drop-shadow(0 0 30px rgba(255, 69, 58, 0.3));
+            }
+            50% {
+                filter: drop-shadow(0 0 60px rgba(255, 69, 58, 0.6));
+            }
+        }
+
+        .stop-subtitle {
+            font-size: var(--h2-size);
+            color: var(--text-secondary);
+            margin-top: 2rem;
+            opacity: 0;
+            animation: fadeUp 0.5s ease 0.8s forwards;
+        }
+
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==================== SLIDE ANIMATIONS ==================== */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .slide.active .animate-in {
+            animation: fadeUp 0.5s ease forwards;
+        }
+
+        .slide.active .animate-in:nth-child(1) { animation-delay: 0s; }
+        .slide.active .animate-in:nth-child(2) { animation-delay: 0.1s; }
+        .slide.active .animate-in:nth-child(3) { animation-delay: 0.2s; }
+
+        /* ==================== NAVIGATION ==================== */
+        .nav-btn {
+            position: fixed;
+            bottom: 50%;
+            transform: translateY(50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255,255,255,0.08);
+            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            z-index: 1000;
+            opacity: 0;
+        }
+
+        body:hover .nav-btn {
+            opacity: 1;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent-blue);
+        }
+
+        .nav-btn svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-btn.nav-prev {
+            left: 20px;
+        }
+
+        .nav-btn.nav-next {
+            right: 20px;
+        }
+
+        /* ==================== SECTION LABEL ==================== */
+        .section-label {
+            position: absolute;
+            top: 24px;
+            left: 24px;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        /* ==================== RESPONSIVE ==================== */
+        @media (max-width: 768px) {
+            :root {
+                --h1-size: clamp(1.75rem, 5vw, 2.5rem);
+                --h2-size: clamp(1.25rem, 4vw, 1.75rem);
+                --support-size: clamp(0.9rem, 2vw, 1.25rem);
+                --body-size: clamp(0.875rem, 2vw, 1rem);
+                --slide-padding: 1.25rem;
+            }
+
+            .stop-sign {
+                width: 180px;
+                height: 180px;
+            }
+
+            .stop-sign span {
+                font-size: 2.5rem;
+            }
+
+            .ctrl-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 1.25rem;
+            }
+
+            .ctrl-btn.play-pause {
+                width: 52px;
+                height: 52px;
+            }
+
+            .video-controls {
+                bottom: 30px;
+                gap: 16px;
+            }
+
+            .nav-btn {
+                width: 40px;
+                height: 40px;
+            }
+
+            .nav-btn.nav-prev {
+                left: 10px;
+            }
+
+            .nav-btn.nav-next {
+                right: 10px;
+            }
+        }
+
+        /* ==================== LAYOUT: BIG STATEMENT ==================== */
+        .layout-big-statement {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        .layout-big-statement h1 {
+            font-size: var(--h1-size);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        .layout-big-statement .support {
+            font-size: var(--support-size);
+            color: var(--text-secondary);
+            max-width: 800px;
+        }
+        .accent { color: var(--accent-blue); }
+        .accent-green { color: var(--accent-green); }
+        .accent-red { color: var(--accent-red); }
+        .accent-yellow { color: var(--accent-yellow); }
+        .accent-purple { color: var(--accent-purple); }
+
+        /* ==================== LAYOUT: 3 LINES ==================== */
+        .layout-3lines {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 2rem;
+            padding-left: 15%;
+        }
+        .layout-3lines h2 {
+            font-size: var(--h2-size);
+            margin-bottom: 2rem;
+        }
+        .line {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            font-size: 1.75rem;
+        }
+        .line-number {
+            width: 48px;
+            height: 48px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .line-text { color: var(--text-secondary); }
+        .line-text strong { color: var(--text-primary); }
+
+        /* ==================== CODE BLOCK ==================== */
+        .code-block {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            text-align: left;
+            max-width: 700px;
+        }
+
+        /* ==================== TIP BOX ==================== */
+        .tip-box {
+            background: rgba(0, 122, 255, 0.1);
+            border: 2px solid var(--accent-blue);
+            border-radius: 12px;
+            padding: 1.25rem 1.75rem;
+            margin-top: 1.5rem;
+            max-width: 700px;
+            text-align: left;
+        }
+        .tip-box h3 { color: var(--accent-blue); margin-bottom: 0.5rem; font-size: 1rem; }
+        .tip-box p { color: var(--text-secondary); font-size: 0.95rem; }
+
+        /* ==================== EXERCISE BOX ==================== */
+        .exercise-box {
+            background: rgba(48, 209, 88, 0.1);
+            border: 2px solid var(--accent-green);
+            border-radius: 16px;
+            padding: 2rem;
+            max-width: 800px;
+            text-align: left;
+        }
+        .exercise-box h3 { color: var(--accent-green); margin-bottom: 1rem; font-size: 1.25rem; }
+        .exercise-box ol, .exercise-box ul { color: var(--text-secondary); padding-left: 1.5rem; }
+        .exercise-box li { margin-bottom: 0.5rem; font-size: 1rem; }
+
+        /* ==================== LAYOUT: BREAK ==================== */
+        .layout-break {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a0a, #111);
+        }
+        .layout-break .break-icon { font-size: 6rem; margin-bottom: 1rem; }
+        .layout-break h1 { font-size: var(--h2-size); }
+        .layout-break .support { font-size: var(--support-size); color: var(--text-secondary); margin-top: 1rem; }
+
+        /* ==================== LAYOUT: VIDEO LINK ==================== */
+        .layout-video-link {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+        }
+        .yt-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.25rem 2.5rem;
+            background: rgba(255, 0, 0, 0.15);
+            border: 2px solid #FF0000;
+            border-radius: 16px;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 2rem;
+        }
+        .yt-link-btn:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: scale(1.05);
+        }
+        .yt-link-btn svg {
+            width: 40px;
+            height: 40px;
+            fill: #FF0000;
+        }
+    </style>
+</head>
+<body>
+    <div id="deck-container">
+        <!-- Progress Bar -->
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress"></div>
+        </div>
+        <span class="slide-counter" id="counter">1 / 44</span>
+
+        <!-- ========================================== -->
+        <!-- RECAP SECTION -->
+        <!-- ========================================== -->
+
+        <!-- Slide 1: Recap Title Divider -->
+        <section class="slide layout-divider active" data-slide="0">
+            <div class="module-number">R</div>
+            <h1 class="animate-in">Repaso <span style="color: var(--accent-blue);">Sesión 1</span></h1>
+            <p class="subtitle animate-in">Conceptos clave antes de continuar</p>
+        </section>
+
+        <!-- Slide 2: Video 1 - ¿Qué es un LLM? -->
+        <section class="slide layout-video-controls" data-slide="1">
+            <div class="video-title-overlay">¿Qué es un LLM?</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/recap-que-es-llm.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 3: Video 2 - ¿Qué es un Agente? -->
+        <section class="slide layout-video-controls" data-slide="2">
+            <div class="video-title-overlay">¿Qué es un Agente?</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/recap-que-es-agente.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 4: Video 3 - API y MCP -->
+        <section class="slide layout-video-controls" data-slide="3">
+            <div class="video-title-overlay">API y MCP</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/recap-que-es-api-mcp.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 5: Stop Sign -->
+        <section class="slide layout-stop" data-slide="4">
+            <div class="stop-sign-container">
+                <div class="stop-sign animate-in">
+                    <span>STOP</span>
+                </div>
+            </div>
+            <p class="stop-subtitle">Fin del repaso</p>
+        </section>
+
+        <!-- Slide 6: Video YouTube Link -->
+        <section class="slide layout-video-link" data-slide="5">
+            <h1 class="animate-in">Video <span class="accent">recomendado</span></h1>
+            <p class="support animate-in">Antes de empezar, veamos esto</p>
+            <a href="https://www.youtube.com/watch?v=kQRu7DdTTVA" target="_blank" rel="noopener" class="yt-link-btn animate-in">
+                <svg viewBox="0 0 24 24"><path d="M23.5 6.2c-.3-1-1-1.8-2-2.1C19.6 3.5 12 3.5 12 3.5s-7.6 0-9.5.6c-1 .3-1.7 1.1-2 2.1C0 8.1 0 12 0 12s0 3.9.5 5.8c.3 1 1 1.8 2 2.1 1.9.6 9.5.6 9.5.6s7.6 0 9.5-.6c1-.3 1.7-1.1 2-2.1.5-1.9.5-5.8.5-5.8s0-3.9-.5-5.8zM9.5 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>
+                Ver en YouTube
+            </a>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- AGENDA -->
+        <!-- ========================================== -->
+
+        <!-- Slide 6: Divider - Sesión 2 -->
+        <section class="slide layout-divider" data-slide="5">
+            <div class="module-number">2</div>
+            <h1 class="animate-in">Sesión <span style="color: var(--accent-blue);">2</span></h1>
+            <p class="subtitle animate-in">Construye tu Agente</p>
+        </section>
+
+        <!-- Slide 7: Big Statement - Hoy construimos -->
+        <section class="slide layout-big-statement" data-slide="6">
+            <h1 class="animate-in">Hoy <span class="accent">construimos</span></h1>
+            <p class="support animate-in">Un chatbot completo con:<br><strong>System Prompt</strong> + <strong>Memoria</strong> + <strong>Herramientas</strong> + <strong>Lógica condicional</strong></p>
+        </section>
+
+        <!-- Slide 8: 3lines - Agenda -->
+        <section class="slide layout-3lines" data-slide="7">
+            <h2 class="animate-in">4 bloques</h2>
+            <div class="line animate-in">
+                <div class="line-number">1</div>
+                <div class="line-text"><strong>System Prompt</strong></div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">2</div>
+                <div class="line-text"><strong>Memoria</strong></div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">3</div>
+                <div class="line-text"><strong>Herramientas + IF</strong></div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">4</div>
+                <div class="line-text"><strong>Proyecto Final</strong></div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BLOQUE 1: SYSTEM PROMPT -->
+        <!-- ========================================== -->
+
+        <!-- Slide 9: Divider - System Prompt -->
+        <section class="slide layout-divider" data-slide="8">
+            <div class="module-number">1</div>
+            <h1 class="animate-in">System Prompt</h1>
+        </section>
+
+        <!-- Slide 10: Video - System Prompt -->
+        <section class="slide layout-video-controls" data-slide="9">
+            <div class="video-title-overlay">¿Qué es un System Prompt?</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-system-prompt.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 11: Exercise - System Prompt -->
+        <section class="slide layout-big-statement" data-slide="10">
+            <h1 class="animate-in">Ejercicio: <span class="accent-green">System Prompt</span></h1>
+            <div class="exercise-box animate-in">
+                <h3>Pasos</h3>
+                <ol>
+                    <li>Abre tu workflow</li>
+                    <li>Doble click en <strong>AI Agent</strong></li>
+                    <li>Escribe tu <strong>System Prompt</strong></li>
+                    <li>Prueba enviando <strong>"Hola"</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Slide 12: Code Block - Prompt Template -->
+        <section class="slide layout-big-statement" data-slide="11">
+            <h1 class="animate-in">Ejemplo de <span class="accent">Prompt</span></h1>
+            <div class="code-block animate-in">
+                <span style="color: #6A9955;">// System Prompt ejemplo</span><br>
+                <span style="color: #CE9178;">Eres un asistente amable que ayuda<br>
+                con preguntas sobre cocina.<br><br>
+                Reglas:<br>
+                - Responde siempre en español<br>
+                - Sé conciso (máx 3 oraciones)<br>
+                - Si no sabes, di "No estoy seguro"</span>
+            </div>
+        </section>
+
+        <!-- Slide 13: Video - JSON -->
+        <section class="slide layout-video-controls" data-slide="12">
+            <div class="video-title-overlay">JSON y Datos en n8n</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-json.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 14: Tips de System Prompt -->
+        <section class="slide layout-big-statement" data-slide="13">
+            <h1 class="animate-in">Tips de <span class="accent">System Prompt</span></h1>
+            <div class="tip-box animate-in">
+                <h3>Tip</h3>
+                <p>Sé específico con el rol, el tono y las restricciones. Un buen System Prompt define <strong>qué hace</strong>, <strong>cómo responde</strong> y <strong>qué NO debe hacer</strong> tu agente.</p>
+            </div>
+        </section>
+
+        <!-- Slide 15: Stop - System Prompt -->
+        <section class="slide layout-stop" data-slide="14">
+            <div class="stop-sign-container">
+                <div class="stop-sign animate-in">
+                    <span>STOP</span>
+                </div>
+            </div>
+            <p class="stop-subtitle">¿Todos tienen su System Prompt funcionando?</p>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BLOQUE 2: MEMORIA -->
+        <!-- ========================================== -->
+
+        <!-- Slide 16: Divider - Memoria -->
+        <section class="slide layout-divider" data-slide="15">
+            <div class="module-number">2</div>
+            <h1 class="animate-in">Memoria</h1>
+        </section>
+
+        <!-- Slide 17: Video - Memoria -->
+        <section class="slide layout-video-controls" data-slide="16">
+            <div class="video-title-overlay">¿Qué es la Memoria?</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-memoria.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 18: Exercise - Memoria -->
+        <section class="slide layout-big-statement" data-slide="17">
+            <h1 class="animate-in">Démosle <span class="accent-green">memoria</span> a nuestro agente</h1>
+            <div class="exercise-box animate-in">
+                <h3>Pasos</h3>
+                <ol>
+                    <li>Buscar <strong>Window Buffer Memory</strong></li>
+                    <li>Conectar al puerto <strong>Memory</strong></li>
+                    <li>windowSize = <strong>10</strong></li>
+                    <li>sessionId = <code>{{ $json.message.chat.id }}</code></li>
+                    <li>Probar: <strong>"Me llamo [nombre]"</strong> → <strong>"¿Cómo me llamo?"</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Slide 19: Tip - Costos de Memoria -->
+        <section class="slide layout-big-statement" data-slide="18">
+            <h1 class="animate-in">Sobre la <span class="accent">Memoria</span></h1>
+            <div class="tip-box animate-in">
+                <h3>Tip: Costos</h3>
+                <p>Más memoria = más tokens enviados al LLM en cada mensaje. Un <strong>windowSize de 10</strong> es un buen balance entre contexto y costo. Ajusta según tu caso de uso.</p>
+            </div>
+        </section>
+
+        <!-- Slide 21: Stop - Memoria -->
+        <section class="slide layout-stop" data-slide="19">
+            <div class="stop-sign-container">
+                <div class="stop-sign animate-in">
+                    <span>STOP</span>
+                </div>
+            </div>
+            <p class="stop-subtitle">¿La memoria funciona?</p>
+        </section>
+
+        <!-- Slide 22: Break 1 -->
+        <section class="slide layout-break" data-slide="20">
+            <div class="break-icon animate-in">☕</div>
+            <h1 class="animate-in">Break</h1>
+            <p class="support animate-in">10 minutos</p>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BLOQUE 3: HERRAMIENTAS -->
+        <!-- ========================================== -->
+
+        <!-- Slide 23: Divider - Herramientas -->
+        <section class="slide layout-divider" data-slide="21">
+            <div class="module-number">3</div>
+            <h1 class="animate-in">Herramientas</h1>
+        </section>
+
+        <!-- Slide 24: Video - Herramientas -->
+        <section class="slide layout-video-controls" data-slide="22">
+            <div class="video-title-overlay">¿Qué son las Herramientas?</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-herramientas.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 25: Video - Calculator -->
+        <section class="slide layout-video-controls" data-slide="23">
+            <div class="video-title-overlay">Calculator Tool</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-calculator.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 26: Exercise - Calculator -->
+        <section class="slide layout-big-statement" data-slide="24">
+            <h1 class="animate-in">Ejercicio: <span class="accent-green">Calculator</span></h1>
+            <div class="exercise-box animate-in">
+                <h3>Pasos</h3>
+                <ol>
+                    <li>Buscar <strong>Calculator</strong></li>
+                    <li>Conectar al puerto <strong>Tool</strong></li>
+                    <li>Probar: <strong>"¿Cuánto es 1547 × 23?"</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Slide 27: Stop - Calculator -->
+        <section class="slide layout-stop" data-slide="25">
+            <div class="stop-sign-container">
+                <div class="stop-sign animate-in">
+                    <span>STOP</span>
+                </div>
+            </div>
+            <p class="stop-subtitle">¿Calculator funciona?</p>
+        </section>
+
+        <!-- Slide 28: Video - HTTP Request -->
+        <section class="slide layout-video-controls" data-slide="26">
+            <div class="video-title-overlay">HTTP Request Tool</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-http-request.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 29: Exercise - HTTP Request -->
+        <section class="slide layout-big-statement" data-slide="27">
+            <h1 class="animate-in">Ejercicio: <span class="accent-green">HTTP Request</span></h1>
+            <div class="exercise-box animate-in">
+                <h3>Pasos</h3>
+                <ol>
+                    <li>Buscar <strong>HTTP Request Tool</strong> (no el normal!)</li>
+                    <li>Conectar al puerto <strong>Tool</strong></li>
+                    <li>Probar: <strong>"Dime un chiste"</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Slide 30: Video - APIs Gratuitas -->
+        <section class="slide layout-video-controls" data-slide="28">
+            <div class="video-title-overlay">APIs Gratuitas</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-apis-gratuitas.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 31: APIs para probar -->
+        <section class="slide layout-3lines" data-slide="29">
+            <h2 class="animate-in">APIs para probar</h2>
+            <div class="line animate-in">
+                <div class="line-number">1</div>
+                <div class="line-text"><strong>icanhazdadjoke.com</strong> — Chistes</div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">2</div>
+                <div class="line-text"><strong>catfact.ninja/fact</strong> — Datos curiosos de gatos</div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">3</div>
+                <div class="line-text"><strong>dog.ceo/api</strong> — Fotos de perros</div>
+            </div>
+        </section>
+
+        <!-- Slide 32: Stop - HTTP Request -->
+        <section class="slide layout-stop" data-slide="30">
+            <div class="stop-sign-container">
+                <div class="stop-sign animate-in">
+                    <span>STOP</span>
+                </div>
+            </div>
+            <p class="stop-subtitle">¿HTTP Request funciona?</p>
+        </section>
+
+        <!-- Slide 33: Video - IF Node -->
+        <section class="slide layout-video-controls" data-slide="31">
+            <div class="video-title-overlay">Nodo IF</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-if-node.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 34: Exercise - IF -->
+        <section class="slide layout-big-statement" data-slide="32">
+            <h1 class="animate-in">Ejercicio: <span class="accent-green">IF</span></h1>
+            <div class="exercise-box animate-in">
+                <h3>Pasos</h3>
+                <ol>
+                    <li>Buscar <strong>IF</strong></li>
+                    <li>Colocar entre <strong>Telegram</strong> y <strong>AI Agent</strong></li>
+                    <li>Condición: message contains <strong>"urgente"</strong></li>
+                    <li>True → <strong>AI Agent</strong></li>
+                    <li>False → <strong>Respuesta simple</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- BREAK 2 -->
+        <!-- ========================================== -->
+
+        <!-- Slide 35: Break 2 -->
+        <section class="slide layout-break" data-slide="33">
+            <div class="break-icon animate-in">☕</div>
+            <h1 class="animate-in">Break</h1>
+            <p class="support animate-in">10 minutos</p>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- PROYECTO FINAL -->
+        <!-- ========================================== -->
+
+        <!-- Slide 36: Divider - Proyecto Final -->
+        <section class="slide layout-divider" data-slide="34">
+            <div class="module-number">4</div>
+            <h1 class="animate-in">Proyecto Final</h1>
+        </section>
+
+        <!-- Slide 37: Video - Arquitectura Chatbot -->
+        <section class="slide layout-video-controls" data-slide="35">
+            <div class="video-title-overlay">Tu Chatbot Completo</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-arquitectura-chatbot.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 38: Video - Flujo de un Mensaje -->
+        <section class="slide layout-video-controls" data-slide="36">
+            <div class="video-title-overlay">El Flujo de un Mensaje</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-flujo-mensaje.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 39: El Reto -->
+        <section class="slide layout-big-statement" data-slide="37">
+            <h1 class="animate-in">El <span class="accent">Reto</span></h1>
+            <div class="exercise-box animate-in">
+                <h3>Construye un chatbot personalizado</h3>
+                <ol>
+                    <li>Elige un tema (<strong>Chef, Tutor, Coach...</strong>)</li>
+                    <li><strong>System Prompt</strong> específico</li>
+                    <li><strong>Memoria</strong> configurada</li>
+                    <li>Al menos <strong>1 herramienta</strong></li>
+                    <li>(Bonus) Nodo <strong>IF</strong></li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- Slide 40: Video - Buenas Prácticas -->
+        <section class="slide layout-video-controls" data-slide="38">
+            <div class="video-title-overlay">Buenas Prácticas</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-buenas-practicas.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- Slide 41: Video - Ideas de Chatbots -->
+        <section class="slide layout-video-controls" data-slide="39">
+            <div class="video-title-overlay">Ideas de Chatbots</div>
+            <div class="video-wrapper">
+                <video muted loop preload="auto" playsinline>
+                    <source src="videos/s2-ideas-chatbots.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="video-controls">
+                <button class="ctrl-btn rewind" onclick="skipVideo(this, -3)" title="Retroceder 3s">−</button>
+                <button class="ctrl-btn play-pause" onclick="togglePlay(this)" title="Play/Pause">▶</button>
+                <button class="ctrl-btn forward" onclick="skipVideo(this, 3)" title="Avanzar 3s">+</button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- CIERRE -->
+        <!-- ========================================== -->
+
+        <!-- Slide 42: Lo que aprendiste hoy -->
+        <section class="slide layout-3lines" data-slide="40">
+            <h2 class="animate-in">Lo que aprendiste hoy</h2>
+            <div class="line animate-in">
+                <div class="line-number">1</div>
+                <div class="line-text"><strong>System Prompt</strong> — personalidad</div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">2</div>
+                <div class="line-text"><strong>Memoria</strong> — contexto</div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">3</div>
+                <div class="line-text"><strong>Herramientas</strong> — capacidades</div>
+            </div>
+            <div class="line animate-in">
+                <div class="line-number">4</div>
+                <div class="line-text"><strong>IF</strong> — lógica</div>
+            </div>
+        </section>
+
+        <!-- Slide 43: Próxima sesión -->
+        <section class="slide layout-big-statement" data-slide="41">
+            <h1 class="animate-in">Próxima <span class="accent">sesión</span></h1>
+            <p class="support animate-in">Agentes autónomos — llevamos todo al siguiente nivel</p>
+        </section>
+
+        <!-- Slide 44: Gracias -->
+        <section class="slide layout-big-statement" data-slide="42">
+            <h1 class="animate-in"><span class="accent-green">¡Gracias!</span></h1>
+            <p class="support animate-in">Practica y experimenta</p>
+        </section>
+
+        <!-- Navigation Controls -->
+        <button class="nav-btn nav-prev" onclick="prevSlide()" title="Anterior">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+        </button>
+        <button class="nav-btn nav-next" onclick="nextSlide()" title="Siguiente">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+        </button>
+    </div>
+
+    <script>
+        // ==================== Video Controls ====================
+
+        function togglePlay(btn) {
+            const slide = btn.closest('.slide');
+            const video = slide.querySelector('video');
+            if (!video) return;
+
+            if (video.paused) {
+                video.play();
+                btn.textContent = '⏸';
+            } else {
+                video.pause();
+                btn.textContent = '▶';
+            }
+        }
+
+        function skipVideo(btn, seconds) {
+            const slide = btn.closest('.slide');
+            const video = slide.querySelector('video');
+            if (!video) return;
+
+            video.currentTime = Math.max(0, Math.min(video.duration, video.currentTime + seconds));
+        }
+
+        // ==================== Slide Management ====================
+
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        const progress = document.getElementById('progress');
+        const counter = document.getElementById('counter');
+
+        function showSlide(index) {
+            if (index < 0) index = 0;
+            if (index >= totalSlides) index = totalSlides - 1;
+            if (index === currentSlide) return;
+
+            const prevSlide = currentSlide;
+
+            // Hide current slide
+            slides[prevSlide].classList.remove('active');
+            slides[prevSlide].classList.add('leaving');
+
+            // Pause videos on previous slide & reset play button
+            const prevVideos = slides[prevSlide].querySelectorAll('video');
+            prevVideos.forEach(video => {
+                video.pause();
+                video.currentTime = 0;
+            });
+            const prevPlayBtn = slides[prevSlide].querySelector('.play-pause');
+            if (prevPlayBtn) prevPlayBtn.textContent = '▶';
+
+            // Show new slide
+            currentSlide = index;
+            slides[currentSlide].classList.add('active', 'entering');
+
+            // Play videos on current slide
+            const currentVideos = slides[currentSlide].querySelectorAll('video');
+            currentVideos.forEach(video => {
+                video.play().then(() => {
+                    const playBtn = slides[currentSlide].querySelector('.play-pause');
+                    if (playBtn) playBtn.textContent = '⏸';
+                }).catch(() => {
+                    // Autoplay blocked — user must click play
+                });
+            });
+
+            // Clean up animations
+            setTimeout(() => {
+                slides[prevSlide].classList.remove('leaving');
+            }, 300);
+
+            setTimeout(() => {
+                slides[currentSlide].classList.remove('entering');
+            }, 500);
+
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const percentage = ((currentSlide + 1) / totalSlides) * 100;
+            progress.style.width = percentage + '%';
+            counter.textContent = `${currentSlide + 1} / ${totalSlides}`;
+            history.replaceState(null, null, `#${currentSlide}`);
+        }
+
+        function nextSlide() {
+            showSlide(currentSlide + 1);
+        }
+
+        function prevSlide() {
+            showSlide(currentSlide - 1);
+        }
+
+        // ==================== Keyboard Navigation ====================
+
+        document.addEventListener('keydown', (e) => {
+            // Don't navigate when video controls are focused
+            if (e.target.closest('.video-controls')) return;
+
+            switch(e.key) {
+                case 'ArrowRight':
+                case 'ArrowDown':
+                case 'PageDown':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                case 'ArrowUp':
+                case 'PageUp':
+                    e.preventDefault();
+                    prevSlide();
+                    break;
+                case ' ':
+                    e.preventDefault();
+                    // Space toggles video if on a video slide, else advances
+                    const currentPlayBtn = slides[currentSlide].querySelector('.play-pause');
+                    if (currentPlayBtn) {
+                        togglePlay(currentPlayBtn);
+                    } else {
+                        nextSlide();
+                    }
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    showSlide(0);
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    showSlide(totalSlides - 1);
+                    break;
+                case 'f':
+                    e.preventDefault();
+                    toggleFullscreen();
+                    break;
+            }
+        });
+
+        // ==================== Touch/Swipe Navigation ====================
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        document.addEventListener('touchstart', (e) => {
+            // Don't capture touch on video controls
+            if (e.target.closest('.video-controls')) return;
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        document.addEventListener('touchend', (e) => {
+            if (e.target.closest('.video-controls')) return;
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartX - touchEndX;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    nextSlide();
+                } else {
+                    prevSlide();
+                }
+            }
+        }
+
+        // ==================== Fullscreen ====================
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        }
+
+        // ==================== URL Hash ====================
+
+        function loadFromHash() {
+            const hash = window.location.hash.slice(1);
+            const slideIndex = parseInt(hash);
+            if (!isNaN(slideIndex) && slideIndex >= 0 && slideIndex < totalSlides) {
+                currentSlide = slideIndex;
+                slides.forEach(s => s.classList.remove('active'));
+                slides[currentSlide].classList.add('active');
+                updateProgress();
+            }
+        }
+
+        // ==================== Initialize ====================
+
+        loadFromHash();
+        updateProgress();
+
+        // Play videos on initial slide if any
+        const initialVideos = slides[currentSlide].querySelectorAll('video');
+        initialVideos.forEach(video => {
+            video.play().then(() => {
+                const playBtn = slides[currentSlide].querySelector('.play-pause');
+                if (playBtn) playBtn.textContent = '⏸';
+            }).catch(() => {});
+        });
+    </script>
+</body>
+</html>
