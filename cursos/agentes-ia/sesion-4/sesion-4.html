@@ -336,7 +336,7 @@
 <div id="deck-container">
 
     <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
-    <span class="slide-counter" id="counter">1 / 23</span>
+    <span class="slide-counter" id="counter">1 / 25</span>
 
     <!-- ================================================ -->
     <!-- PORTADA -->
@@ -474,8 +474,50 @@
         </div>
     </section>
 
-    <!-- Slide 9: Video Generar Markdown -->
-    <section class="slide layout-video-controls" data-slide="8">
+    <!-- Slide 9: Markdown título -->
+    <section class="slide layout-big-statement" data-slide="8">
+        <h1 class="animate-in">Markdown.</h1>
+        <p class="support animate-in">El formato que la IA entiende perfectamente<br>y que se convierte en <span class="accent-green">cualquier cosa</span>.</p>
+    </section>
+
+    <!-- Slide 10: Markdown detalle -->
+    <section class="slide layout-cheatsheet" data-slide="9">
+        <span class="section-label">Sintaxis</span>
+        <div class="cheatsheet-title animate-in">Qué es Markdown y por qué importa <span class="badge">Referencia</span></div>
+        <p style="color:var(--text-secondary);font-size:clamp(0.9rem,1.5vw,1.05rem);margin-bottom:1.25rem;">Markdown es texto plano con reglas mínimas de formato. Sin botones, sin clics — escribes estructura y la IA la interpreta sola.</p>
+        <div class="steps-grid animate-in">
+            <div class="step-card">
+                <h4 style="color:var(--accent-blue);"># Título principal</h4>
+                <p>El título del documento o del slide. Solo uno por sección.</p>
+                <code># Mi presentación sobre IA</code>
+            </div>
+            <div class="step-card">
+                <h4 style="color:var(--accent-purple);">## Sección &nbsp;/&nbsp; ### Subsección</h4>
+                <p>Jerarquía de contenido. Cada ## es un bloque nuevo, ### es un detalle dentro.</p>
+                <code>## Por qué importa
+### Caso de uso concreto</code>
+            </div>
+            <div class="step-card">
+                <h4 style="color:var(--accent-yellow);">--- Separador</h4>
+                <p>Divide secciones o indica un cambio de slide. La IA lo usa como corte visual.</p>
+                <code>## Sección A
+
+---
+
+## Sección B</code>
+            </div>
+            <div class="step-card">
+                <h4 style="color:var(--accent-green);">Listas y énfasis</h4>
+                <p>Puntos clave con <code style="display:inline;background:none;border:none;padding:0;color:var(--accent-green);">-</code>, negrita con <code style="display:inline;background:none;border:none;padding:0;color:var(--accent-green);">**texto**</code>.</p>
+                <code>- Punto importante
+- **Concepto clave**
+- Detalle adicional</code>
+            </div>
+        </div>
+    </section>
+
+    <!-- Slide 11: Video Generar Markdown -->
+    <section class="slide layout-video-controls" data-slide="10">
         <div class="video-title-overlay">Generar el Markdown con IA</div>
         <div class="video-wrapper">
             <video muted loop preload="auto" playsinline>
@@ -490,7 +532,7 @@
     </section>
 
     <!-- Slide 10: Prompt para generar outline -->
-    <section class="slide layout-cheatsheet" data-slide="9">
+    <section class="slide layout-cheatsheet" data-slide="11">
         <span class="section-label">Cheatsheet</span>
         <div class="cheatsheet-title animate-in">
             Prompt: Generar Outline de Presentación <span class="badge">Copiar y ajustar</span>
@@ -525,7 +567,7 @@
     </section>
 
     <!-- Slide 11: Stop — Generar su propio markdown -->
-    <section class="slide layout-stop" data-slide="10">
+    <section class="slide layout-stop" data-slide="12">
         <div class="stop-sign-container">
             <div class="stop-sign animate-in">
                 <span>STOP</span>
@@ -535,7 +577,7 @@
     </section>
 
     <!-- Slide 12: Ejercicio Markdown -->
-    <section class="slide layout-3lines" data-slide="11">
+    <section class="slide layout-3lines" data-slide="13">
         <h2 class="animate-in">Tu outline en <span class="accent">10 minutos</span></h2>
         <div class="line animate-in">
             <div class="line-number" style="background: var(--accent-blue);">1</div>
@@ -556,14 +598,14 @@
     <!-- ================================================ -->
 
     <!-- Slide 13: Divider -->
-    <section class="slide layout-divider" data-slide="12">
+    <section class="slide layout-divider" data-slide="14">
         <div class="module-number">3</div>
         <h1 class="animate-in"><span style="color: #10a37f;">Codex</span></h1>
         <p class="subtitle animate-in">El agente de coding de ChatGPT</p>
     </section>
 
     <!-- Slide 14: Video Usar Codex -->
-    <section class="slide layout-video-controls" data-slide="13">
+    <section class="slide layout-video-controls" data-slide="15">
         <div class="video-title-overlay">ChatGPT Codex — Cómo usarlo</div>
         <div class="video-wrapper">
             <video muted loop preload="auto" playsinline>
@@ -578,7 +620,7 @@
     </section>
 
     <!-- Slide 15: Prompt inverso para recrear esta presentacion con Codex -->
-    <section class="slide layout-cheatsheet" data-slide="14">
+    <section class="slide layout-cheatsheet" data-slide="16">
         <span class="section-label">Demo en vivo</span>
         <div class="cheatsheet-title animate-in">
             Prompt para recrear esta presentación <span class="badge">Codex</span>
@@ -624,14 +666,14 @@
     <!-- ================================================ -->
 
     <!-- Slide 16: Divider -->
-    <section class="slide layout-divider" data-slide="15">
+    <section class="slide layout-divider" data-slide="17">
         <div class="module-number">4</div>
         <h1 class="animate-in">Tu <span style="color: var(--accent-purple);">Portafolio</span></h1>
         <p class="subtitle animate-in">GitHub + Vercel → tu web en internet hoy</p>
     </section>
 
     <!-- Slide 17: Video Crear Portafolio -->
-    <section class="slide layout-video-controls" data-slide="16">
+    <section class="slide layout-video-controls" data-slide="18">
         <div class="video-title-overlay">El Portafolio Personal</div>
         <div class="video-wrapper">
             <video muted loop preload="auto" playsinline>
@@ -646,7 +688,7 @@
     </section>
 
     <!-- Slide 18: Prompt del portafolio -->
-    <section class="slide layout-cheatsheet" data-slide="17">
+    <section class="slide layout-cheatsheet" data-slide="19">
         <span class="section-label">Cheatsheet</span>
         <div class="cheatsheet-title animate-in">
             Prompt: Tu Web de Portafolio <span class="badge">Para Codex</span>
@@ -681,7 +723,7 @@
     </section>
 
     <!-- Slide 19: Video GitHub + Vercel -->
-    <section class="slide layout-video-controls" data-slide="18">
+    <section class="slide layout-video-controls" data-slide="20">
         <div class="video-title-overlay">GitHub + Vercel Deploy</div>
         <div class="video-wrapper">
             <video muted loop preload="auto" playsinline>
@@ -696,7 +738,7 @@
     </section>
 
     <!-- Slide 20: Cheatsheet GitHub -->
-    <section class="slide layout-cheatsheet" data-slide="19">
+    <section class="slide layout-cheatsheet" data-slide="21">
         <span class="section-label">Cheatsheet</span>
         <div class="cheatsheet-title animate-in">
             Git + GitHub en 5 comandos <span class="badge">Terminal</span>
@@ -740,14 +782,14 @@ git branch -M main</code>
     <!-- ================================================ -->
 
     <!-- Slide 21: Divider Materiales -->
-    <section class="slide layout-divider" data-slide="20">
+    <section class="slide layout-divider" data-slide="22">
         <div class="module-number" style="opacity:0.2; font-size: 7rem; font-weight:800; color: var(--accent-blue);">5</div>
         <h1 class="animate-in" style="font-size: clamp(2.5rem,6vw,4.5rem);">Materiales</h1>
         <p class="subtitle animate-in">Todo lo que necesitan para esta sesión</p>
     </section>
 
     <!-- Slide 22: Materiales descargables -->
-    <section class="slide layout-cheatsheet" data-slide="21">
+    <section class="slide layout-cheatsheet" data-slide="23">
         <span class="section-label">Recursos</span>
         <div class="cheatsheet-title animate-in">Materiales de la Sesión 4</div>
         <div class="materials-grid animate-in">
@@ -807,7 +849,7 @@ git branch -M main</code>
     <!-- ================================================ -->
 
     <!-- Slide 23: Stop Showcase -->
-    <section class="slide layout-stop" data-slide="22">
+    <section class="slide layout-stop" data-slide="24">
         <div class="stop-sign-container">
             <div class="stop-sign animate-in">
                 <span>STOP</span>
