@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Code — Curso Completo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--display-font);
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 0.85;
+    }
+
+    .deck { width: 100vw; height: 100vh; position: relative; }
+
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 6rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .progress-bar {
+      position: fixed; top: 0; left: 0;
+      height: 5px; background: var(--brand-blue);
+      transition: width 0.4s ease; z-index: 100;
+    }
+
+    .slide-counter {
+      position: fixed; bottom: 2rem; right: 3rem;
+      font-size: 0.8rem; font-weight: 600;
+      color: rgba(0,19,63,0.25); z-index: 100;
+    }
+
+    /* Title Slide */
+    .slide-title {
+      align-items: flex-start;
+      justify-content: flex-end;
+      padding-bottom: 6rem;
+      gap: 1rem;
+    }
+
+    .slide-title h1 {
+      font-size: clamp(5rem, 12vw, 11rem);
+      letter-spacing: -3px;
+      line-height: 0.82;
+    }
+
+    .slide-title h1 .accent { color: var(--brand-blue); }
+
+    .subtitle {
+      font-size: 1rem;
+      color: rgba(0,19,63,0.45);
+      max-width: 400px;
+      line-height: 1.5;
+    }
+
+    .logo-tag {
+      position: absolute; top: 3rem; left: 6rem;
+      font-family: var(--display-font);
+      font-weight: 800; font-size: 1rem;
+      text-transform: uppercase; letter-spacing: 3px;
+      color: rgba(0,19,63,0.3);
+    }
+
+    .title-accent-block {
+      position: absolute; top: 0; right: 0;
+      width: 35vw; height: 100vh;
+      background: var(--brand-blue); z-index: -1;
+    }
+
+    .title-accent-block::after {
+      content: "CC";
+      position: absolute; bottom: 4rem; right: 4rem;
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 20rem; color: rgba(255,255,255,0.07);
+      line-height: 0.8;
+    }
+
+    /* Section Divider */
+    .slide-section { align-items: flex-start; gap: 1rem; }
+
+    .slide-section h2 {
+      font-size: clamp(4rem, 10vw, 9rem);
+      line-height: 0.82; letter-spacing: -2px;
+    }
+
+    .section-badge {
+      padding: 0.4rem 1rem; border-radius: 999px;
+      font-size: 0.7rem; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 3px;
+    }
+
+    .slide-section .section-bg-num {
+      position: absolute; right: -2rem; bottom: -4rem;
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 28rem; line-height: 0.8; pointer-events: none;
+    }
+
+    .accent { color: var(--brand-blue); }
+
+    /* Closing Slide */
+    .slide-closing { align-items: flex-start; gap: 1.5rem; }
+
+    .slide-closing h2 {
+      font-size: clamp(5rem, 12vw, 11rem);
+      letter-spacing: -3px; line-height: 0.82;
+    }
+
+    .closing-sub {
+      font-size: 1.05rem;
+      color: rgba(0,19,63,0.4);
+      max-width: 450px; line-height: 1.6;
+    }
+
+    .closing-accent-block {
+      position: absolute; bottom: 0; right: 0;
+      width: 40vw; height: 35vh;
+      background: var(--brand-teal);
+      z-index: -1; border-radius: 40px 0 0 0;
+    }
+
+    /* Dark variant */
+    .slide-dark { background: var(--brand-blue-dark); color: #fff; }
+    .slide-dark h2 { color: #fff; }
+    .slide-dark .section-badge { background: var(--brand-teal); color: var(--brand-blue-dark); }
+    .slide-dark .section-bg-num { color: rgba(255,255,255,0.04); }
+
+    /* Blue variant */
+    .slide-blue { background: var(--brand-blue); color: #fff; }
+    .slide-blue h2 { color: #fff; }
+    .slide-blue .section-badge { background: var(--brand-teal); color: var(--brand-blue-dark); }
+    .slide-blue .section-bg-num { color: rgba(255,255,255,0.06); }
+
+    /* Light section defaults */
+    .slide-section:not(.slide-dark):not(.slide-blue) .section-badge {
+      background: var(--brand-blue);
+      color: #fff;
+    }
+    .slide-section:not(.slide-dark):not(.slide-blue) .section-bg-num {
+      color: rgba(0,19,63,0.04);
+    }
+
+    /* About Me Slide */
+    .slide-about {
+      flex-direction: row;
+      align-items: center;
+      gap: 4rem;
+      padding: 4rem 6rem;
+    }
+
+    .about-photo {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-teal) 100%);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--display-font);
+      font-weight: 800;
+      font-size: 4rem;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,71,233,0.2);
+    }
+
+    .about-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .about-info { display: flex; flex-direction: column; gap: 1rem; }
+
+    .about-info h2 {
+      font-size: clamp(3rem, 7vw, 6rem);
+      line-height: 0.85;
+      letter-spacing: -2px;
+    }
+
+    .about-role {
+      font-size: 1.15rem;
+      color: rgba(0,19,63,0.55);
+      line-height: 1.6;
+      max-width: 450px;
+    }
+
+    .about-org {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.2rem;
+      border-radius: 999px;
+      background: var(--brand-blue);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      width: fit-content;
+    }
+
+    /* Navigation */
+    .nav-arrows {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%);
+      display: flex; gap: 0.5rem; z-index: 100;
+    }
+
+    .nav-btn {
+      width: 40px; height: 40px; border-radius: 50%;
+      border: 1px solid rgba(0,19,63,0.12);
+      background: #fff; color: var(--brand-blue-dark);
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(0,19,63,0.08);
+    }
+
+    .nav-btn:hover {
+      background: var(--brand-blue);
+      color: #fff;
+      border-color: var(--brand-blue);
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <div class="deck" id="deck">
+
+    <!-- Slide 1: Title -->
+    <div class="slide slide-title active">
+      <div class="logo-tag">ESIC &middot; Business &amp; Marketing School</div>
+      <h1>CLAUDE<br><span class="accent">CODE</span></h1>
+      <p class="subtitle">Curso completo para dominar el asistente de desarrollo con IA de Anthropic</p>
+      <div class="title-accent-block"></div>
+    </div>
+
+    <!-- Slide 2: About Me -->
+    <div class="slide slide-about">
+      <div class="about-photo">
+        <img src="presenter-web.jpg" alt="Jerónimo Martínez">
+      </div>
+      <div class="about-info">
+        <h2>JER&Oacute;NIMO<br><span class="accent">MART&Iacute;NEZ</span></h2>
+        <p class="about-role">Business &amp; Marketing School</p>
+        <span class="about-org">ESIC Medell&iacute;n</span>
+      </div>
+    </div>
+
+    <!-- Slide 3: Section 01 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 01</span>
+      <h2>QU&Eacute; ES UN<br><span class="accent">CODING ASSISTANT</span></h2>
+      <div class="section-bg-num">01</div>
+    </div>
+
+    <!-- Slide 3: Section 02 -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge">Secci&oacute;n 02</span>
+      <h2>CLAUDE CODE<br><span style="color: var(--brand-teal);">EN ACCI&Oacute;N</span></h2>
+      <div class="section-bg-num">02</div>
+    </div>
+
+    <!-- Slide 4: Section 03 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 03</span>
+      <h2>A&Ntilde;ADIENDO<br><span class="accent">CONTEXTO</span></h2>
+      <div class="section-bg-num">03</div>
+    </div>
+
+    <!-- Slide 5: Section 04 -->
+    <div class="slide slide-section slide-blue">
+      <span class="section-badge">Secci&oacute;n 04</span>
+      <h2>HACIENDO<br><span style="color: var(--brand-teal);">CAMBIOS</span></h2>
+      <div class="section-bg-num">04</div>
+    </div>
+
+    <!-- Slide 6: Section 05 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 05</span>
+      <h2>CONTROLANDO<br><span class="accent">EL CONTEXTO</span></h2>
+      <div class="section-bg-num">05</div>
+    </div>
+
+    <!-- Slide 7: Section 06 -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge">Secci&oacute;n 06</span>
+      <h2>COMANDOS<br><span style="color: var(--brand-teal);">PERSONALIZADOS</span></h2>
+      <div class="section-bg-num">06</div>
+    </div>
+
+    <!-- Slide 8: Section 07 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 07</span>
+      <h2>SERVIDORES<br><span class="accent">MCP</span></h2>
+      <div class="section-bg-num">07</div>
+    </div>
+
+    <!-- Slide 9: Section 08 -->
+    <div class="slide slide-section slide-blue">
+      <span class="section-badge">Secci&oacute;n 08</span>
+      <h2>INTEGRACI&Oacute;N<br><span style="color: var(--brand-teal);">GITHUB</span></h2>
+      <div class="section-bg-num">08</div>
+    </div>
+
+    <!-- Slide 10: Section 09 -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge">Secci&oacute;n 09</span>
+      <h2>INTRODUCCI&Oacute;N<br><span style="color: var(--brand-teal);">A HOOKS</span></h2>
+      <div class="section-bg-num">09</div>
+    </div>
+
+    <!-- Slide 11: Section 10 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 10</span>
+      <h2>DEFINIENDO<br><span class="accent">HOOKS</span></h2>
+      <div class="section-bg-num">10</div>
+    </div>
+
+    <!-- Slide 12: Section 11 -->
+    <div class="slide slide-section slide-blue">
+      <span class="section-badge">Secci&oacute;n 11</span>
+      <h2>IMPLEMENTANDO<br><span style="color: var(--brand-teal);">UN HOOK</span></h2>
+      <div class="section-bg-num">11</div>
+    </div>
+
+    <!-- Slide 13: Section 12 -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge">Secci&oacute;n 12</span>
+      <h2>HOOKS<br><span style="color: var(--brand-teal);">&Uacute;TILES</span></h2>
+      <div class="section-bg-num">12</div>
+    </div>
+
+    <!-- Slide 14: Section 13 -->
+    <div class="slide slide-section">
+      <span class="section-badge">Secci&oacute;n 13</span>
+      <h2>EL SDK DE<br><span class="accent">CLAUDE CODE</span></h2>
+      <div class="section-bg-num">13</div>
+    </div>
+
+    <!-- Slide 15: Closing -->
+    <div class="slide slide-closing">
+      <h2>GRACIAS</h2>
+      <p class="closing-sub">Ahora tienes las herramientas para integrar Claude Code en tu flujo de desarrollo diario.</p>
+      <div class="closing-accent-block"></div>
+    </div>
+
+  </div>
+
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="navigate(-1)">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 9H3m4-4L3 9l4 4"/></svg>
+    </button>
+    <button class="nav-btn" onclick="navigate(1)">
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h12M11 5l4 4-4 4"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const counter = document.getElementById('slideCounter');
+    const bar = document.getElementById('progressBar');
+    let current = 0;
+
+    function show(idx) {
+      if (idx < 0 || idx >= slides.length) return;
+      slides[current].classList.remove('active');
+      current = idx;
+      slides[current].classList.add('active');
+      counter.textContent = `${current + 1} / ${slides.length}`;
+      bar.style.width = `${((current + 1) / slides.length) * 100}%`;
+    }
+
+    function navigate(dir) { show(current + dir); }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); navigate(1); }
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); navigate(-1); }
+      if (e.key === 'Home') { e.preventDefault(); show(0); }
+      if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    });
+
+    show(0);
+  </script>
+</body>
+</html>
