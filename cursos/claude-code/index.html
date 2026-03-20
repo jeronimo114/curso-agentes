@@ -621,6 +621,57 @@
       opacity: 0.85;
     }
     .benefit-card:nth-child(3) li { opacity: 0.7; }
+
+    /* Exercise Steps */
+    .exercise-steps {
+      display: flex; flex-direction: column;
+      gap: 1rem; margin-top: 0.5rem; max-width: 700px;
+    }
+    .exercise-step {
+      display: flex; align-items: center; gap: 1.25rem;
+      padding: 1rem 1.5rem; background: #fff; border-radius: 16px;
+      box-shadow: 0 1px 3px rgba(0,19,63,0.06);
+    }
+    .step-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 3rem; color: var(--brand-blue);
+      min-width: 3.5rem; text-align: center;
+      line-height: 1; opacity: 0.3;
+    }
+    .step-content { display: flex; flex-direction: column; gap: 0.15rem; }
+    .step-content strong { font-size: 1rem; }
+    .step-content span { font-size: 0.85rem; color: rgba(0,19,63,0.45); }
+
+    /* Dark variant for exercise steps */
+    .slide-dark .exercise-step {
+      background: rgba(255,255,255,0.06);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .slide-dark .step-num { color: var(--brand-teal); }
+    .slide-dark .step-content strong { color: #fff; }
+    .slide-dark .step-content span { color: rgba(255,255,255,0.4); }
+
+    /* Blue variant for exercise steps */
+    .slide-blue .exercise-step {
+      background: rgba(255,255,255,0.1);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .slide-blue .step-num { color: var(--brand-teal); }
+    .slide-blue .step-content strong { color: #fff; }
+    .slide-blue .step-content span { color: rgba(255,255,255,0.5); }
+
+    /* Demo label badge */
+    .demo-label {
+      font-family: var(--body-font);
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: var(--brand-teal);
+      margin-bottom: 0.5rem;
+    }
   </style>
 </head>
 <body>
@@ -932,6 +983,217 @@
       <span class="section-badge">Secci&oacute;n 02</span>
       <h2>CLAUDE CODE<br><span style="color: var(--brand-teal);">EN ACCI&Oacute;N</span></h2>
       <div class="section-bg-num">02</div>
+    </div>
+
+    <!-- Section 02, Slide A: Que Puede Hacer (overview) -->
+    <div class="slide page-slide">
+      <div class="card-stack-layout">
+        <h2>QU&Eacute; PUEDE<br><span class="accent">HACER</span></h2>
+        <div class="card-stack">
+          <div class="stack-card"><strong>Generaci&oacute;n de contenido</strong> &mdash; presentaciones, documentaci&oacute;n, c&oacute;digo desde cero</div>
+          <div class="stack-card"><strong>Optimizaci&oacute;n de c&oacute;digo</strong> &mdash; an&aacute;lisis de rendimiento, profiling, mejoras autom&aacute;ticas</div>
+          <div class="stack-card"><strong>An&aacute;lisis de datos</strong> &mdash; notebooks, visualizaciones, iteraci&oacute;n sobre resultados</div>
+          <div class="stack-card"><strong>Automatizaci&oacute;n e integraci&oacute;n</strong> &mdash; navegadores, GitHub, herramientas externas v&iacute;a MCP</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide B: Demo - Esta Presentacion -->
+    <div class="slide page-slide slide-dark">
+      <span class="demo-label">Demo 1</span>
+      <h2>ESTA<br><span style="color: var(--brand-teal);">PRESENTACI&Oacute;N</span></h2>
+      <p class="page-desc">Claude Code construy&oacute; esta presentaci&oacute;n completa: slides, diagramas, animaciones y despliegue.</p>
+      <div class="exercise-steps">
+        <div class="exercise-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>CLAUDE.md como contexto</strong>
+            <span>C&oacute;mo un archivo de texto gu&iacute;a todo el comportamiento del asistente</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Generar un slide en vivo</strong>
+            <span>Pedir a Claude Code que agregue contenido nuevo a la presentaci&oacute;n</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Diagramas paso a paso</strong>
+            <span>Sistema de CSS Grid con revelaci&oacute;n controlada por teclado</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Video Remotion</strong>
+            <span>Proyecto React completo generado por Claude para animaciones</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide C: Demo - Rendimiento -->
+    <div class="slide page-slide">
+      <span class="demo-label" style="color: var(--brand-blue);">Demo 2</span>
+      <h2>OPTIMIZACI&Oacute;N DE<br><span class="accent">RENDIMIENTO</span></h2>
+      <p class="page-desc">Chalk: la 5ta librer&iacute;a m&aacute;s descargada de JavaScript con 429M descargas semanales.</p>
+      <div class="exercise-steps">
+        <div class="exercise-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>Ejecutar benchmarks actuales</strong>
+            <span>Establecer la l&iacute;nea base de rendimiento</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Claude analiza y perfila</strong>
+            <span>Identifica cuellos de botella, crea scripts de an&aacute;lisis propios</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Implementar optimizaciones</strong>
+            <span>Cambios autom&aacute;ticos basados en el profiling</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Resultado: 3.9x mejora</strong>
+            <span>Comparaci&oacute;n antes vs. despu&eacute;s del throughput</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide D: Demo - Analisis de Datos -->
+    <div class="slide page-slide slide-dark">
+      <span class="demo-label">Demo 3</span>
+      <h2>AN&Aacute;LISIS DE<br><span style="color: var(--brand-teal);">DATOS</span></h2>
+      <p class="page-desc">An&aacute;lisis de churn en una plataforma de video streaming usando Jupyter notebooks.</p>
+      <div class="exercise-steps">
+        <div class="exercise-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>Cargar dataset CSV</strong>
+            <span>Datos reales de suscriptores y cancelaciones</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Claude crea el notebook</strong>
+            <span>Genera c&oacute;digo, ejecuta celdas, analiza resultados</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Iteraci&oacute;n autom&aacute;tica</strong>
+            <span>Adapta el an&aacute;lisis seg&uacute;n los hallazgos previos</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Visualizaciones finales</strong>
+            <span>Gr&aacute;ficos y conclusiones generados autom&aacute;ticamente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide E: Demo - Herramientas Externas -->
+    <div class="slide page-slide">
+      <span class="demo-label" style="color: var(--brand-blue);">Demo 4</span>
+      <h2>HERRAMIENTAS<br><span class="accent">EXTERNAS</span></h2>
+      <p class="page-desc">MCP servers permiten a Claude controlar herramientas externas como navegadores web.</p>
+      <div class="exercise-steps">
+        <div class="exercise-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>Instalar Playwright MCP</strong>
+            <span>claude mcp add playwright npx @anthropic-ai/mcp-playwright</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Abrir navegador y capturar</strong>
+            <span>Claude abre la app, toma screenshots, analiza la UI</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Mejorar la interfaz</strong>
+            <span>Cambios de estilos basados en an&aacute;lisis visual</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Ciclo iterativo</strong>
+            <span>Screenshot, analisis, cambio, screenshot: mejora continua</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide F: Demo - GitHub -->
+    <div class="slide page-slide slide-dark">
+      <span class="demo-label">Demo 5</span>
+      <h2>INTEGRACI&Oacute;N<br><span style="color: var(--brand-teal);">GITHUB</span></h2>
+      <p class="page-desc">Claude Code en GitHub Actions: review autom&aacute;tico de PRs y detecci&oacute;n de riesgos.</p>
+      <div class="exercise-steps">
+        <div class="exercise-step">
+          <span class="step-num">1</span>
+          <div class="step-content">
+            <strong>Instalar GitHub App</strong>
+            <span>/install GitHub app &mdash; configura acciones autom&aacute;ticas</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">2</span>
+          <div class="step-content">
+            <strong>Crear PR con riesgo</strong>
+            <span>Agregar email de usuario al output de Lambda (Terraform)</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">3</span>
+          <div class="step-content">
+            <strong>Detecci&oacute;n autom&aacute;tica de PII</strong>
+            <span>Claude analiza el flujo de infraestructura y detecta la exposici&oacute;n</span>
+          </div>
+        </div>
+        <div class="exercise-step">
+          <span class="step-num">4</span>
+          <div class="step-content">
+            <strong>Review en el PR</strong>
+            <span>Comentario autom&aacute;tico alertando sobre datos sensibles</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 02, Slide G: El Principio (takeaway) -->
+    <div class="slide page-slide slide-blue">
+      <h2 style="color:#fff;">EL PRINCIPIO<br><span style="color: var(--brand-teal);">CLAVE</span></h2>
+      <div class="card-stack" style="max-width:800px;">
+        <div class="stack-card" style="background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.15); font-size:1.1rem; padding:1.5rem 2rem;">
+          Claude Code es un asistente flexible que crece con las necesidades del equipo a trav&eacute;s de la <strong style="color:var(--brand-teal);">expansi&oacute;n de herramientas</strong>, no funcionalidad fija.
+        </div>
+        <div class="stack-card" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.7); border:1px solid rgba(255,255,255,0.1);">
+          No importa si es generar slides, optimizar rendimiento, analizar datos o revisar PRs &mdash; el mismo asistente se adapta al contexto.
+        </div>
+      </div>
     </div>
 
     <!-- Slide 4: Section 03 -->

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Demos Secci&oacute;n 02 &mdash; Claude Code en Acci&oacute;n</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--display-font);
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 0.9;
+    }
+
+    /* Header */
+    .page-header {
+      background: var(--brand-blue-dark);
+      color: #fff;
+      padding: 4rem 3rem 3rem;
+    }
+    .page-header h1 {
+      font-size: clamp(3rem, 8vw, 5rem);
+      letter-spacing: -1px;
+    }
+    .page-header h1 span { color: var(--brand-teal); }
+    .page-header p {
+      margin-top: 1rem;
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.5);
+      max-width: 600px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: var(--brand-teal);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .back-link:hover { opacity: 1; }
+
+    /* Content */
+    .content {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem 2rem 4rem;
+    }
+
+    /* Demo section */
+    .demo-section {
+      margin-top: 3rem;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 2px 20px rgba(0,19,63,0.06);
+    }
+
+    .demo-header {
+      padding: 2rem 2.5rem 1.5rem;
+      display: flex;
+      align-items: baseline;
+      gap: 1.5rem;
+    }
+    .demo-header-light { background: var(--brand-blue-dark); color: #fff; }
+    .demo-header-alt { background: var(--brand-blue); color: #fff; }
+
+    .demo-num {
+      font-family: var(--display-font);
+      font-weight: 800;
+      font-size: 4rem;
+      line-height: 1;
+      opacity: 0.2;
+    }
+    .demo-header-info h2 {
+      font-size: 2.2rem;
+      letter-spacing: -0.5px;
+    }
+    .demo-header-info h2 span { color: var(--brand-teal); }
+    .demo-time {
+      font-family: var(--body-font);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.4;
+      margin-top: 0.3rem;
+    }
+
+    .demo-body {
+      background: #fff;
+      padding: 2rem 2.5rem 2.5rem;
+    }
+
+    .demo-block {
+      margin-top: 1.5rem;
+    }
+    .demo-block:first-child { margin-top: 0; }
+
+    .demo-block h3 {
+      font-size: 1.3rem;
+      color: var(--brand-blue);
+      margin-bottom: 0.6rem;
+      text-transform: uppercase;
+    }
+
+    .demo-block ul, .demo-block ol {
+      padding-left: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .demo-block li {
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+    .demo-block li strong {
+      color: var(--brand-blue-dark);
+    }
+
+    code {
+      background: rgba(0,19,63,0.06);
+      padding: 0.15rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-family: "SF Mono", "Fira Code", monospace;
+    }
+
+    .plan-b {
+      margin-top: 1rem;
+      padding: 1rem 1.25rem;
+      background: rgba(10,228,195,0.06);
+      border: 1px solid rgba(10,228,195,0.15);
+      border-radius: 12px;
+      font-size: 0.85rem;
+      color: rgba(0,19,63,0.6);
+    }
+    .plan-b strong {
+      color: var(--brand-blue-dark);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .prompt-example {
+      margin-top: 0.5rem;
+      padding: 0.8rem 1.2rem;
+      background: var(--brand-blue-dark);
+      color: var(--brand-teal);
+      border-radius: 10px;
+      font-family: "SF Mono", "Fira Code", monospace;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    /* Print styles */
+    @media print {
+      .page-header { padding: 2rem; }
+      .demo-section { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+      .back-link { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-header">
+    <h1>DEMOS SECCI&Oacute;N 02<br><span>CLAUDE CODE EN ACCI&Oacute;N</span></h1>
+    <p>Gu&iacute;a paso a paso para ejecutar cada demo en vivo. 5 demos, de lo simple a lo complejo.</p>
+    <a href="index.html" class="back-link">&larr; Volver a la presentaci&oacute;n</a>
+  </div>
+
+  <div class="content">
+
+    <!-- DEMO 1 -->
+    <div class="demo-section">
+      <div class="demo-header demo-header-light">
+        <span class="demo-num">01</span>
+        <div class="demo-header-info">
+          <h2>ESTA <span>PRESENTACI&Oacute;N</span></h2>
+          <div class="demo-time">~10 minutos</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-block">
+          <h3>Preparaci&oacute;n</h3>
+          <ul>
+            <li>Tener <code>index.html</code> abierto en el navegador con la presentaci&oacute;n visible</li>
+            <li>Tener Claude Code abierto en terminal en el directorio del proyecto</li>
+            <li>Tener el archivo <code>CLAUDE.md</code> listo para mostrar</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Pasos</h3>
+          <ol>
+            <li><strong>Mostrar CLAUDE.md:</strong> Abrir el archivo y explicar c&oacute;mo define las reglas del proyecto &mdash; idioma, dise&ntilde;o, restricciones (sin emojis), branding ESIC</li>
+            <li><strong>Explicar el sistema de slides:</strong> Mostrar brevemente la estructura HTML &mdash; cada <code>&lt;div class="slide"&gt;</code> es un slide, los CSS controlan el look</li>
+            <li><strong>Generar un slide en vivo:</strong> Pedirle a Claude Code que agregue un slide nuevo
+              <div class="prompt-example">Agrega un slide de agradecimiento al final de la presentaci&oacute;n con el texto "Gracias" y el logo de ESIC</div>
+            </li>
+            <li><strong>Refrescar el navegador:</strong> Mostrar el slide generado, navegar hasta &eacute;l con las flechas</li>
+            <li><strong>Mostrar los diagramas:</strong> Navegar a los diagramas de la Secci&oacute;n 01 y mostrar c&oacute;mo cada flecha aparece al presionar "Siguiente"</li>
+            <li><strong>Mencionar Remotion:</strong> Explicar que Claude tambi&eacute;n gener&oacute; un proyecto React completo para la animaci&oacute;n en video del loop de herramientas</li>
+          </ol>
+        </div>
+
+        <div class="demo-block">
+          <h3>Puntos Clave</h3>
+          <ul>
+            <li><strong>CLAUDE.md es el contexto:</strong> Un simple archivo de texto gu&iacute;a todo el comportamiento del asistente</li>
+            <li><strong>No solo c&oacute;digo:</strong> Claude Code genera documentaci&oacute;n, presentaciones, contenido visual</li>
+            <li><strong>Iteraci&oacute;n:</strong> Los diagramas pasaron por 3 rondas de mejora hasta llegar al resultado actual</li>
+            <li><strong>Despliegue incluido:</strong> Claude tambi&eacute;n copi&oacute; archivos al repo de GitHub y despleg&oacute; en Vercel</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Resultado Esperado</h3>
+          <ul>
+            <li>El slide nuevo aparece en la presentaci&oacute;n al refrescar</li>
+            <li>El contador de slides se actualiza autom&aacute;ticamente</li>
+            <li>El slide sigue el sistema de dise&ntilde;o del proyecto</li>
+          </ul>
+        </div>
+
+        <div class="plan-b">
+          <strong>Plan B:</strong> Si el demo falla, mostrar el <code>git log</code> con todos los commits que Claude hizo para construir la presentaci&oacute;n. Tener screenshots del proceso guardados.
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 2 -->
+    <div class="demo-section">
+      <div class="demo-header demo-header-alt">
+        <span class="demo-num">02</span>
+        <div class="demo-header-info">
+          <h2>OPTIMIZACI&Oacute;N DE <span>RENDIMIENTO</span></h2>
+          <div class="demo-time">~10 minutos</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-block">
+          <h3>Preparaci&oacute;n</h3>
+          <ul>
+            <li>Clonar el repositorio de <strong>Chalk</strong> (librer&iacute;a JavaScript de colores en terminal)</li>
+            <li>Verificar que los benchmarks existentes corren correctamente: <code>npm run bench</code></li>
+            <li>Tener Claude Code abierto en el directorio de Chalk</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Pasos</h3>
+          <ol>
+            <li><strong>Contexto:</strong> Explicar que Chalk es la 5ta librer&iacute;a m&aacute;s descargada de JS (429M descargas/semana)</li>
+            <li><strong>Ejecutar benchmarks:</strong> Correr <code>npm run bench</code> y mostrar los resultados base</li>
+            <li><strong>Pedir optimizaci&oacute;n:</strong>
+              <div class="prompt-example">Analiza los benchmarks de este proyecto, identifica los cuellos de botella de rendimiento y optimiza el throughput</div>
+            </li>
+            <li><strong>Observar el proceso:</strong> Claude va a:
+              <ul>
+                <li>Leer los archivos de source y benchmarks</li>
+                <li>Ejecutar profiling y crear scripts de an&aacute;lisis propios</li>
+                <li>Crear un todo list con las optimizaciones</li>
+                <li>Implementar cada mejora</li>
+              </ul>
+            </li>
+            <li><strong>Comparar resultados:</strong> Ejecutar benchmarks de nuevo y mostrar la mejora (esperado: ~3.9x)</li>
+          </ol>
+        </div>
+
+        <div class="demo-block">
+          <h3>Puntos Clave</h3>
+          <ul>
+            <li><strong>Combinaci&oacute;n de herramientas:</strong> Claude usa Read, Edit, Bash y Grep en un solo flujo</li>
+            <li><strong>Autonom&iacute;a:</strong> Claude crea sus propios scripts de an&aacute;lisis sin que se lo pidan</li>
+            <li><strong>Planificaci&oacute;n:</strong> Genera un plan antes de ejecutar cambios</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Resultado Esperado</h3>
+          <ul>
+            <li>Mejora significativa en throughput (el curso original reporta 3.9x)</li>
+            <li>C&oacute;digo limpio y optimizado que pasa los tests existentes</li>
+          </ul>
+        </div>
+
+        <div class="plan-b">
+          <strong>Plan B:</strong> Tener un video pre-grabado del demo del curso original de Anthropic. Alternativamente, mostrar el diff de los cambios que Claude har&iacute;a.
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 3 -->
+    <div class="demo-section">
+      <div class="demo-header demo-header-light">
+        <span class="demo-num">03</span>
+        <div class="demo-header-info">
+          <h2>AN&Aacute;LISIS DE <span>DATOS</span></h2>
+          <div class="demo-time">~10 minutos</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-block">
+          <h3>Preparaci&oacute;n</h3>
+          <ul>
+            <li>Tener un archivo CSV con datos de churn de plataforma de streaming (suscripciones, cancelaciones, fechas, planes)</li>
+            <li>Verificar que Jupyter est&aacute; instalado: <code>pip install jupyter</code></li>
+            <li>Tener Claude Code abierto en el directorio con el CSV</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Pasos</h3>
+          <ol>
+            <li><strong>Mostrar el dataset:</strong> Abrir el CSV brevemente para que la audiencia vea la estructura de datos</li>
+            <li><strong>Pedir an&aacute;lisis:</strong>
+              <div class="prompt-example">Analiza el churn de esta plataforma de streaming. Usa un Jupyter notebook para explorar los datos, identificar patrones y generar visualizaciones</div>
+            </li>
+            <li><strong>Observar la iteraci&oacute;n:</strong> Claude va a:
+              <ul>
+                <li>Crear un notebook nuevo</li>
+                <li>Ejecutar celdas con c&oacute;digo de an&aacute;lisis</li>
+                <li>Ver los resultados y adaptar el siguiente paso</li>
+                <li>Generar gr&aacute;ficos y conclusiones</li>
+              </ul>
+            </li>
+            <li><strong>Mostrar el notebook:</strong> Abrir en Jupyter para ver las visualizaciones</li>
+          </ol>
+        </div>
+
+        <div class="demo-block">
+          <h3>Puntos Clave</h3>
+          <ul>
+            <li><strong>Iteraci&oacute;n inteligente:</strong> Claude adapta su an&aacute;lisis basado en lo que encuentra</li>
+            <li><strong>No solo c&oacute;digo:</strong> Genera insights y conclusiones en lenguaje natural</li>
+            <li><strong>Notebooks como herramienta:</strong> Ejecuta c&oacute;digo y lee resultados en un ciclo</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Resultado Esperado</h3>
+          <ul>
+            <li>Notebook completo con an&aacute;lisis exploratorio, visualizaciones y conclusiones</li>
+            <li>Identificaci&oacute;n de factores clave de churn</li>
+          </ul>
+        </div>
+
+        <div class="plan-b">
+          <strong>Plan B:</strong> Tener un notebook pre-ejecutado con resultados y visualizaciones listas para mostrar.
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 4 -->
+    <div class="demo-section">
+      <div class="demo-header demo-header-alt">
+        <span class="demo-num">04</span>
+        <div class="demo-header-info">
+          <h2>HERRAMIENTAS <span>EXTERNAS</span></h2>
+          <div class="demo-time">~10 minutos</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-block">
+          <h3>Preparaci&oacute;n</h3>
+          <ul>
+            <li>Instalar el MCP server de Playwright:
+              <div class="prompt-example">claude mcp add playwright npx @anthropic-ai/mcp-playwright</div>
+            </li>
+            <li>Tener una app web local corriendo en <code>localhost:3000</code> (cualquier proyecto con UI)</li>
+            <li>Reiniciar Claude Code despu&eacute;s de agregar el MCP server</li>
+            <li>Verificar que el MCP server est&aacute; activo: Claude deber&iacute;a mencionar las herramientas de Playwright al iniciar</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Pasos</h3>
+          <ol>
+            <li><strong>Explicar MCP:</strong> "Los MCP servers son herramientas externas que expanden las capacidades de Claude Code m&aacute;s all&aacute; de editar archivos"</li>
+            <li><strong>Pedir screenshot:</strong>
+              <div class="prompt-example">Abre el navegador, navega a localhost:3000 y toma un screenshot de la p&aacute;gina principal</div>
+            </li>
+            <li><strong>Pedir mejoras de UI:</strong>
+              <div class="prompt-example">Analiza el screenshot y mejora los estilos de la p&aacute;gina. Haz los cambios y toma otro screenshot para verificar</div>
+            </li>
+            <li><strong>Mostrar el ciclo:</strong> Claude toma screenshot, analiza, edita CSS/HTML, toma otro screenshot, compara</li>
+          </ol>
+        </div>
+
+        <div class="demo-block">
+          <h3>Puntos Clave</h3>
+          <ul>
+            <li><strong>Extensibilidad:</strong> Claude Code no est&aacute; limitado a leer y escribir archivos</li>
+            <li><strong>MCP es un est&aacute;ndar:</strong> Cualquier herramienta puede exponerse como MCP server</li>
+            <li><strong>Feedback visual:</strong> Claude puede "ver" la UI y tomar decisiones basadas en ello</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Resultado Esperado</h3>
+          <ul>
+            <li>Claude controla un navegador real, visible para la audiencia</li>
+            <li>La UI mejora visiblemente despu&eacute;s de los cambios</li>
+            <li>El ciclo screenshot-analisis-cambio demuestra automatizaci&oacute;n end-to-end</li>
+          </ul>
+        </div>
+
+        <div class="plan-b">
+          <strong>Plan B:</strong> Tener screenshots guardados del antes/despu&eacute;s. Si Playwright falla, mostrar el proceso conceptualmente y mencionar que MCP se cubre a fondo en la Secci&oacute;n 07.
+        </div>
+      </div>
+    </div>
+
+    <!-- DEMO 5 -->
+    <div class="demo-section">
+      <div class="demo-header demo-header-light">
+        <span class="demo-num">05</span>
+        <div class="demo-header-info">
+          <h2>INTEGRACI&Oacute;N <span>GITHUB</span></h2>
+          <div class="demo-time">~10 minutos</div>
+        </div>
+      </div>
+      <div class="demo-body">
+        <div class="demo-block">
+          <h3>Preparaci&oacute;n</h3>
+          <ul>
+            <li>Tener un repositorio en GitHub con configuraci&oacute;n de Terraform (AWS Lambda + DynamoDB + S3 compartido con partner externo)</li>
+            <li>Tener la GitHub App de Claude Code instalada en el repo: <code>/install GitHub app</code></li>
+            <li>Preparar un cambio que exponga PII: agregar email de usuario al output del Lambda</li>
+            <li>Tener el repo clonado localmente para crear el PR</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Pasos</h3>
+          <ol>
+            <li><strong>Explicar la arquitectura:</strong> Lambda procesa datos de usuarios, DynamoDB almacena, S3 se comparte con partner externo</li>
+            <li><strong>Mostrar la integraci&oacute;n:</strong> Explicar que Claude Code se instal&oacute; como GitHub App con dos actions: mention support y PR review</li>
+            <li><strong>Hacer el cambio:</strong> En el c&oacute;digo del Lambda, agregar el email del usuario al output
+              <div class="prompt-example">// En el handler del Lambda, agregar:
+response.user_email = event.user.email</div>
+            </li>
+            <li><strong>Crear el PR:</strong> Push y crear pull request en GitHub</li>
+            <li><strong>Esperar el review:</strong> Claude Code analiza autom&aacute;ticamente el PR y detecta que el email (PII) puede llegar al S3 compartido con el partner</li>
+            <li><strong>Mostrar el comentario:</strong> Abrir el PR en GitHub y mostrar el review autom&aacute;tico de Claude alertando sobre la exposici&oacute;n de datos sensibles</li>
+          </ol>
+        </div>
+
+        <div class="demo-block">
+          <h3>Puntos Clave</h3>
+          <ul>
+            <li><strong>An&aacute;lisis de infraestructura:</strong> Claude entiende el flujo completo, no solo el c&oacute;digo modificado</li>
+            <li><strong>Seguridad proactiva:</strong> Detecta riesgos de PII sin que nadie se lo pida expl&iacute;citamente</li>
+            <li><strong>CI/CD inteligente:</strong> Se integra en el flujo existente de desarrollo</li>
+            <li><strong>Extensible:</strong> Las actions son personalizables y pueden incluir MCP servers</li>
+          </ul>
+        </div>
+
+        <div class="demo-block">
+          <h3>Resultado Esperado</h3>
+          <ul>
+            <li>Comentario autom&aacute;tico en el PR identificando el riesgo de exponer PII al partner externo</li>
+            <li>Sugerencia de c&oacute;mo mitigar el problema</li>
+          </ul>
+        </div>
+
+        <div class="plan-b">
+          <strong>Plan B:</strong> Tener un PR pre-creado con el review de Claude ya visible. El review tarda ~1-2 minutos en aparecer, as&iacute; que si el tiempo es ajustado, crear el PR antes de la clase y mostrar el resultado directamente.
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
