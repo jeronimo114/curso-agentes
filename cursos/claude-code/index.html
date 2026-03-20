@@ -353,148 +353,121 @@
       color: var(--brand-blue-dark);
     }
 
-    /* Sequence Diagram (Anthropic pattern) */
-    .seq-diagram {
-      display: flex;
-      justify-content: center;
-      gap: 0;
+    /* Sequence Diagram — Grid-based system */
+    .seq-grid {
+      display: grid;
       margin-top: 1rem;
-      position: relative;
-      flex: 1;
+      gap: 0;
+      width: 100%;
+      max-width: 800px;
     }
-    .seq-lane {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      flex: 1;
-      max-width: 320px;
-      position: relative;
-    }
-    .seq-actor {
-      padding: 0.75rem 1.5rem;
+    .seq-2col { grid-template-columns: 1fr 1fr; }
+    .seq-3col { grid-template-columns: 1fr 1fr 1fr; max-width: 1000px; }
+    .seq-compact { max-width: 100%; }
+
+    .seq-grid-actor {
+      text-align: center;
+      padding: 0.8rem 1.5rem;
+      margin: 0 2rem;
       background: rgba(0,19,63,0.06);
       border: 1px solid rgba(0,19,63,0.12);
       border-radius: 10px;
       font-weight: 700;
       font-size: 0.95rem;
-      text-align: center;
-      z-index: 2;
-      white-space: nowrap;
+      line-height: 1.3;
     }
-    .seq-actor-annotation {
-      font-size: 0.75rem;
+    .seq-grid-sub {
+      font-size: 0.72rem;
       font-style: italic;
       font-weight: 400;
       color: rgba(0,19,63,0.4);
-      margin-top: 0.3rem;
     }
-    .seq-lifeline {
-      width: 1px;
-      flex: 1;
-      border-left: 2px dashed rgba(0,19,63,0.15);
-      min-height: 300px;
-    }
-    .seq-messages {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-    }
-    .seq-msg {
-      position: absolute;
+    .seq-grid-lane {
       display: flex;
+      justify-content: center;
+      padding: 0;
+      min-height: 1.5rem;
+    }
+    .seq-grid-lane::after {
+      content: '';
+      width: 2px;
+      height: 100%;
+      background: repeating-linear-gradient(
+        to bottom,
+        rgba(0,19,63,0.15) 0px,
+        rgba(0,19,63,0.15) 6px,
+        transparent 6px,
+        transparent 12px
+      );
+    }
+    .seq-grid-lane-tall { min-height: 4rem; }
+
+    .seq-grid-msg {
+      display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 0;
-      font-size: 0.8rem;
-      color: var(--brand-blue-dark);
-      line-height: 1.4;
-    }
-    .seq-msg-text {
-      text-align: center;
-      padding: 0 0.5rem;
-      max-width: 100%;
-      font-weight: 500;
-    }
-    .seq-msg-annotation {
-      font-size: 0.7rem;
-      font-style: italic;
-      font-weight: 400;
-      color: rgba(0,19,63,0.4);
-      position: absolute;
-      white-space: nowrap;
-    }
-    .seq-arrow-line {
-      height: 1px;
-      background: rgba(0,19,63,0.3);
-      flex: 1;
+      padding: 0.5rem 1rem;
       position: relative;
     }
-    .seq-arrow-line::after {
+    .seq-grid-msg::before {
       content: '';
       position: absolute;
-      top: -4px;
+      top: 50%;
+      left: 3rem;
+      right: 3rem;
+      height: 1.5px;
+      background: rgba(0,19,63,0.2);
+    }
+    /* Right-pointing arrow */
+    .seq-grid-msg-right::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: 3rem;
+      transform: translateY(-50%);
       width: 0; height: 0;
-      border-top: 5px solid transparent;
-      border-bottom: 5px solid transparent;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-left: 10px solid rgba(0,19,63,0.3);
     }
-    .seq-arrow-line.arrow-right::after {
-      right: 0;
-      border-left: 8px solid rgba(0,19,63,0.3);
+    /* Left-pointing arrow */
+    .seq-grid-msg-left::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 3rem;
+      transform: translateY(-50%);
+      width: 0; height: 0;
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      border-right: 10px solid rgba(0,19,63,0.3);
     }
-    .seq-arrow-line.arrow-left::after {
-      left: 0;
-      border-right: 8px solid rgba(0,19,63,0.3);
-    }
-
-    /* Full-width sequence diagram (self-contained rows) */
-    .seq-full {
-      width: 100%;
-      margin-top: 1.5rem;
-    }
-    .seq-full .seq-header {
-      display: flex;
-      justify-content: space-around;
-      align-items: flex-start;
-      margin-bottom: 0;
-      padding: 0 2rem;
-    }
-    .seq-full .seq-actor-col {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 0.3rem;
-    }
-    .seq-full .seq-body {
-      display: flex;
-      padding: 0 2rem;
+    .seq-grid-label {
       position: relative;
-    }
-    .seq-full .seq-col {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .seq-full .seq-col .seq-lifeline {
-      min-height: 350px;
-    }
-    .seq-full .seq-row {
-      display: flex;
-      align-items: center;
-      padding: 0.6rem 0;
-      width: 100%;
-    }
-    .seq-full .seq-row-label {
-      text-align: center;
-      font-size: 0.8rem;
+      z-index: 1;
+      background: var(--bg);
+      padding: 0.25rem 0.75rem;
+      font-size: 0.82rem;
       font-weight: 500;
+      text-align: center;
       line-height: 1.4;
-      padding: 0.4rem 0.75rem;
-      background: rgba(0,19,63,0.04);
       border-radius: 6px;
-      max-width: 300px;
+      max-width: 90%;
+    }
+    .seq-grid-label-bold {
+      font-weight: 700;
+      color: var(--brand-blue-dark);
+    }
+    .seq-grid-annotation {
+      font-size: 0.65rem;
+      font-style: italic;
+      color: rgba(0,19,63,0.4);
+      margin-top: 0.15rem;
+      position: relative;
+      z-index: 1;
+    }
+    .seq-grid-msg-annotated {
+      padding-bottom: 0.25rem;
     }
 
     /* Split sequence diagram (left text, right diagram) */
@@ -628,42 +601,21 @@
     <!-- Slide B: El Gran Problema (LLM alone fails) -->
     <div class="slide page-slide">
       <h2>EL GRAN<br><span class="accent">PROBLEMA</span></h2>
-      <div class="seq-full">
-        <div class="seq-header">
-          <div class="seq-actor-col">
-            <div class="seq-actor">T&uacute;</div>
-          </div>
-          <div class="seq-actor-col">
-            <div class="seq-actor">Language Model</div>
-            <span class="seq-actor-annotation">Sin coding assistant</span>
-          </div>
+      <div class="seq-grid seq-2col">
+        <div class="seq-grid-actor">T&uacute;</div>
+        <div class="seq-grid-actor">Language Model<br><span class="seq-grid-sub">Sin coding assistant</span></div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-right" style="grid-column: 1 / 3;">
+          <span class="seq-grid-label">Qu&eacute; c&oacute;digo hay en el archivo main.go?</span>
         </div>
-        <div style="display:flex; padding:0 2rem;">
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-            <div class="seq-lifeline" style="min-height:280px;"></div>
-          </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-            <div class="seq-lifeline" style="min-height:280px;"></div>
-          </div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-left" style="grid-column: 1 / 3;">
+          <span class="seq-grid-label seq-grid-label-bold">Lo siento, no tengo la capacidad de leer archivos</span>
         </div>
-        <!-- Arrow: question -->
-        <div style="position:absolute; top:120px; left:15%; right:15%; display:flex; align-items:center; gap:0.5rem;">
-          <div style="flex:1; height:1px; background:rgba(0,19,63,0.3); position:relative;">
-            <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
-          </div>
-        </div>
-        <div style="position:absolute; top:98px; left:50%; transform:translateX(-50%); text-align:center; font-size:0.85rem; font-weight:500; max-width:350px;">
-          Qu&eacute; c&oacute;digo hay en el archivo main.go?
-        </div>
-        <!-- Arrow: response -->
-        <div style="position:absolute; top:200px; left:15%; right:15%; display:flex; align-items:center; gap:0.5rem;">
-          <div style="flex:1; height:1px; background:rgba(0,19,63,0.3); position:relative;">
-            <div style="position:absolute; top:-5px; left:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-right:10px solid rgba(0,19,63,0.3);"></div>
-          </div>
-        </div>
-        <div style="position:absolute; top:178px; left:50%; transform:translateX(-50%); text-align:center; font-size:0.85rem; font-weight:600; max-width:400px;">
-          Lo siento, no tengo la capacidad de leer archivos
-        </div>
+        <div class="seq-grid-lane seq-grid-lane-tall"></div>
+        <div class="seq-grid-lane seq-grid-lane-tall"></div>
       </div>
     </div>
 
@@ -679,120 +631,74 @@
           </ul>
         </div>
         <div class="split-seq-right">
-          <div class="seq-full" style="position:relative; min-height:400px;">
-            <div class="seq-header" style="justify-content:space-around;">
-              <div class="seq-actor-col">
-                <div class="seq-actor">Coding Assistant</div>
-              </div>
-              <div class="seq-actor-col">
-                <div class="seq-actor">Language Model</div>
-              </div>
+          <div class="seq-grid seq-2col seq-compact">
+            <div class="seq-grid-actor">Coding Assistant</div>
+            <div class="seq-grid-actor">Language Model</div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-msg seq-grid-msg-right" style="grid-column: 1 / 3;">
+              <span class="seq-grid-label" style="font-size:0.72rem;">Qu&eacute; c&oacute;digo hay en main.go?<br>Si quieres leer un archivo, responde con &quot;ReadFile: nombre del archivo&quot;</span>
             </div>
-            <div style="display:flex; padding:0 1rem;">
-              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-                <div class="seq-lifeline" style="min-height:300px;"></div>
-              </div>
-              <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-                <div class="seq-lifeline" style="min-height:300px;"></div>
-              </div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-msg seq-grid-msg-left" style="grid-column: 1 / 3;">
+              <span class="seq-grid-label seq-grid-label-bold">ReadFile: main.go</span>
             </div>
-            <!-- Arrow 1: request with tool instructions -->
-            <div style="position:absolute; top:100px; left:10%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-              <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-msg seq-grid-msg-right" style="grid-column: 1 / 3;">
+              <span class="seq-grid-label">&lt;Contenido de main.go&gt;</span>
             </div>
-            <div style="position:absolute; top:68px; left:50%; transform:translateX(-50%); text-align:center; font-size:0.72rem; font-weight:500; max-width:280px; line-height:1.4;">
-              Qu&eacute; c&oacute;digo hay en main.go?<br>Si quieres leer un archivo, responde con &quot;ReadFile: nombre del archivo&quot;
-            </div>
-            <!-- Arrow 2: model responds with tool call -->
-            <div style="position:absolute; top:190px; left:10%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-              <div style="position:absolute; top:-5px; left:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-right:10px solid rgba(0,19,63,0.3);"></div>
-            </div>
-            <div style="position:absolute; top:170px; left:50%; transform:translateX(-50%); text-align:center; font-size:0.8rem; font-weight:600;">
-              ReadFile: main.go
-            </div>
-            <!-- Arrow 3: file contents sent back -->
-            <div style="position:absolute; top:270px; left:10%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-              <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
-            </div>
-            <div style="position:absolute; top:250px; left:50%; transform:translateX(-50%); text-align:center; font-size:0.8rem; font-weight:500;">
-              &lt;Contenido de main.go&gt;
-            </div>
+            <div class="seq-grid-lane"></div>
+            <div class="seq-grid-lane"></div>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Slide D: El Loop Completo (3 actors) -->
-    <div class="slide page-slide">
-      <h2>EL LOOP DE<br><span class="accent">TOOL USE</span></h2>
-      <div class="seq-full" style="position:relative; min-height:380px; margin-top:1rem;">
-        <div class="seq-header" style="justify-content:space-around;">
-          <div class="seq-actor-col">
-            <div class="seq-actor">T&uacute;</div>
-          </div>
-          <div class="seq-actor-col">
-            <div class="seq-actor">Coding Assistant</div>
-          </div>
-          <div class="seq-actor-col">
-            <div class="seq-actor">Language Model</div>
-          </div>
+    <div class="slide page-slide" style="padding: 3rem 4rem;">
+      <h2 style="font-size: clamp(2rem, 4vw, 3.5rem);">EL LOOP DE<br><span class="accent">TOOL USE</span></h2>
+      <div class="seq-grid seq-3col">
+        <div class="seq-grid-actor">T&uacute;</div>
+        <div class="seq-grid-actor">Coding Assistant</div>
+        <div class="seq-grid-actor">Language Model</div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-lane"></div>
+        <!-- 1: User -> CA -->
+        <div class="seq-grid-msg seq-grid-msg-right" style="grid-column: 1 / 3;">
+          <span class="seq-grid-label">Qu&eacute; c&oacute;digo hay en main.go?</span>
         </div>
-        <div style="display:flex; padding:0 3rem;">
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-            <div class="seq-lifeline" style="min-height:300px;"></div>
-          </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-            <div class="seq-lifeline" style="min-height:300px;"></div>
-          </div>
-          <div style="flex:1; display:flex; flex-direction:column; align-items:center;">
-            <div class="seq-lifeline" style="min-height:300px;"></div>
-          </div>
+        <div class="seq-grid-lane"></div>
+        <!-- 2: CA -> LM -->
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-right seq-grid-msg-annotated" style="grid-column: 2 / 4;">
+          <span class="seq-grid-label" style="font-size:0.7rem;">Qu&eacute; c&oacute;digo hay en main.go? + instrucciones de herramientas</span>
+          <span class="seq-grid-annotation">Agregado por el coding assistant</span>
         </div>
-        <!-- Arrow 1: User -> CA -->
-        <div style="position:absolute; top:95px; left:10%; right:66%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
+        <!-- 3: LM -> CA -->
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-left" style="grid-column: 2 / 4;">
+          <span class="seq-grid-label seq-grid-label-bold">ReadFile: main.go</span>
         </div>
-        <div style="position:absolute; top:75px; left:10%; right:66%; text-align:center; font-size:0.72rem; font-weight:500;">
-          Qu&eacute; c&oacute;digo hay en main.go?
+        <div class="seq-grid-lane"></div>
+        <!-- 4: CA -> LM (contents) -->
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-right" style="grid-column: 2 / 4;">
+          <span class="seq-grid-label">&lt;Contenido de main.go&gt;</span>
         </div>
-        <!-- Arrow 2: CA -> LM (with annotation) -->
-        <div style="position:absolute; top:140px; left:37%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
+        <!-- 5: LM -> CA (response) -->
+        <div class="seq-grid-lane"></div>
+        <div class="seq-grid-msg seq-grid-msg-left" style="grid-column: 2 / 4;">
+          <span class="seq-grid-label">El archivo contiene...</span>
         </div>
-        <div style="position:absolute; top:110px; left:37%; right:10%; text-align:center; font-size:0.68rem; font-weight:500; line-height:1.3;">
-          Qu&eacute; c&oacute;digo hay en main.go?<br>Si quieres leer un archivo, responde con &quot;ReadFile: nombre&quot;
+        <div class="seq-grid-lane"></div>
+        <!-- 6: CA -> User (response) -->
+        <div class="seq-grid-msg seq-grid-msg-left" style="grid-column: 1 / 3;">
+          <span class="seq-grid-label">El archivo contiene...</span>
         </div>
-        <div style="position:absolute; top:148px; right:4%; font-size:0.65rem; font-style:italic; color:rgba(0,19,63,0.4); max-width:130px; text-align:left; line-height:1.3;">
-          Agregado indirectamente por el coding assistant
-        </div>
-        <!-- Arrow 3: LM -> CA (ReadFile) -->
-        <div style="position:absolute; top:195px; left:37%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; left:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-right:10px solid rgba(0,19,63,0.3);"></div>
-        </div>
-        <div style="position:absolute; top:177px; left:37%; right:10%; text-align:center; font-size:0.75rem; font-weight:600;">
-          ReadFile: main.go
-        </div>
-        <!-- Arrow 4: CA -> LM (contents) -->
-        <div style="position:absolute; top:245px; left:37%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; right:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-left:10px solid rgba(0,19,63,0.3);"></div>
-        </div>
-        <div style="position:absolute; top:227px; left:37%; right:10%; text-align:center; font-size:0.75rem; font-weight:500;">
-          &lt;Contenido de main.go&gt;
-        </div>
-        <!-- Arrow 5: LM -> CA (response) -->
-        <div style="position:absolute; top:295px; left:37%; right:10%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; left:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-right:10px solid rgba(0,19,63,0.3);"></div>
-        </div>
-        <div style="position:absolute; top:277px; left:37%; right:10%; text-align:center; font-size:0.75rem; font-weight:500;">
-          El archivo contiene...
-        </div>
-        <!-- Arrow 6: CA -> User (response) -->
-        <div style="position:absolute; top:340px; left:10%; right:66%; height:1px; background:rgba(0,19,63,0.3);">
-          <div style="position:absolute; top:-5px; left:0; width:0; height:0; border-top:6px solid transparent; border-bottom:6px solid transparent; border-right:10px solid rgba(0,19,63,0.3);"></div>
-        </div>
-        <div style="position:absolute; top:322px; left:10%; right:66%; text-align:center; font-size:0.75rem; font-weight:500;">
-          El archivo contiene...
-        </div>
+        <div class="seq-grid-lane"></div>
       </div>
     </div>
 
