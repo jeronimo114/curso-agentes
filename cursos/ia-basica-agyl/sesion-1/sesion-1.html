@@ -389,50 +389,54 @@
     <!-- CURSO: PLAN DE SESIONES                    -->
     <!-- ========================================== -->
 
-    <div class="slide page-slide">
-      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Plan del curso</p>
-      <h2>Hoja de <span class="accent">ruta</span></h2>
-      <p class="page-desc">4 sesiones para entender qué es la IA, cómo funciona, y cómo usarla con criterio real.</p>
-      <div class="cards-grid cards-grid-2" style="margin-top: 2rem; max-width: 800px;">
-        <div class="card" style="border-left: 4px solid var(--brand-blue);">
-          <div class="card-type">Sesión 1 — Hoy</div>
-          <h3 style="font-size: 1.5rem;">De Turing a GPT</h3>
-          <p>Historia de la IA, el Test de Turing, cómo funcionan los LLMs, hype cycle de Gartner, demos en vivo y prompt engineering básico.</p>
-          <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
-            <span class="tag" style="background: rgba(0,71,233,0.08); color: var(--brand-blue);">Historia</span>
-            <span class="tag" style="background: rgba(0,71,233,0.08); color: var(--brand-blue);">LLMs</span>
-            <span class="tag" style="background: rgba(0,71,233,0.08); color: var(--brand-blue);">Demos</span>
-            <span class="tag" style="background: rgba(0,71,233,0.08); color: var(--brand-blue);">Prompts</span>
+    <div class="slide slide-split">
+      <div class="split-left" style="padding: 4rem 4rem 4rem 6rem; justify-content: flex-start; gap: 0.5rem;">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Plan del curso</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Hoja de <span class="accent">ruta</span></h2>
+        <p class="page-desc">4 sesiones para entender qué es la IA, cómo funciona, y cómo usarla con criterio real.</p>
+      </div>
+      <div class="split-right" style="width: 50%; background: var(--brand-blue-dark);">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 0; width: 100%; height: 100%;">
+          <!-- Sesión 1 -->
+          <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: flex-start; border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <span style="font-family: var(--display-font); font-weight: 800; font-size: 4rem; color: var(--brand-blue); line-height: 1; opacity: 0.3;">01</span>
+            <h3 style="font-family: var(--display-font); font-weight: 700; font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">De Turing a GPT</h3>
+            <p style="font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; line-height: 1.5;">Historia, LLMs, Hype Cycle, demos en vivo y prompt engineering básico.</p>
+            <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(0,71,233,0.2); color: var(--brand-blue); border-radius: 4px;">Historia</span>
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(0,71,233,0.2); color: var(--brand-blue); border-radius: 4px;">LLMs</span>
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(0,71,233,0.2); color: var(--brand-blue); border-radius: 4px;">Demos</span>
+            </div>
           </div>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--brand-teal);">
-          <div class="card-type">Sesión 2</div>
-          <h3 style="font-size: 1.5rem;">Prompt Engineering</h3>
-          <p>Chain of Thought, few-shot, zero-shot, role prompting, estructuras de prompts avanzados y evaluación de outputs.</p>
-          <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
-            <span class="tag" style="background: rgba(10,228,195,0.1); color: #0a7a6a;">Técnicas</span>
-            <span class="tag" style="background: rgba(10,228,195,0.1); color: #0a7a6a;">Frameworks</span>
-            <span class="tag" style="background: rgba(10,228,195,0.1); color: #0a7a6a;">Práctica</span>
+          <!-- Sesión 2 -->
+          <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: flex-start; border-bottom: 1px solid rgba(255,255,255,0.08);">
+            <span style="font-family: var(--display-font); font-weight: 800; font-size: 4rem; color: var(--brand-teal); line-height: 1; opacity: 0.3;">02</span>
+            <h3 style="font-family: var(--display-font); font-weight: 700; font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">Prompt Engineering</h3>
+            <p style="font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; line-height: 1.5;">Chain of Thought, role prompting, few-shot y evaluación de outputs.</p>
+            <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(10,228,195,0.2); color: var(--brand-teal); border-radius: 4px;">Técnicas</span>
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(10,228,195,0.2); color: var(--brand-teal); border-radius: 4px;">Frameworks</span>
+            </div>
           </div>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--brand-orange);">
-          <div class="card-type">Sesión 3</div>
-          <h3 style="font-size: 1.5rem;">Herramientas y Workflow</h3>
-          <p>ChatGPT vs Claude vs Gemini, cuándo usar cada uno, herramientas de productividad con IA y automatizaciones simples.</p>
-          <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
-            <span class="tag" style="background: rgba(255,150,0,0.1); color: #b9770e;">Modelos</span>
-            <span class="tag" style="background: rgba(255,150,0,0.1); color: #b9770e;">Tools</span>
-            <span class="tag" style="background: rgba(255,150,0,0.1); color: #b9770e;">Workflow</span>
+          <!-- Sesión 3 -->
+          <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: flex-start; border-right: 1px solid rgba(255,255,255,0.08);">
+            <span style="font-family: var(--display-font); font-weight: 800; font-size: 4rem; color: var(--brand-orange); line-height: 1; opacity: 0.3;">03</span>
+            <h3 style="font-family: var(--display-font); font-weight: 700; font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">Herramientas</h3>
+            <p style="font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; line-height: 1.5;">ChatGPT vs Claude vs Gemini, cuándo usar cada uno y automatizaciones.</p>
+            <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(255,150,0,0.2); color: var(--brand-orange); border-radius: 4px;">Modelos</span>
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(255,150,0,0.2); color: var(--brand-orange); border-radius: 4px;">Tools</span>
+            </div>
           </div>
-        </div>
-        <div class="card" style="border-left: 4px solid var(--brand-red);">
-          <div class="card-type">Sesión 4</div>
-          <h3 style="font-size: 1.5rem;">IA en el Mundo Real</h3>
-          <p>Límites de la IA, ética, sesgos, deepfakes, el futuro del trabajo y cómo mantener criterio con herramientas de IA.</p>
-          <div style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
-            <span class="tag" style="background: rgba(233,59,59,0.08); color: var(--brand-red);">Ética</span>
-            <span class="tag" style="background: rgba(233,59,59,0.08); color: var(--brand-red);">Futuro</span>
-            <span class="tag" style="background: rgba(233,59,59,0.08); color: var(--brand-red);">Criterio</span>
+          <!-- Sesión 4 -->
+          <div style="padding: 2.5rem; display: flex; flex-direction: column; justify-content: flex-start;">
+            <span style="font-family: var(--display-font); font-weight: 800; font-size: 4rem; color: var(--brand-red); line-height: 1; opacity: 0.3;">04</span>
+            <h3 style="font-family: var(--display-font); font-weight: 700; font-size: 1.8rem; color: #fff; margin-top: 0.5rem; line-height: 1.1;">IA en el Mundo Real</h3>
+            <p style="font-size: 0.95rem; color: rgba(255,255,255,0.45); margin-top: 0.75rem; line-height: 1.5;">Ética, sesgos, deepfakes, futuro del trabajo y criterio con IA.</p>
+            <div style="margin-top: auto; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(233,59,59,0.2); color: var(--brand-red); border-radius: 4px;">Ética</span>
+              <span style="font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 0.25rem 0.5rem; background: rgba(233,59,59,0.2); color: var(--brand-red); border-radius: 4px;">Futuro</span>
+            </div>
           </div>
         </div>
       </div>
