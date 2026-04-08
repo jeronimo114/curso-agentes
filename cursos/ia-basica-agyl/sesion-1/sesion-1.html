@@ -285,6 +285,41 @@
     .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0,19,63,0.12); background: #fff; color: var(--brand-blue-dark); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,19,63,0.08); }
     .nav-btn:hover { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
 
+    /* DEMO BUTTONS */
+    .demo-btn {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      padding: 0.6rem 1.2rem; border-radius: 999px; text-decoration: none;
+      font-size: 0.85rem; font-weight: 600; letter-spacing: 0.5px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .demo-btn:hover { transform: translateY(-2px); }
+    .demo-btn img { width: 22px; height: 22px; object-fit: contain; }
+    .demo-btn-chatgpt {
+      background: #fff; color: var(--brand-blue-dark);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    }
+    .demo-btn-chatgpt:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+    .demo-btn-deepseek {
+      background: #1a1a2e; color: #fff;
+      box-shadow: 0 2px 12px rgba(26,26,46,0.2);
+    }
+    .demo-btn-deepseek:hover { box-shadow: 0 6px 20px rgba(26,26,46,0.3); }
+    .demo-btn-claude {
+      background: #fff; color: #1a1a1a;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    }
+    .demo-btn-claude:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.12); }
+    .slide-dark .demo-btn-chatgpt {
+      background: rgba(255,255,255,0.1); color: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    .slide-dark .demo-btn-deepseek {
+      background: rgba(26,26,46,0.6); color: #fff;
+    }
+    .slide-dark .demo-btn-claude {
+      background: rgba(255,255,255,0.1); color: #fff;
+    }
+
     /* RESPONSIVE */
     @media (max-width: 1024px) {
       .slide { padding: 3rem 4rem; }
@@ -1015,14 +1050,14 @@
     </div>
 
     <!-- 16b: GARTNER HYPE CYCLE -->
-    <div class="slide page-slide">
+    <div class="slide page-slide" style="padding-bottom: 6rem;">
       <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Gartner</p>
       <h2>El ciclo del <span class="accent">hype</span></h2>
       <p class="page-desc">El modelo de Gartner describe cómo las tecnologías pasan por fases predecibles: entusiasmo excesivo, decepción, y finalmente adopción real.</p>
-      <div style="margin-top: 1.5rem; text-align: center;">
-        <img src="https://emt.gartnerweb.com/ngw/globalassets/intl-es/about/methodologies/hype-cycle-es.png" alt="Ciclo de Hype de Gartner" style="max-width: 85%; max-height: 55vh; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,19,63,0.1);">
+      <div style="margin-top: 1rem; text-align: center;">
+        <img src="https://emt.gartnerweb.com/ngw/globalassets/intl-es/about/methodologies/hype-cycle-es.png" alt="Ciclo de Hype de Gartner" style="max-width: 80%; max-height: 48vh; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,19,63,0.1);">
       </div>
-      <p class="page-desc" style="margin-top: 1rem;">La pregunta es: ¿dónde está la IA generativa en este ciclo hoy?</p>
+      <p class="page-desc" style="margin-top: 0.75rem;">La pregunta es: ¿dónde está la IA generativa en este ciclo hoy?</p>
     </div>
 
     <!-- ========================================== -->
@@ -1327,6 +1362,12 @@
           <div class="prompt-box-label">Prompt (copiar en ambos)</div>
           <p>Soy director de operaciones de una empresa de logística con 200 empleados. Estoy evaluando implementar IA en el servicio al cliente. Dame un análisis honesto de pros, contras y riesgos. Sé directo, no me vendas la idea.</p>
         </div>
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://chatgpt.com" target="_blank" class="demo-btn demo-btn-chatgpt">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/ChatGPT_logo.svg" alt="ChatGPT">
+            Abrir ChatGPT
+          </a>
+        </div>
         <p class="page-desc" style="margin-top: 0.75rem;">No hay un modelo "mejor". Hay modelos diferentes para tareas diferentes.</p>
       </div>
       <div class="split-right split-right-blue">
@@ -1343,6 +1384,15 @@
         <div class="prompt-box good" style="margin-top: 1rem;">
           <div class="prompt-box-label">Prompt</div>
           <p>Dame 5 artículos científicos sobre el impacto de la inteligencia artificial en la gestión de cadenas de suministro, publicados entre 2020 y 2024. Incluye: autor, título exacto, revista, año, y DOI.</p>
+        </div>
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://chat.deepseek.com" target="_blank" class="demo-btn demo-btn-deepseek">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="12" cy="12" r="10" fill="#4D6BFE"/>
+              <path d="M8 12l3 3 5-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Abrir DeepSeek Chat
+          </a>
         </div>
         <p class="page-desc" style="margin-top: 0.75rem;">El modelo no buscó esto. Lo inventó. Y suena perfecto. Predice texto probable, no verifica verdad.</p>
       </div>
@@ -1365,11 +1415,82 @@
           <div class="prompt-box-label">Prompt 2 — Notas de whiteboard</div>
           <p>Transcribe estas notas y organízalas en un formato estructurado.</p>
         </div>
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://claude.ai" target="_blank" class="demo-btn demo-btn-claude">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Claude_AI_symbol.svg" alt="Claude">
+            Abrir Claude
+          </a>
+        </div>
       </div>
       <div class="split-right split-right-teal">
         <span class="big-letter" style="font-size: 12rem;">
           <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="rgba(0,19,63,0.15)" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         </span>
+      </div>
+    </div>
+
+    <!-- DEMO 3b: Financial chart for screenshot exercise -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Ejercicio</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Toma screenshot<br>de esta <span class="accent">gráfica</span></h2>
+        <p class="page-desc">Haz una captura de pantalla de esta gráfica financiera y súbela a Claude o ChatGPT para el ejercicio de análisis.</p>
+        <div style="margin-top: 1rem; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;">
+          <a href="https://claude.ai" target="_blank" class="demo-btn demo-btn-claude">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Claude_AI_symbol.svg" alt="Claude">
+            Abrir Claude
+          </a>
+        </div>
+      </div>
+      <div class="split-right" style="background: #f0f4f8;">
+        <svg width="500" height="350" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%; height: auto;">
+          <!-- Background -->
+          <rect width="500" height="350" fill="#ffffff"/>
+          <!-- Title -->
+          <text x="250" y="35" font-family="DM Sans, sans-serif" font-size="16" font-weight="700" fill="#00133F" text-anchor="middle">Revenue &amp; Growth — FY 2023-2025</text>
+          <!-- Grid lines -->
+          <line x1="70" y1="60" x2="70" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="70" y1="280" x2="470" y2="280" stroke="#e5e7eb" stroke-width="1"/>
+          <line x1="70" y1="225" x2="470" y2="225" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="70" y1="170" x2="470" y2="170" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="70" y1="115" x2="470" y2="115" stroke="#f3f4f6" stroke-width="1"/>
+          <line x1="70" y1="60" x2="470" y2="60" stroke="#f3f4f6" stroke-width="1"/>
+          <!-- Y-axis labels -->
+          <text x="60" y="284" font-family="DM Sans, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">$0M</text>
+          <text x="60" y="229" font-family="DM Sans, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">$5M</text>
+          <text x="60" y="174" font-family="DM Sans, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">$10M</text>
+          <text x="60" y="119" font-family="DM Sans, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">$15M</text>
+          <text x="60" y="64" font-family="DM Sans, sans-serif" font-size="11" fill="#6b7280" text-anchor="end">$20M</text>
+          <!-- Bar chart: Q1-Q4 2024 -->
+          <rect x="90" y="170" width="40" height="110" rx="4" fill="#0047E9"/>
+          <rect x="150" y="140" width="40" height="140" rx="4" fill="#0047E9"/>
+          <rect x="210" y="110" width="40" height="170" rx="4" fill="#0047E9"/>
+          <rect x="270" y="80" width="40" height="200" rx="4" fill="#0047E9"/>
+          <!-- Bar chart: Q1-Q4 2025 -->
+          <rect x="330" y="100" width="40" height="180" rx="4" fill="#0AE4C3"/>
+          <rect x="390" y="70" width="40" height="210" rx="4" fill="#0AE4C3"/>
+          <!-- X-axis labels -->
+          <text x="110" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q1'24</text>
+          <text x="170" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q2'24</text>
+          <text x="230" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q3'24</text>
+          <text x="290" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q4'24</text>
+          <text x="350" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q1'25</text>
+          <text x="410" y="298" font-family="DM Sans, sans-serif" font-size="10" fill="#6b7280" text-anchor="middle">Q2'25</text>
+          <!-- Legend -->
+          <rect x="120" y="320" width="12" height="12" rx="2" fill="#0047E9"/>
+          <text x="138" y="330" font-family="DM Sans, sans-serif" font-size="11" fill="#374151">2024</text>
+          <rect x="220" y="320" width="12" height="12" rx="2" fill="#0AE4C3"/>
+          <text x="238" y="330" font-family="DM Sans, sans-serif" font-size="11" fill="#374151">2025</text>
+          <!-- Trend line -->
+          <polyline points="110,165 170,135 230,105 290,75 350,95 410,65" fill="none" stroke="#FF9600" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Data points -->
+          <circle cx="110" cy="165" r="4" fill="#FF9600"/>
+          <circle cx="170" cy="135" r="4" fill="#FF9600"/>
+          <circle cx="230" cy="105" r="4" fill="#FF9600"/>
+          <circle cx="290" cy="75" r="4" fill="#FF9600"/>
+          <circle cx="350" cy="95" r="4" fill="#FF9600"/>
+          <circle cx="410" cy="65" r="4" fill="#FF9600"/>
+        </svg>
       </div>
     </div>
 
