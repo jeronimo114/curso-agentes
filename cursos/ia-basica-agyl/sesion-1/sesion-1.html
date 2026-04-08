@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IA Básica: De Turing a GPT — Sesión 1 AGYL</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --brand-orange: #FF9600;
+      --brand-red: #E93B3B;
+      --brand-green: #1DB954;
+      --bg: #F8F6F2;
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      overflow: hidden;
+      height: 100vh; width: 100vw;
+    }
+    h1,h2,h3,h4 {
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.85;
+    }
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 6rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .progress-bar { position: fixed; top: 0; left: 0; height: 5px; background: var(--brand-blue); transition: width 0.4s ease; z-index: 100; }
+    .slide-counter { position: fixed; bottom: 2rem; right: 3rem; font-size: 0.8rem; font-weight: 600; color: rgba(0,19,63,0.25); z-index: 100; }
+
+    /* TITLE */
+    .slide-title { align-items: flex-start; justify-content: flex-end; padding-bottom: 6rem; gap: 1rem; }
+    .slide-title h1 { font-size: clamp(5rem,12vw,11rem); letter-spacing: -3px; line-height: 0.82; }
+    .subtitle { font-size: 1.35rem; color: rgba(0,19,63,0.45); max-width: 500px; line-height: 1.5; }
+    .logo-tag { position: absolute; top: 3rem; left: 6rem; font-family: var(--display-font); font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3); }
+    .title-accent-block { position: absolute; top: 0; right: 0; width: 35vw; height: 100vh; background: var(--brand-blue); z-index: -1; }
+    .title-accent-block::after { content: "IA"; position: absolute; bottom: 4rem; right: 4rem; font-family: var(--display-font); font-weight: 800; font-size: 20rem; color: rgba(255,255,255,0.07); line-height: 0.8; }
+
+    /* ACCENT */
+    .accent { color: var(--brand-blue); }
+    .accent-teal { color: var(--brand-teal); }
+    .accent-orange { color: var(--brand-orange); }
+    .accent-red { color: var(--brand-red); }
+    .accent-green { color: var(--brand-green); }
+
+    /* SECTION DIVIDERS */
+    .slide-section { align-items: flex-start; gap: 1rem; }
+    .slide-section h2 { font-size: clamp(4rem,10vw,9rem); line-height: 0.82; letter-spacing: -2px; }
+    .section-badge { padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; }
+    .slide-section .section-bg-num { position: absolute; right: -2rem; bottom: -4rem; font-family: var(--display-font); font-weight: 800; font-size: 28rem; line-height: 0.8; pointer-events: none; }
+
+    /* SPLIT LAYOUT */
+    .slide-split { flex-direction: row; padding: 0; gap: 0; }
+    .split-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 4rem 4rem 6rem; gap: 1.5rem; }
+    .split-right { width: 38%; display: flex; align-items: center; justify-content: center; position: relative; }
+    .split-right .big-letter { font-family: var(--display-font); font-weight: 800; font-size: 22rem; line-height: 0.75; opacity: 0.08; }
+    .split-right-blue { background: var(--brand-blue); }
+    .split-right-blue .big-letter { color: #fff; opacity: 0.12; }
+    .split-right-teal { background: var(--brand-teal); }
+    .split-right-teal .big-letter { color: var(--brand-blue-dark); opacity: 0.12; }
+    .split-right-dark { background: var(--brand-blue-dark); }
+    .split-right-dark .big-letter { color: #fff; opacity: 0.06; }
+    .split-right-orange { background: var(--brand-orange); }
+    .split-right-orange .big-letter { color: #fff; opacity: 0.12; }
+    .split-right-red { background: var(--brand-red); }
+    .split-right-red .big-letter { color: #fff; opacity: 0.12; }
+
+    /* PAGE SLIDE */
+    .page-slide { gap: 1.5rem; }
+    .page-slide h2 { font-size: clamp(2.5rem,6vw,5rem); letter-spacing: -1px; }
+    .page-desc { font-size: 1.4rem; color: rgba(0,19,63,0.55); max-width: 750px; line-height: 1.7; }
+
+    /* DARK SLIDE */
+    .slide-dark { background: var(--brand-blue-dark); color: #fff; }
+    .slide-dark h2 { color: #fff; }
+    .slide-dark .page-desc { color: rgba(255,255,255,0.55); }
+    .slide-dark .prompt-box { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+    .slide-dark .prompt-box-label { color: var(--brand-teal); }
+    .slide-dark .prompt-box p { color: rgba(255,255,255,0.6); }
+    .slide-dark .prompt-tag { background: var(--brand-teal); color: var(--brand-blue-dark); }
+    .slide-dark .paper-card { background: rgba(255,255,255,0.06); box-shadow: none; }
+    .slide-dark .paper-card h3 { color: #fff; }
+    .slide-dark .paper-card li { color: rgba(255,255,255,0.6); }
+    .slide-dark .paper-card li::before { background: var(--brand-teal); }
+    .slide-dark .step { background: rgba(255,255,255,0.06); box-shadow: none; }
+    .slide-dark .step-num { color: var(--brand-teal); }
+    .slide-dark .step-content strong { color: #fff; }
+    .slide-dark .step-content span { color: rgba(255,255,255,0.45); }
+
+    /* BLUE SLIDE */
+    .slide-blue { background: var(--brand-blue); color: #fff; }
+    .slide-blue h2 { color: #fff; }
+    .slide-blue .page-desc { color: rgba(255,255,255,0.65); }
+    .slide-blue .prompt-box { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+    .slide-blue .prompt-box-label { color: var(--brand-teal); }
+    .slide-blue .prompt-box p { color: rgba(255,255,255,0.7); }
+    .slide-blue .prompt-tag { background: var(--brand-teal); color: var(--brand-blue-dark); }
+    .slide-blue .step { background: rgba(255,255,255,0.08); box-shadow: none; }
+    .slide-blue .step-num { color: var(--brand-teal); }
+    .slide-blue .step-content strong { color: #fff; }
+    .slide-blue .step-content span { color: rgba(255,255,255,0.5); }
+    .slide-blue .cards-grid .card { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.15); box-shadow: none; }
+    .slide-blue .cards-grid .card h3 { color: var(--brand-teal); }
+    .slide-blue .cards-grid .card .card-type { color: rgba(255,255,255,0.4); }
+    .slide-blue .cards-grid .card p { color: rgba(255,255,255,0.6); }
+
+    /* ORANGE SLIDE */
+    .slide-orange { background: var(--brand-orange); color: #fff; }
+    .slide-orange h2 { color: #fff; }
+
+    /* RED SLIDE */
+    .slide-red { background: var(--brand-red); color: #fff; }
+    .slide-red h2 { color: #fff; }
+    .slide-red .page-desc { color: rgba(255,255,255,0.65); }
+
+    /* PROMPT BOX */
+    .prompt-box { margin-top: 1rem; padding: 1.25rem 1.75rem; background: rgba(0,71,233,0.04); border: 1px solid rgba(0,71,233,0.12); border-radius: 14px; max-width: 750px; }
+    .prompt-box.bad { background: rgba(233,59,59,0.04); border-color: rgba(233,59,59,0.2); }
+    .prompt-box.good { background: rgba(29,185,84,0.04); border-color: rgba(29,185,84,0.2); }
+    .prompt-box-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-blue); margin-bottom: 0.4rem; }
+    .prompt-box.bad .prompt-box-label { color: var(--brand-red); }
+    .prompt-box.good .prompt-box-label { color: var(--brand-green); }
+    .prompt-box p { font-size: 1.2rem; color: rgba(0,19,63,0.6); line-height: 1.7; font-style: italic; }
+    .prompt-tag { display: inline; background: var(--brand-blue); color: #fff; padding: 0.1rem 0.45rem; border-radius: 4px; font-style: normal; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    /* CARDS GRID */
+    .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 0.5rem; }
+    .cards-grid-2 { grid-template-columns: repeat(2,1fr); }
+    .card { padding: 1.5rem; background: #fff; border-radius: 16px; display: flex; flex-direction: column; gap: 0.4rem; box-shadow: 0 1px 3px rgba(0,19,63,0.06); border: 1px solid rgba(0,19,63,0.06); transition: transform 0.2s, box-shadow 0.2s; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,19,63,0.1); }
+    .card h3 { font-size: 1.8rem; color: var(--brand-blue); }
+    .card .card-type { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(0,19,63,0.3); }
+    .card p { font-size: 1.1rem; color: rgba(0,19,63,0.55); line-height: 1.5; }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; max-width: 750px; }
+    .step { display: flex; align-items: center; gap: 1.25rem; padding: 1.1rem 1.5rem; background: #fff; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .step-num { font-family: var(--display-font); font-weight: 800; font-size: 3rem; color: var(--brand-blue); min-width: 3.5rem; text-align: center; line-height: 1; opacity: 0.3; }
+    .step-content { display: flex; flex-direction: column; gap: 0.15rem; }
+    .step-content strong { font-size: 1.25rem; }
+    .step-content span { font-size: 1.1rem; color: rgba(0,19,63,0.5); }
+
+    /* PAPER CARD */
+    .paper-card { padding: 2rem; background: #fff; border-radius: 20px; display: flex; flex-direction: column; gap: 0.75rem; max-width: 750px; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .paper-card.blue-border { border-left: 4px solid var(--brand-blue); }
+    .paper-card.red-border { border-left: 4px solid var(--brand-red); }
+    .paper-card.green-border { border-left: 4px solid var(--brand-green); }
+    .paper-card.teal-border { border-left: 4px solid var(--brand-teal); }
+    .paper-card h3 { font-size: 2rem; }
+    .paper-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .paper-card li { font-size: 1.2rem; color: rgba(0,19,63,0.6); line-height: 1.6; padding-left: 1.5rem; position: relative; }
+    .paper-card li::before { content: ""; position: absolute; left: 0; top: 0.55rem; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-blue); }
+    .paper-card.red-border li::before { background: var(--brand-red); }
+    .paper-card.green-border li::before { background: var(--brand-green); }
+    .paper-card.teal-border li::before { background: var(--brand-teal); }
+
+    /* QUOTE */
+    .quote-block { border-left: 4px solid var(--brand-blue); padding: 1.5rem 2rem; max-width: 700px; }
+    .quote-block p { font-size: 1.4rem; color: rgba(0,19,63,0.55); line-height: 1.7; font-style: italic; }
+    .quote-block strong { color: var(--brand-blue-dark); font-style: normal; }
+    .slide-dark .quote-block { border-color: var(--brand-teal); }
+    .slide-dark .quote-block p { color: rgba(255,255,255,0.6); }
+    .slide-dark .quote-block strong { color: #fff; }
+
+    /* FRAMEWORK GRID */
+    .framework-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 0.8rem; margin-top: 1rem; }
+    .framework-card { padding: 1.25rem; background: #fff; border-radius: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,19,63,0.06); border-top: 3px solid var(--brand-blue); }
+    .framework-card .fw-icon { width: 48px; height: 48px; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(0,71,233,0.06); border-radius: 12px; }
+    .framework-card h3 { font-size: 1.4rem; margin-bottom: 0.25rem; }
+    .framework-card p { font-size: 0.95rem; color: rgba(0,19,63,0.5); line-height: 1.5; }
+
+    /* TABLE */
+    .table-container { margin-top: 1rem; max-width: 800px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.9rem 1.25rem; text-align: left; border-bottom: 1px solid rgba(0,19,63,0.08); }
+    th { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-blue); }
+    td { font-size: 1.15rem; color: rgba(0,19,63,0.6); }
+    tr:hover td { color: var(--brand-blue-dark); }
+
+    /* DIAGRAM */
+    .diagram { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .diagram-box { background: #fff; border: 1px solid rgba(0,19,63,0.08); border-radius: 16px; padding: 1.25rem 1.75rem; text-align: center; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .diagram-box.highlight { border-color: var(--brand-blue); box-shadow: 0 4px 16px rgba(0,71,233,0.12); }
+    .diagram-box strong { font-size: 1.2rem; display: block; }
+    .diagram-box small { font-size: 1.05rem; color: rgba(0,19,63,0.4); }
+    .diagram-arrow { color: var(--brand-blue); }
+
+    /* INTERACTION CARD (presencial) */
+    .interaction-card { margin-top: 1.5rem; padding: 2rem 2.5rem; background: #fff; border: 2px solid var(--brand-teal); border-radius: 20px; max-width: 650px; box-shadow: 0 4px 20px rgba(10,228,195,0.1); }
+    .interaction-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal); margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+    .interaction-label svg { flex-shrink: 0; }
+    .interaction-card p { font-size: 1.35rem; color: var(--brand-blue-dark); line-height: 1.7; }
+    .interaction-card .interaction-options { margin-top: 1rem; font-size: 1.2rem; color: rgba(0,19,63,0.45); line-height: 1.6; }
+    .slide-dark .interaction-card { background: rgba(255,255,255,0.06); border-color: var(--brand-teal); box-shadow: none; }
+    .slide-dark .interaction-card p { color: #fff; }
+    .slide-dark .interaction-card .interaction-options { color: rgba(255,255,255,0.4); }
+
+    /* EXERCISE CARD */
+    .exercise-card { margin-top: 1rem; padding: 2rem 2.5rem; background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; max-width: 750px; }
+    .exercise-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem; }
+    .exercise-card ol { list-style: none; counter-reset: ex; display: flex; flex-direction: column; gap: 0.7rem; }
+    .exercise-card li { counter-increment: ex; font-size: 1.2rem; color: rgba(255,255,255,0.85); line-height: 1.6; padding-left: 2rem; position: relative; }
+    .exercise-card li::before { content: counter(ex); position: absolute; left: 0; font-family: var(--display-font); font-weight: 800; font-size: 1.2rem; color: var(--brand-teal); }
+    .exercise-time { display: inline-flex; align-items: center; gap: 0.4rem; background: var(--brand-teal); color: var(--brand-blue-dark); padding: 0.3rem 0.8rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; }
+
+    /* TIMELINE */
+    .timeline { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 0.5rem; max-width: 750px; }
+    .timeline-node { display: flex; align-items: flex-start; gap: 1.25rem; padding: 0.8rem 0; }
+    .timeline-year { font-family: var(--display-font); font-weight: 800; font-size: 2.2rem; color: var(--brand-blue); min-width: 5rem; line-height: 1; padding-top: 0.1rem; }
+    .timeline-content { display: flex; flex-direction: column; gap: 0.15rem; border-left: 2px solid rgba(0,71,233,0.15); padding-left: 1.25rem; }
+    .timeline-content strong { font-size: 1.2rem; }
+    .timeline-content span { font-size: 1.1rem; color: rgba(0,19,63,0.5); line-height: 1.5; }
+    .slide-dark .timeline-year { color: var(--brand-teal); }
+    .slide-dark .timeline-content { border-color: rgba(255,255,255,0.12); }
+    .slide-dark .timeline-content strong { color: #fff; }
+    .slide-dark .timeline-content span { color: rgba(255,255,255,0.45); }
+
+    /* CLOSING */
+    .slide-closing { align-items: flex-start; gap: 1.5rem; }
+    .slide-closing h2 { font-size: clamp(5rem,12vw,11rem); letter-spacing: -3px; line-height: 0.82; }
+    .closing-sub { font-size: 1.15rem; color: rgba(0,19,63,0.4); max-width: 450px; line-height: 1.6; }
+    .closing-accent-block { position: absolute; bottom: 0; right: 0; width: 40vw; height: 35vh; background: var(--brand-teal); z-index: -1; border-radius: 40px 0 0 0; }
+
+    /* BREAK */
+    .slide-break { background: var(--brand-blue-dark); color: #fff; text-align: center; align-items: center; }
+    .slide-break h2 { color: #fff; font-size: clamp(3rem,8vw,6rem); }
+    .slide-break .page-desc { color: rgba(255,255,255,0.4); }
+
+    /* FIXED LOGO + PHONE */
+    .fixed-brand {
+      position: fixed; bottom: 1.5rem; left: 3rem; z-index: 100;
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .fixed-brand svg { flex-shrink: 0; }
+    .fixed-brand-info {
+      display: flex; flex-direction: column; justify-content: center; gap: 0.15rem;
+    }
+    .fixed-brand-info .brand-text {
+      font-family: var(--body-font); font-size: 0.95rem; font-weight: 700;
+      color: rgba(0,19,63,0.6); letter-spacing: 0.5px; line-height: 1.2;
+    }
+    .fixed-brand-info .brand-phone {
+      font-family: var(--body-font); font-size: 0.7rem; font-weight: 600;
+      color: rgba(0,19,63,0.35); letter-spacing: 0.5px; line-height: 1.2;
+    }
+
+    /* INTRO SLIDE */
+    .slide-intro { flex-direction: row; padding: 0; gap: 0; }
+    .intro-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 4rem 4rem 6rem; gap: 1.5rem; }
+    .intro-right { width: 38%; display: flex; align-items: center; justify-content: center; background: var(--brand-blue); position: relative; overflow: hidden; }
+    .intro-right img { width: 100%; height: 100%; object-fit: cover; opacity: 0.9; }
+    .intro-clients { display: flex; flex-wrap: wrap; align-items: center; gap: 1.5rem; margin-top: 1rem; }
+    .intro-clients img { height: 36px; opacity: 0.35; filter: grayscale(100%); transition: opacity 0.3s, filter 0.3s; }
+    .intro-clients img:hover { opacity: 1; filter: grayscale(0%); }
+
+    /* CONTACT CLOSING SLIDE */
+    .slide-contact { flex-direction: row; padding: 0; gap: 0; background: var(--brand-blue-dark); color: #fff; }
+    .contact-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 4rem 4rem 6rem; gap: 1.5rem; }
+    .contact-photo { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--brand-teal); }
+    .contact-name { font-size: clamp(3rem,8vw,6rem); letter-spacing: -2px; color: #fff; }
+    .contact-info { display: flex; flex-direction: column; gap: 0.75rem; }
+    .contact-info a, .contact-info span { color: rgba(255,255,255,0.6); text-decoration: none; font-size: 1.15rem; display: flex; align-items: center; gap: 0.6rem; }
+    .contact-info a:hover { color: var(--brand-teal); }
+    .contact-right { width: 38%; display: flex; align-items: center; justify-content: center; background: #fff; }
+    .contact-right img { max-width: 80%; max-height: 80%; border-radius: 16px; }
+
+    /* NAV */
+    .nav-arrows { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 100; }
+    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0,19,63,0.12); background: #fff; color: var(--brand-blue-dark); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,19,63,0.08); }
+    .nav-btn:hover { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .slide { padding: 3rem 4rem; }
+      .split-left { padding: 3rem; }
+      .cards-grid { grid-template-columns: repeat(2,1fr); }
+      .framework-grid { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 768px) {
+      .slide { padding: 2rem 2rem; }
+      .slide-split, .slide-intro, .slide-contact { flex-direction: column; }
+      .split-left, .intro-left, .contact-left { padding: 2rem; }
+      .split-right, .intro-right, .contact-right { width: 100%; height: 30vh; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .framework-grid { grid-template-columns: 1fr 1fr; }
+      .diagram { flex-direction: column; }
+      .title-accent-block { display: none; }
+      .closing-accent-block { display: none; }
+      .slide-section .section-bg-num { font-size: 14rem; }
+      .timeline-year { font-size: 1.6rem; min-width: 4rem; }
+      .fixed-brand { display: none; }
+      .contact-qr img { width: 150px; }
+      .contact-photo { width: 80px; height: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <!-- FIXED LOGO + PHONE -->
+  <div class="fixed-brand" id="fixedBrand">
+    <svg width="48" height="42" viewBox="0 0 18 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M9 1L1 15h16L9 1z" stroke="#0047E9" stroke-width="2.2" fill="none"/>
+    </svg>
+    <div class="fixed-brand-info">
+      <span class="brand-text">Jerónimo Martínez</span>
+      <span class="brand-phone">305 246 3800</span>
+    </div>
+  </div>
+
+  <div class="deck" id="deck">
+
+    <!-- ========================================== -->
+    <!-- INTRO (slide 0)                            -->
+    <!-- ========================================== -->
+
+    <div class="slide slide-intro active">
+      <div class="intro-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Instructor</p>
+        <h2 style="font-size: clamp(3rem,7vw,6rem); letter-spacing: -2px;">Jerónimo<br><span class="accent">Martínez</span></h2>
+        <p class="page-desc">Consultor de IA y automatización. Capacitación corporativa en inteligencia artificial, agentes y herramientas de productividad.</p>
+        <p style="font-size: 1rem; color: rgba(0,19,63,0.4); display: flex; align-items: center; gap: 0.5rem;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          305 246 3800
+        </p>
+        <div style="margin-top: 0.5rem;">
+          <p style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(0,19,63,0.25); margin-bottom: 0.75rem;">Algunos clientes</p>
+          <img src="images/client-logos.png" alt="ESIC, CEIPA, La Casa del Tornillo, MultiEquipos, CREO, OMA" style="max-width: 100%; height: auto;">
+        </div>
+      </div>
+      <div class="intro-right">
+        <img src="images/jero-profile.png" alt="Jerónimo Martínez">
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- APERTURA (slides 1-2)                      -->
+    <!-- ========================================== -->
+
+    <!-- 1: GANCHO -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">La brecha</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Todos usan IA.<br><span class="accent">Casi nadie</span><br>entiende cómo<br>funciona.</h2>
+        <p class="page-desc">Hoy no les voy a enseñar a usar ChatGPT. Hoy van a entender la tecnología que va a definir sus carreras.</p>
+        <div class="interaction-card">
+          <div class="interaction-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Escriban en el chat — 15 segundos
+          </div>
+          <p>¿Usaron IA esta semana? ¿Para qué?</p>
+          <p style="margin-top:0.5rem; color: rgba(0,19,63,0.35); font-size: 1.05rem;">Segunda pregunta: ¿pueden explicar cómo funciona?</p>
+        </div>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">?</span>
+      </div>
+    </div>
+
+    <!-- 2: HOJA DE RUTA -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Hoy</p>
+      <h2>Hoja de <span class="accent">ruta</span></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Historia</strong>
+            <span>70 años de intentos: de Turing a ChatGPT</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Cómo funciona</strong>
+            <span>Tokens, transformers y por qué la IA no "piensa"</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Demos en vivo</strong>
+            <span>Capacidades y límites en tiempo real</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>Pensamiento crítico</strong>
+            <span>Alucinaciones, sesgo, límites y cómo evaluar</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <strong>Uso estratégico</strong>
+            <span>Prompt engineering y aplicación profesional</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- HISTORIA DE LA IA (slides 3-16)            -->
+    <!-- ========================================== -->
+
+    <!-- 3: SECTION DIVIDER -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge" style="background: var(--brand-teal); color: var(--brand-blue-dark);">Historia</span>
+      <h2>70 años<br>de <span class="accent-teal">intentos</span></h2>
+      <p class="page-desc">La IA no apareció en 2022. Lleva 70 años intentándolo.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">01</span>
+    </div>
+
+    <!-- 4: 1950 TURING -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">1950</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Alan <span class="accent">Turing</span></h2>
+        <p class="page-desc">"Computing Machinery and Intelligence" — el paper que lo empezó todo.</p>
+        <div class="quote-block">
+          <p>No preguntó <strong>"¿pueden pensar las máquinas?"</strong> sino <strong>"¿pueden comportarse como si pensaran?"</strong></p>
+        </div>
+        <p class="page-desc">Esa distinción sigue siendo relevante hoy. El Test de Turing no mide inteligencia — mide imitación convincente.</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter">50</span>
+      </div>
+    </div>
+
+    <!-- 4b: TEST DE TURING — Visual -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">1950 — El experimento</p>
+      <h2>El Test de <span class="accent-teal">Turing</span></h2>
+      <p class="page-desc">Un juez humano habla con dos participantes ocultos: uno es humano, el otro es una máquina. Si el juez no puede distinguir cuál es cuál, la máquina "pasa" el test.</p>
+      <div style="display: flex; align-items: center; justify-content: center; gap: 2rem; margin-top: 2rem; flex-wrap: wrap;">
+        <!-- Humano -->
+        <div style="text-align: center;">
+          <div style="width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 0.5rem; font-weight: 600;">Humano</p>
+        </div>
+        <!-- Pared / barrera -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+          <div style="width: 4px; height: 120px; background: var(--brand-teal); border-radius: 2px; opacity: 0.5;"></div>
+          <p style="font-size: 0.75rem; color: var(--brand-teal); font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Barrera</p>
+        </div>
+        <!-- Juez -->
+        <div style="text-align: center;">
+          <div style="width: 110px; height: 110px; border-radius: 50%; background: rgba(10,228,195,0.1); border: 3px solid var(--brand-teal); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--brand-teal)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <p style="color: var(--brand-teal); font-size: 1rem; margin-top: 0.5rem; font-weight: 700;">JUEZ</p>
+          <p style="color: rgba(255,255,255,0.35); font-size: 0.8rem;">¿Quién es humano?</p>
+        </div>
+        <!-- Pared / barrera -->
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.5rem;">
+          <div style="width: 4px; height: 120px; background: var(--brand-teal); border-radius: 2px; opacity: 0.5;"></div>
+          <p style="font-size: 0.75rem; color: var(--brand-teal); font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Barrera</p>
+        </div>
+        <!-- Máquina -->
+        <div style="text-align: center;">
+          <div style="width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.08); border: 2px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; margin: 0 auto;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="10" r="1.5" fill="rgba(255,255,255,0.5)"/><circle cx="15" cy="10" r="1.5" fill="rgba(255,255,255,0.5)"/><path d="M9 15h6"/></svg>
+          </div>
+          <p style="color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-top: 0.5rem; font-weight: 600;">Máquina</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1.5rem;">La clave: Turing no preguntó si la máquina <strong style="color: var(--brand-teal);">piensa</strong>. Preguntó si puede <strong style="color: var(--brand-teal);">parecer</strong> que piensa. Esa distinción sigue siendo relevante hoy.</p>
+    </div>
+
+    <!-- 5: 1956 DARTMOUTH - La conferencia -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">1956</p>
+      <h2>Conferencia de <span class="accent-teal">Dartmouth</span></h2>
+      <p class="page-desc">El verano en que se inventó la Inteligencia Artificial — literalmente. McCarthy, Minsky y Shannon convencieron a la Fundación Rockefeller de financiar un taller de 2 meses en Dartmouth College.</p>
+      <div class="paper-card" style="margin-top: 1rem;">
+        <h3 style="font-size: 1.5rem;">La propuesta original</h3>
+        <ul>
+          <li>"Cada aspecto del aprendizaje puede describirse tan precisamente que una máquina puede simularlo"</li>
+          <li>Meta: resolver lenguaje, abstracción, creatividad y auto-mejora en un verano</li>
+          <li>Pensaron que la IA general estaba a 20 años. 70 años después, seguimos sin alcanzarla</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 5b: DARTMOUTH — El resultado -->
+    <div class="slide slide-blue" style="text-align: center; align-items: center; justify-content: center;">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">1956 — El resultado</p>
+      <h2 style="font-size: clamp(3rem,8vw,7rem); line-height: 0.85; letter-spacing: -2px; color: #fff;">No resolvieron<br><span style="color: var(--brand-teal);">nada.</span></h2>
+      <p style="font-size: 1.6rem; color: rgba(255,255,255,0.6); max-width: 650px; line-height: 1.6; margin-top: 1.5rem;">Pero le dieron nombre al campo: <strong style="color: #fff;">Inteligencia Artificial</strong>.</p>
+      <p style="font-size: 1.2rem; color: rgba(255,255,255,0.35); max-width: 550px; line-height: 1.6; margin-top: 1rem;">Un verano, las mentes más brillantes del mundo, fondos ilimitados... y ni un solo problema resuelto. Pero la ambición quedó plantada.</p>
+    </div>
+
+    <!-- 7: 1960s PERCEPTRONES - El auge -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">1958</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">El <span class="accent">Perceptrón</span></h2>
+        <p class="page-desc">Frank Rosenblatt construye el Mark I Perceptron en Cornell — una máquina física del tamaño de un armario que podía aprender a reconocer formas simples.</p>
+        <div class="paper-card blue-border" style="margin-top: 0.5rem;">
+          <h3 style="font-size: 1.5rem;">El hype mediático</h3>
+          <ul>
+            <li>The New York Times, 1958: "La Marina revela un embrión de computadora que podrá caminar, hablar, ver y reproducirse"</li>
+            <li>Rosenblatt predijo: "percebirá, reconocerá e identificará su entorno sin entrenamiento humano"</li>
+            <li>La primera red neuronal. La primera promesa incumplida.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="split-right" style="background: transparent; overflow: hidden;">
+        <img src="images/perceptron.jpg" alt="Mark I Perceptron" style="width: 100%; height: 100%; object-fit: cover; border-radius: 1rem;">
+      </div>
+    </div>
+
+    <!-- 8: 1960s PERCEPTRONES - La caída -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">1969 — El golpe</p>
+      <h2>Minsky <span class="accent-red">destruye</span> el sueño</h2>
+      <p class="page-desc">Minsky y Papert publican "Perceptrons" — un libro que demuestra que estas redes neuronales simples tienen un problema fatal: solo pueden aprender cosas muy básicas.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="paper-card red-border">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">Lo que demostraron</h3>
+          <ul>
+            <li>Un perceptrón puede separar cosas simples: "esto es rojo / esto es azul"</li>
+            <li>Pero no puede aprender combinaciones: "esto es rojo Y grande, O azul Y pequeño"</li>
+            <li>Es como un empleado que solo sabe decir sí o no a una sola pregunta</li>
+          </ul>
+        </div>
+        <div class="paper-card blue-border">
+          <h3 style="font-size: 1.5rem;">Lo que no vieron</h3>
+          <ul>
+            <li>Si conectas MUCHAS de estas neuronas en capas, SÍ pueden resolver cosas complejas</li>
+            <li>Pero en 1969 las computadoras no tenían la potencia para hacer funcionar eso</li>
+          </ul>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Primera vez que el hype superó la realidad. No sería la última.</p>
+    </div>
+
+    <!-- 9: 1970s-80s PRIMER INVIERNO -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">1970s — 1980s</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Primer<br><span class="accent-orange">invierno</span></h2>
+        <p class="page-desc">Los fondos se secan. Las promesas no se cumplieron.</p>
+        <div class="paper-card" style="margin-top: 0.5rem;">
+          <h3 style="font-size: 1.5rem;">Sistemas expertos</h3>
+          <ul>
+            <li>Basados en reglas escritas por humanos, no aprendizaje</li>
+            <li>Funcionaban en dominios estrechos, fallaban fuera de ellos</li>
+            <li>Lección: las reglas humanas no capturan la complejidad del mundo real</li>
+          </ul>
+        </div>
+      </div>
+      <div class="split-right split-right-orange">
+        <span class="big-letter">I</span>
+      </div>
+    </div>
+
+    <!-- 10: 1990s ML EMERGE — Section divider -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge" style="background: var(--brand-teal); color: var(--brand-blue-dark);">1990s</span>
+      <h2>Machine Learning<br><span class="accent-teal">emerge</span></h2>
+      <p class="page-desc">Los sistemas expertos colapsan. Pero silenciosamente, algo nuevo está naciendo.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">ML</span>
+    </div>
+
+    <!-- 10b: QUÉ ES MACHINE LEARNING -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Concepto</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">¿Qué es<br><span class="accent">Machine Learning</span>?</h2>
+        <p class="page-desc">En vez de decirle a la computadora QUÉ hacer paso a paso, le das ejemplos y ella aprende las reglas sola.</p>
+        <div class="steps" style="margin-top: 1rem;">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>Le das datos</strong>
+              <span>Miles de ejemplos con la respuesta correcta</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>Busca patrones</strong>
+              <span>El algoritmo encuentra relaciones entre los datos</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>Hace predicciones</strong>
+              <span>Con datos nuevos, aplica lo que aprendió</span>
+            </div>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">Así funcionan las recomendaciones de Netflix, el filtro de spam, y el reconocimiento facial de tu celular.</p>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter">ML</span>
+      </div>
+    </div>
+
+    <!-- 10b2: ML — Reglas vs Datos -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">El cambio clave</p>
+      <h2>De reglas a <span class="accent-teal">datos</span></h2>
+      <p class="page-desc">Los sistemas expertos colapsan. Pero silenciosamente, un cambio radical está ocurriendo.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="paper-card red-border" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">Antes: Reglas</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">Humanos escriben las reglas manualmente</li>
+            <li style="color: rgba(255,255,255,0.6);">"SI el email tiene 'gratis' Y 'urgente' ENTONCES es spam"</li>
+            <li style="color: rgba(255,255,255,0.6);">Frágil: cada excepción necesita una regla nueva</li>
+          </ul>
+        </div>
+        <div class="paper-card teal-border" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-teal);">Ahora: Datos</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">La máquina descubre las reglas sola</li>
+            <li style="color: rgba(255,255,255,0.6);">Le das 10,000 emails marcados como spam/no-spam</li>
+            <li style="color: rgba(255,255,255,0.6);">Ella encuentra los patrones que los humanos no ven</li>
+          </ul>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Este cambio de "programar reglas" a "aprender de datos" es la revolución del <strong style="color: var(--brand-teal);">Machine Learning</strong>.</p>
+    </div>
+
+    <!-- 10c: DEEP BLUE VS KASPAROV -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">1997</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Deep Blue vs<br><span class="accent">Kasparov</span></h2>
+        <p class="page-desc">La computadora de IBM vence al campeón mundial de ajedrez. El mundo celebra. Pero hay un detalle importante.</p>
+        <div class="paper-card red-border" style="margin-top: 1rem;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">No era inteligencia</h3>
+          <ul>
+            <li>Deep Blue evaluaba <strong>200 millones de posiciones por segundo</strong></li>
+            <li>No "entendía" ajedrez. Calculaba todas las posibilidades por fuerza bruta</li>
+            <li>Era como ganar una carrera de autos contra un corredor: no corre mejor, simplemente tiene un motor</li>
+          </ul>
+        </div>
+        <div class="quote-block" style="margin-top: 1rem;">
+          <p>Vencer en ajedrez no es <strong>pensar</strong>. Es <strong>calcular</strong>. La verdadera pregunta era: ¿puede una máquina aprender estrategia sin que se la programen?</p>
+        </div>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter" style="font-size: 14rem;">97</span>
+      </div>
+    </div>
+
+    <!-- 11: 2012 DEEP LEARNING -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">2012</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">La revolución<br><span class="accent">deep learning</span></h2>
+        <p class="page-desc">ImageNet 2012: AlexNet aplasta a la competencia. El error de clasificación cae del 25% al 16% — usando una red neuronal profunda.</p>
+        <div class="diagram">
+          <div class="diagram-box">
+            <strong>Datos</strong>
+            <small>Internet-scale</small>
+          </div>
+          <span class="diagram-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <div class="diagram-box">
+            <strong>Cómputo</strong>
+            <small>GPUs</small>
+          </div>
+          <span class="diagram-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <div class="diagram-box highlight">
+            <strong>Algoritmos</strong>
+            <small>Deep Neural Nets</small>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">El momento en que datos + cómputo + algoritmos convergieron.</p>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter">12</span>
+      </div>
+    </div>
+
+    <!-- 11b: DEEP LEARNING — Cómo aprende -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Ejemplo</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">¿Cómo <span class="accent">aprende</span> una<br>red neuronal?</h2>
+        <p class="page-desc">Imaginen que quieren enseñarle a una computadora a reconocer fotos de gatos. No le explican qué es un gato. Solo le muestran miles de fotos:</p>
+        <!-- Visual flow of learning -->
+        <div style="display: flex; align-items: stretch; gap: 0.6rem; margin-top: 1.5rem;">
+          <div style="flex: 1; padding: 1rem; background: rgba(0,71,233,0.06); border-radius: 14px; border: 1px solid rgba(0,71,233,0.1); text-align: center;">
+            <p style="font-size: 2.5rem; line-height: 1;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </p>
+            <p style="font-weight: 700; font-size: 0.85rem; margin-top: 0.3rem;">Miles de fotos</p>
+            <p style="font-size: 0.8rem; color: rgba(0,19,63,0.4);">con etiqueta: gato / no gato</p>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--brand-blue);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div style="flex: 1; padding: 1rem; background: rgba(0,71,233,0.06); border-radius: 14px; border: 1px solid rgba(0,71,233,0.1); text-align: center;">
+            <p style="font-size: 2.5rem; line-height: 1;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+            </p>
+            <p style="font-weight: 700; font-size: 0.85rem; margin-top: 0.3rem;">Intenta adivinar</p>
+            <p style="font-size: 0.8rem; color: rgba(0,19,63,0.4);">y se equivoca mucho</p>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--brand-blue);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div style="flex: 1; padding: 1rem; background: rgba(0,71,233,0.06); border-radius: 14px; border: 1px solid rgba(0,71,233,0.1); text-align: center;">
+            <p style="font-size: 2.5rem; line-height: 1;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="1.5"><path d="M2 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </p>
+            <p style="font-weight: 700; font-size: 0.85rem; margin-top: 0.3rem;">Se corrige</p>
+            <p style="font-size: 0.8rem; color: rgba(0,19,63,0.4);">ajusta sus conexiones internas</p>
+          </div>
+          <div style="display: flex; align-items: center; color: var(--brand-blue);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div style="flex: 1; padding: 1rem; background: rgba(10,228,195,0.08); border-radius: 14px; border: 1px solid rgba(10,228,195,0.2); text-align: center;">
+            <p style="font-size: 2.5rem; line-height: 1;">
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--brand-teal)" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            </p>
+            <p style="font-weight: 700; font-size: 0.85rem; margin-top: 0.3rem;">Aprende</p>
+            <p style="font-size: 0.8rem; color: rgba(0,19,63,0.4);">después de millones de intentos</p>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1.25rem;">Las capas internas detectan cosas cada vez más complejas: bordes, formas, orejas, bigotes... hasta entender "gato". Por eso se llama <strong>deep</strong> learning: más capas = más profundidad = más comprensión.</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter" style="font-size: 14rem; opacity: 0.05;">
+          <svg width="180" height="180" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1"><circle cx="6" cy="6" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="6" cy="18" r="2"/><circle cx="18" cy="18" r="2"/><circle cx="12" cy="12" r="2.5"/><line x1="7.5" y1="7" x2="10.5" y2="10.5"/><line x1="16.5" y1="7" x2="13.5" y2="10.5"/><line x1="7.5" y1="17" x2="10.5" y2="13.5"/><line x1="16.5" y1="17" x2="13.5" y2="13.5"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- 11c: QUÉ ES ALPHAGO -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">2016 — Contexto</p>
+      <h2>¿Qué es <span class="accent-teal">AlphaGo</span>?</h2>
+      <p class="page-desc">Go es un juego de mesa de 2,500 años de antigüedad, popular en Asia. Dos jugadores colocan piedras blancas y negras en un tablero intentando controlar territorio.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-teal);">¿Por qué importa Go?</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">Tiene más posiciones posibles que <strong style="color: #fff;">átomos en el universo</strong></li>
+            <li style="color: rgba(255,255,255,0.6);">No se puede resolver por fuerza bruta (como hicieron con el ajedrez)</li>
+            <li style="color: rgba(255,255,255,0.6);">Requiere intuición, estrategia a largo plazo y "lectura" del oponente</li>
+            <li style="color: rgba(255,255,255,0.6);">Los expertos decían que una máquina tardaría décadas en ganar</li>
+          </ul>
+        </div>
+        <div class="paper-card" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-teal);">¿Cómo funciona AlphaGo?</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);"><strong style="color: #fff;">Paso 1:</strong> Estudió millones de partidas humanas para aprender estrategias</li>
+            <li style="color: rgba(255,255,255,0.6);"><strong style="color: #fff;">Paso 2:</strong> Jugó millones de partidas contra sí misma para mejorar</li>
+            <li style="color: rgba(255,255,255,0.6);"><strong style="color: #fff;">Paso 3:</strong> Desarrolló estrategias que ningún humano había visto</li>
+            <li style="color: rgba(255,255,255,0.6);">No calculaba todas las posiciones. <strong style="color: #fff;">Aprendió intuición.</strong></li>
+          </ul>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">A diferencia de Deep Blue, AlphaGo no ganó por calcular más rápido. Ganó porque <strong style="color: var(--brand-teal);">aprendió a jugar</strong>.</p>
+    </div>
+
+    <!-- 12: 2016 ALPHAGO -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">2016</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;"><span class="accent">AlphaGo</span></h2>
+        <p class="page-desc">DeepMind vence a Lee Sedol, campeón mundial de Go. Resultado: 4-1.</p>
+        <div class="paper-card blue-border" style="margin-top: 0.5rem;">
+          <h3 style="font-size: 1.5rem;">Por qué importa</h3>
+          <ul>
+            <li>Go tiene más posiciones posibles que átomos en el universo</li>
+            <li>No se puede resolver por fuerza bruta como el ajedrez</li>
+            <li>La máquina aprendió estrategia e intuición</li>
+            <li>Movimiento 37: una jugada que ningún humano haría, pero que resultó brillante</li>
+          </ul>
+        </div>
+      </div>
+      <div class="split-right" style="background: transparent; overflow: hidden;">
+        <img src="images/alphago.png" alt="AlphaGo vs Lee Sedol" style="width: 100%; height: 100%; object-fit: cover; border-radius: 1rem;">
+      </div>
+    </div>
+
+    <!-- 13: 2017 TRANSFORMERS — El paper -->
+    <div class="slide slide-blue page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">2017</p>
+      <h2>"Attention Is<br>All You <span class="accent-teal">Need</span>"</h2>
+      <p class="page-desc">8 investigadores de Google publican un paper de 15 páginas. No sabían que estaban creando la base de toda la IA moderna.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card">
+          <h3 style="font-size: 1.5rem;">El paper</h3>
+          <ul>
+            <li>Vaswani et al., junio 2017</li>
+            <li>Propone una nueva arquitectura: el <strong>Transformer</strong></li>
+            <li>Originalmente diseñado solo para traducción</li>
+          </ul>
+        </div>
+        <div class="paper-card blue-border">
+          <h3 style="font-size: 1.5rem;">Lo que generó</h3>
+          <ul>
+            <li>GPT (OpenAI)</li>
+            <li>BERT (Google)</li>
+            <li>Claude (Anthropic)</li>
+            <li>LLaMA (Meta)</li>
+            <li>Gemini (Google)</li>
+          </ul>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Un solo paper. Toda la IA que usas hoy nació aquí.</p>
+    </div>
+
+    <!-- 13b: TRANSFORMERS — El problema anterior -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Antes del Transformer</p>
+      <h2>El problema: leer <span class="accent">una palabra a la vez</span></h2>
+      <p class="page-desc">Antes de 2017, las redes neuronales procesaban el texto de forma secuencial — como leer un libro palabra por palabra, sin poder volver atrás.</p>
+      <div class="diagram" style="margin-top: 1.5rem;">
+        <div class="diagram-box">
+          <strong>El</strong>
+          <small>1ro</small>
+        </div>
+        <span class="diagram-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+        <div class="diagram-box">
+          <strong>gato</strong>
+          <small>2do</small>
+        </div>
+        <span class="diagram-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+        <div class="diagram-box">
+          <strong>se</strong>
+          <small>3ro</small>
+        </div>
+        <span class="diagram-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+        <div class="diagram-box">
+          <strong>sentó</strong>
+          <small>4to</small>
+        </div>
+      </div>
+      <div class="paper-card red-border" style="margin-top: 1.5rem;">
+        <h3 style="font-size: 1.5rem; color: var(--brand-red);">Dos problemas graves</h3>
+        <ul>
+          <li><strong>Lento:</strong> no se puede paralelizar. Cada palabra espera a la anterior.</li>
+          <li><strong>Olvida:</strong> al llegar al final de una oración larga, ya "olvidó" el principio.</li>
+        </ul>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Imagina leer un libro de 500 páginas sin poder volver a revisar las primeras.</p>
+    </div>
+
+    <!-- 13c: TRANSFORMERS — La atención -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">La innovación</p>
+      <h2>Mecanismo de <span class="accent-teal">atención</span></h2>
+      <p class="page-desc">En vez de leer palabra por palabra, el Transformer mira TODAS las palabras al mismo tiempo y decide cuáles son relevantes entre sí.</p>
+      <div style="text-align: center; margin: 1.5rem auto; max-width: 600px;">
+        <p style="font-size: 1.8rem; font-weight: 800; font-family: var(--font-display); line-height: 1.6; color: #fff;">
+          "El <span style="background: var(--brand-blue); padding: 0.15em 0.4em; border-radius: 0.3em;">banco</span> estaba lleno de <span style="background: var(--brand-teal); color: var(--brand-blue-dark); padding: 0.15em 0.4em; border-radius: 0.3em;">peces</span>"
+        </p>
+        <p style="font-size: 1.1rem; color: rgba(255,255,255,0.6); margin-top: 0.8rem;">La atención conecta "banco" con "peces" para entender que es un banco de peces — no un banco financiero.</p>
+      </div>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="font-size: 1.3rem; color: var(--brand-teal);">Paralelo</h3>
+          <p style="color: rgba(255,255,255,0.7);">Todas las palabras se procesan al mismo tiempo. Mucho más rápido.</p>
+        </div>
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);">
+          <h3 style="font-size: 1.3rem; color: var(--brand-teal);">Contexto completo</h3>
+          <p style="color: rgba(255,255,255,0.7);">Cada palabra "ve" a todas las demás. Nunca olvida el principio.</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Esto es lo que hizo posible entrenar modelos con miles de millones de parámetros.</p>
+    </div>
+
+    <!-- 14: 2020-2023 ERA GPT -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">2020 — 2023</p>
+      <h2>La era <span class="accent">GPT</span></h2>
+      <div class="timeline">
+        <div class="timeline-node">
+          <div class="timeline-year">2020</div>
+          <div class="timeline-content">
+            <strong>GPT-3</strong>
+            <span>175 mil millones de parámetros. La generación de lenguaje se vuelve asombrosamente buena.</span>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-year">2021</div>
+          <div class="timeline-content">
+            <strong>DALL-E</strong>
+            <span>Imágenes a partir de texto. La IA generativa se vuelve visual.</span>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-content">
+            <strong>ChatGPT</strong>
+            <span>100 millones de usuarios en 2 meses. La adopción más rápida de una tecnología en la historia.</span>
+          </div>
+        </div>
+        <div class="timeline-node">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-content">
+            <strong>GPT-4, Claude, Gemini</strong>
+            <span>Modelos multimodales: texto, imágenes, código, voz. La carrera se acelera.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15: 2024-2026 HOY -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">2024 — 2026</p>
+      <h2>Donde estamos <span class="accent-teal">hoy</span></h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Capacidad</span>
+          <h3 style="color: var(--brand-teal);">Multimodal</h3>
+          <p style="color: rgba(255,255,255,0.55);">Texto, imagen, video, código, voz — todo en un modelo</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Autonomía</span>
+          <h3 style="color: var(--brand-teal);">Agentes</h3>
+          <p style="color: rgba(255,255,255,0.55);">IA que puede tomar acciones, no solo generar texto</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Acceso</span>
+          <h3 style="color: var(--brand-teal);">Open Source</h3>
+          <p style="color: rgba(255,255,255,0.55);">LLaMA, Mistral, Gemma — modelos abiertos compiten con los propietarios</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Gobierno</span>
+          <h3 style="color: var(--brand-teal);">Regulación</h3>
+          <p style="color: rgba(255,255,255,0.55);">EU AI Act, órdenes ejecutivas, debate global sobre límites</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1.5rem;">Estamos aquí. Pero recuerden los inviernos. ¿Qué podría salir mal esta vez?</p>
+    </div>
+
+    <!-- 16: PATRÓN DE CICLOS -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">El patrón</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Ciclos de <span class="accent">hype</span></h2>
+        <p class="page-desc">Cada avance importante fue seguido por decepción cuando las expectativas superaron las capacidades.</p>
+        <!-- Visual wave chart -->
+        <div style="margin-top: 1.5rem; display: flex; align-items: flex-end; gap: 0.75rem; height: 160px; max-width: 550px;">
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 80px; background: var(--brand-blue); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.7;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">60s</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 25px; background: var(--brand-red); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.5;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">70s</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 65px; background: var(--brand-blue); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.7;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">80s</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 20px; background: var(--brand-red); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.5;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">90s</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 110px; background: var(--brand-blue); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.8;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">2012</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 160px; background: var(--brand-teal); border-radius: 10px 10px 0 0; width: 100%;"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">2023</span>
+          </div>
+          <div style="display: flex; flex-direction: column; align-items: center; gap: 0.3rem; flex: 1;">
+            <div style="height: 140px; background: var(--brand-blue); border-radius: 10px 10px 0 0; width: 100%; opacity: 0.3; border: 2px dashed var(--brand-blue);"></div>
+            <span style="font-size: 0.7rem; color: rgba(0,19,63,0.45); font-weight: 600;">???</span>
+          </div>
+        </div>
+        <div class="interaction-card" style="margin-top: 1.5rem;">
+          <div class="interaction-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Escriban en el chat — 30 segundos
+          </div>
+          <p>¿Estamos en un ciclo de hype o en una revolución real? ¿Por qué?</p>
+        </div>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter" style="font-size: 12rem; opacity: 0.04;">HYPE</span>
+      </div>
+    </div>
+
+    <!-- 16b: GARTNER HYPE CYCLE -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Gartner</p>
+      <h2>El ciclo del <span class="accent">hype</span></h2>
+      <p class="page-desc">El modelo de Gartner describe cómo las tecnologías pasan por fases predecibles: entusiasmo excesivo, decepción, y finalmente adopción real.</p>
+      <div style="margin-top: 1.5rem; text-align: center;">
+        <img src="https://emt.gartnerweb.com/ngw/globalassets/intl-es/about/methodologies/hype-cycle-es.png" alt="Ciclo de Hype de Gartner" style="max-width: 85%; max-height: 55vh; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,19,63,0.1);">
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">La pregunta es: ¿dónde está la IA generativa en este ciclo hoy?</p>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CÓMO FUNCIONA (slides 17-23)               -->
+    <!-- ========================================== -->
+
+    <!-- 17: SECTION DIVIDER -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge" style="background: var(--brand-teal); color: var(--brand-blue-dark);">Sección 2</span>
+      <h2>Cómo funciona<br><span class="accent-teal">realmente</span></h2>
+      <p class="page-desc">Detrás de la magia hay matemáticas. Y las matemáticas son elegantes.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">02</span>
+    </div>
+
+    <!-- 17b: QUÉ ES UN LLM -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Definición</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">¿Qué es un<br><span class="accent">LLM</span>?</h2>
+        <p class="page-desc"><strong>Large Language Model</strong> — Modelo Grande de Lenguaje. Es el motor detrás de ChatGPT, Claude, Gemini y todas las IAs conversacionales.</p>
+        <div class="paper-card blue-border" style="margin-top: 1rem;">
+          <h3 style="font-size: 1.5rem;">En palabras simples</h3>
+          <ul>
+            <li>Es un programa que leyó casi todo el texto disponible en internet</li>
+            <li>Aprendió los patrones del lenguaje humano: gramática, contexto, estilo, conocimiento</li>
+            <li>Ahora puede generar texto nuevo que suena como si lo escribiera un humano</li>
+            <li>Es <strong>"grande"</strong> porque tiene miles de millones de parámetros (conexiones internas ajustables)</li>
+          </ul>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">Piensen en un LLM como un <strong>loro extremadamente sofisticado</strong>: no entiende lo que dice, pero reproduce los patrones del lenguaje con una precisión asombrosa.</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter">LLM</span>
+      </div>
+    </div>
+
+    <!-- 18: PREDICCIÓN DE TOKENS -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">El concepto central</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Predicción del<br>siguiente <span class="accent">token</span></h2>
+        <p class="page-desc">Un modelo de lenguaje predice la siguiente palabra (token) más probable, una a la vez.</p>
+        <div class="diagram" style="margin-top: 1rem;">
+          <div class="diagram-box">
+            <strong>"El gato se"</strong>
+            <small>Input</small>
+          </div>
+          <span class="diagram-arrow">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+          <div class="diagram-box highlight">
+            <strong>"sentó" (72%)</strong>
+            <small>"subió" (15%) "durmió" (8%)</small>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">No "entiende". Calcula distribuciones de probabilidad sobre todos los posibles siguientes tokens.</p>
+        <p class="page-desc" style="margin-top: 0.5rem; font-size: 1.1rem;">Por eso sin buen contexto las respuestas son genéricas: el modelo produce el promedio estadístico de todo lo que leyó. Darle contexto preciso cambia radicalmente el resultado.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">T</span>
+      </div>
+    </div>
+
+    <!-- 19: ENTRENAMIENTO -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Entrenamiento</p>
+      <h2>Datos + Arquitectura + <span class="accent">Cómputo</span></h2>
+      <div class="cards-grid" style="margin-top: 1rem;">
+        <div class="card">
+          <span class="card-type">Ingrediente 1</span>
+          <h3>Datos</h3>
+          <p>Texto a escala de internet: libros, artículos, código, conversaciones. Billones de palabras.</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Ingrediente 2</span>
+          <h3>Arquitectura</h3>
+          <p>Transformers: la estructura que permite procesar contexto en paralelo con atención.</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Ingrediente 3</span>
+          <h3>Cómputo</h3>
+          <p>Miles de GPUs entrenando durante semanas. El costo de entrenar GPT-4 se estima en $100M+.</p>
+        </div>
+      </div>
+      <div class="quote-block" style="margin-top: 1.5rem;">
+        <p>Como aprender un idioma leyendo <strong>todos los libros del mundo</strong>, sin que nadie te explique la gramática.</p>
+      </div>
+    </div>
+
+    <!-- 19b: QUÉ ES UN TRANSFORMER — Explicación gráfica -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Arquitectura</p>
+      <h2>¿Qué es un <span class="accent-teal">Transformer</span>?</h2>
+      <p class="page-desc">Es la "receta" que usan ChatGPT, Claude, Gemini y todos los modelos modernos. Funciona en 3 pasos:</p>
+      <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+        <!-- Paso 1 -->
+        <div style="flex: 1; min-width: 200px; padding: 1.5rem; background: rgba(255,255,255,0.06); border-radius: 16px; border-top: 3px solid var(--brand-teal);">
+          <p style="font-family: var(--display-font); font-weight: 800; font-size: 2.5rem; color: var(--brand-teal); opacity: 0.4; line-height: 1;">01</p>
+          <h3 style="font-size: 1.4rem; color: #fff; margin-top: 0.5rem;">Convierte palabras en números</h3>
+          <p style="color: rgba(255,255,255,0.5); font-size: 1.05rem; line-height: 1.5; margin-top: 0.4rem;">Cada palabra se transforma en una lista de números que captura su significado. "Rey" y "Reina" tienen números parecidos porque significan cosas similares.</p>
+        </div>
+        <!-- Paso 2 -->
+        <div style="flex: 1; min-width: 200px; padding: 1.5rem; background: rgba(255,255,255,0.06); border-radius: 16px; border-top: 3px solid var(--brand-blue);">
+          <p style="font-family: var(--display-font); font-weight: 800; font-size: 2.5rem; color: var(--brand-blue); opacity: 0.4; line-height: 1;">02</p>
+          <h3 style="font-size: 1.4rem; color: #fff; margin-top: 0.5rem;">Mira todo al mismo tiempo</h3>
+          <p style="color: rgba(255,255,255,0.5); font-size: 1.05rem; line-height: 1.5; margin-top: 0.4rem;">En vez de leer palabra por palabra, el Transformer ve TODA la oración a la vez y decide qué palabras se relacionan entre sí. Esto es la "atención".</p>
+        </div>
+        <!-- Paso 3 -->
+        <div style="flex: 1; min-width: 200px; padding: 1.5rem; background: rgba(255,255,255,0.06); border-radius: 16px; border-top: 3px solid var(--brand-orange);">
+          <p style="font-family: var(--display-font); font-weight: 800; font-size: 2.5rem; color: var(--brand-orange); opacity: 0.4; line-height: 1;">03</p>
+          <h3 style="font-size: 1.4rem; color: #fff; margin-top: 0.5rem;">Predice la siguiente palabra</h3>
+          <p style="color: rgba(255,255,255,0.5); font-size: 1.05rem; line-height: 1.5; margin-top: 0.4rem;">Usando todo el contexto, calcula cuál es la palabra más probable que viene después. Y repite. Así genera texto completo, una palabra a la vez.</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1.5rem;">Piensen en el Transformer como un <strong style="color: var(--brand-teal);">lector ultrarrápido</strong> que puede leer un libro entero al mismo tiempo, entender cómo se conecta cada palabra con todas las demás, y escribir la continuación más probable.</p>
+    </div>
+
+    <!-- 20: MECANISMO DE ATENCIÓN -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Atención</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">No todas las<br>palabras <span class="accent">pesan igual</span></h2>
+        <p class="page-desc">Cuando el modelo lee tu prompt, no trata cada palabra por igual. Aprende cuáles son más relevantes para cuáles otras.</p>
+        <div style="margin-top: 1.5rem; display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.15); border-radius: 8px; font-weight: 600; color: var(--brand-blue);">El</span>
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.4); border-radius: 8px; font-weight: 600; color: #fff;">banco</span>
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.08); border-radius: 8px; font-weight: 600;">del</span>
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.35); border-radius: 8px; font-weight: 600; color: #fff;">parque</span>
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.08); border-radius: 8px; font-weight: 600;">está</span>
+          <span style="font-size: 1.2rem; padding: 0.5rem 0.9rem; background: rgba(0,71,233,0.12); border-radius: 8px; font-weight: 600;">mojado</span>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">"parque" le dice al modelo que "banco" es un asiento, no una institución financiera. Eso es atención.</p>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter">A</span>
+      </div>
+    </div>
+
+    <!-- 21: CAPACIDADES EMERGENTES -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Lo inesperado</p>
+      <h2>Capacidades<br><span class="accent-teal">emergentes</span></h2>
+      <p class="page-desc">Aquí viene lo más sorprendente: <strong style="color: #fff;">nadie les enseñó a hacer esto</strong>. Los LLMs fueron entrenados SOLO para predecir la siguiente palabra. Pero al hacerlo con suficientes datos, aparecieron habilidades que nadie programó:</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.25);">No lo entrenaron para esto</span>
+          <h3 style="color: var(--brand-teal);">Razonamiento</h3>
+          <p style="color: rgba(255,255,255,0.55);">Resuelve problemas lógicos paso a paso, sin haberle enseñado lógica</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.25);">No lo entrenaron para esto</span>
+          <h3 style="color: var(--brand-teal);">Traducción</h3>
+          <p style="color: rgba(255,255,255,0.55);">Traduce entre docenas de idiomas sin entrenamiento específico en traducción</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.25);">No lo entrenaron para esto</span>
+          <h3 style="color: var(--brand-teal);">Programación</h3>
+          <p style="color: rgba(255,255,255,0.55);">Escribe y arregla código funcional, sin ser un compilador</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.25);">No lo entrenaron para esto</span>
+          <h3 style="color: var(--brand-teal);">Creatividad</h3>
+          <p style="color: rgba(255,255,255,0.55);">Genera analogías, metáforas e ideas que parecen originales</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Es como enseñarle a alguien a leer y que de pronto sepa matemáticas. ¿Cómo pasó?</p>
+    </div>
+
+    <!-- 21b: CÓMO EMERGIERON LAS CAPACIDADES -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">La explicación</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">¿Cómo<br><span class="accent">emergieron</span>?</h2>
+        <p class="page-desc">El modelo leyó TODO internet. Al predecir la siguiente palabra en textos tan diversos, inevitablemente aprendió los patrones detrás del lenguaje:</p>
+        <div class="steps" style="margin-top: 1rem;">
+          <div class="step">
+            <div class="step-num" style="font-size: 1.5rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="step-content">
+              <strong>Leyó textos bilingües</strong>
+              <span>Wikipedia en 100 idiomas, documentos de la ONU, subtítulos de películas. Aprendió que "cat" y "gato" aparecen en contextos idénticos. Resultado: sabe traducir.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="font-size: 1.5rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            </div>
+            <div class="step-content">
+              <strong>Leyó código en GitHub</strong>
+              <span>Millones de repositorios con código y explicaciones. Aprendió que después de "def suma(a, b):" viene "return a + b". Resultado: sabe programar.</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num" style="font-size: 1.5rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="step-content">
+              <strong>Leyó problemas resueltos paso a paso</strong>
+              <span>Libros de texto, foros de matemáticas, exámenes con soluciones. Aprendió los PATRONES del razonamiento. Resultado: puede razonar.</span>
+            </div>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1rem;">No le enseñaron a traducir, programar o razonar. Aprendió los <strong>patrones</strong> de cómo los humanos hacen esas cosas, y los replica.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">E</span>
+      </div>
+    </div>
+
+    <!-- 22: ENTONCES QUÉ PUEDE Y QUÉ NO -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Entonces...</p>
+      <h2>¿Qué puede y qué <span class="accent-red">no puede</span> hacer?</h2>
+      <p class="page-desc">Si es un sistema de predicción de texto — no una mente — las implicaciones son claras:</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="paper-card green-border">
+          <h3 style="font-size: 1.5rem; color: var(--brand-green);">Puede</h3>
+          <ul>
+            <li>Generar texto coherente y útil a partir de instrucciones claras</li>
+            <li>Transformar, resumir y analizar información</li>
+            <li>Traducir, programar, explicar conceptos complejos</li>
+            <li>Ser sorprendentemente creativo con analogías e ideas</li>
+          </ul>
+        </div>
+        <div class="paper-card red-border">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">No puede</h3>
+          <ul>
+            <li>Garantizar que algo sea verdadero — predice, no verifica</li>
+            <li>Acceder a internet ni a información en tiempo real</li>
+            <li>Recordar conversaciones anteriores (sin memoria explícita)</li>
+            <li>Reemplazar el juicio humano, el contexto ni la experiencia</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 22b: LLM vs AGENTE -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Distinción clave</p>
+      <h2>LLM vs <span class="accent-teal">Agente</span></h2>
+      <p class="page-desc">Esta distinción es fundamental para entender las herramientas que usan hoy.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card" style="background: rgba(255,255,255,0.06); box-shadow: none; border-left: 4px solid var(--brand-orange);">
+          <h3 style="font-size: 1.5rem; color: var(--brand-orange);">LLM = Cerebro solo</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">Genera texto a partir de un prompt</li>
+            <li style="color: rgba(255,255,255,0.6);">No tiene memoria entre conversaciones</li>
+            <li style="color: rgba(255,255,255,0.6);">No puede buscar en internet ni ejecutar acciones</li>
+            <li style="color: rgba(255,255,255,0.6);">Le pides un email: te da el texto</li>
+          </ul>
+        </div>
+        <div class="paper-card" style="background: rgba(255,255,255,0.06); box-shadow: none; border-left: 4px solid var(--brand-teal);">
+          <h3 style="font-size: 1.5rem; color: var(--brand-teal);">Agente = Cerebro + Herramientas</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">LLM conectado a herramientas externas</li>
+            <li style="color: rgba(255,255,255,0.6);">Puede buscar en internet, acceder a archivos, ejecutar código</li>
+            <li style="color: rgba(255,255,255,0.6);">Puede recordar contexto y tomar acciones</li>
+            <li style="color: rgba(255,255,255,0.6);">Le pides un email: lo redacta Y lo envía</li>
+          </ul>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">ChatGPT con búsqueda web activada es un agente. ChatGPT sin búsqueda es un LLM solo.</p>
+    </div>
+
+    <!-- 23: PAUSA PARA PREGUNTAS -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Pausa</p>
+      <h2>¿Hasta aquí todo <span class="accent">claro</span>?</h2>
+      <p class="page-desc">Antes de seguir, asegurémonos de que la base está sólida.</p>
+      <div class="interaction-card" style="margin-top: 1.5rem;">
+        <div class="interaction-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Escriban en el chat — 30 segundos
+        </div>
+        <p>¿Algo que no haya quedado claro? ¿Qué fue lo que más les sorprendió?</p>
+      </div>
+      <div class="quote-block" style="margin-top: 1.5rem;">
+        <p>Ya entienden la teoría. Ahora vamos a <strong>verlo en acción con demos en vivo</strong>.</p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEMOS EN VIVO (slides 24-29)               -->
+    <!-- ========================================== -->
+
+    <!-- DEMO SECTION DIVIDER -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge" style="background: var(--brand-blue); color: #fff;">Sección 3</span>
+      <h2>Demos<br><span class="accent-teal">en vivo</span></h2>
+      <p class="page-desc">Vamos a ver las capacidades y los límites en tiempo real.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">03</span>
+    </div>
+
+    <!-- DEMO 1: ChatGPT vs Claude -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-blue);">Demo 1</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">No todos los modelos<br>son <span class="accent">iguales</span></h2>
+        <p class="page-desc">El mismo prompt en dos modelos diferentes produce resultados sorprendentemente distintos.</p>
+        <div class="prompt-box good" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Prompt (copiar en ambos)</div>
+          <p>Soy director de operaciones de una empresa de logística con 200 empleados. Estoy evaluando implementar IA en el servicio al cliente. Dame un análisis honesto de pros, contras y riesgos. Sé directo, no me vendas la idea.</p>
+        </div>
+        <p class="page-desc" style="margin-top: 0.75rem;">No hay un modelo "mejor". Hay modelos diferentes para tareas diferentes.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">VS</span>
+      </div>
+    </div>
+
+    <!-- DEMO 2: Alucinaciones en vivo -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Demo 2</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Cuando la IA miente<br>con total <span class="accent-red">confianza</span></h2>
+        <p class="page-desc">ChatGPT SIN búsqueda web. Modelo base solamente.</p>
+        <div class="prompt-box good" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Prompt</div>
+          <p>Dame 5 artículos científicos sobre el impacto de la inteligencia artificial en la gestión de cadenas de suministro, publicados entre 2020 y 2024. Incluye: autor, título exacto, revista, año, y DOI.</p>
+        </div>
+        <p class="page-desc" style="margin-top: 0.75rem;">El modelo no buscó esto. Lo inventó. Y suena perfecto. Predice texto probable, no verifica verdad.</p>
+      </div>
+      <div class="split-right split-right-red">
+        <span class="big-letter">!</span>
+      </div>
+    </div>
+
+    <!-- DEMO 3: Visión + Multimodal -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Demo 3</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">La IA <span class="accent">ve</span>,<br>no solo lee</h2>
+        <p class="page-desc">Subir una gráfica financiera o foto de notas en whiteboard.</p>
+        <div class="prompt-box good" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Prompt 1 — Gráfica financiera</div>
+          <p>Analiza esta gráfica. ¿Qué tendencias identificas? ¿Qué decisiones de negocio sugerirías con base en estos datos?</p>
+        </div>
+        <div class="prompt-box good" style="margin-top: 0.75rem;">
+          <div class="prompt-box-label">Prompt 2 — Notas de whiteboard</div>
+          <p>Transcribe estas notas y organízalas en un formato estructurado.</p>
+        </div>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter" style="font-size: 12rem;">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="rgba(0,19,63,0.15)" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- DEMO 4: Chain of Thought en acción -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Demo 4</p>
+      <h2>Prompt básico vs<br>prompt <span class="accent-teal">estratégico</span></h2>
+      <p class="page-desc">La misma pregunta, dos maneras de formularla. Resultados radicalmente diferentes.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;">
+          <h3 style="font-size: 1.3rem; color: var(--brand-red);">Sin Chain of Thought</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 1.05rem;">"Tengo un presupuesto de $50,000 USD para marketing digital de una empresa B2B de software. ¿Cómo lo distribuyo?"</p>
+        </div>
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;">
+          <h3 style="font-size: 1.3rem; color: var(--brand-teal);">Con Chain of Thought</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 1.05rem;">"Tengo $50,000 USD para marketing digital B2B de software. Piensa paso a paso: primero analiza los canales más efectivos para B2B, luego evalúa el ROI típico de cada canal, después propone una distribución justificada, y finalmente identifica los riesgos."</p>
+        </div>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">La calidad del output es directamente proporcional a la calidad del input.</p>
+    </div>
+
+    <!-- DEMO 5: Agentes — El siguiente nivel -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-blue);">Demo 5</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">LLM vs <span class="accent">Agente</span><br>en acción</h2>
+        <p class="page-desc">ChatGPT con Deep Research activado. La diferencia entre generar texto e investigar de verdad.</p>
+        <div class="prompt-box good" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Prompt</div>
+          <p>Investiga las 3 herramientas de IA más adoptadas en empresas latinoamericanas en 2025-2026. Para cada una: nombre, qué hace, cuántas empresas la usan, precio, y un caso de uso real documentado. Cita tus fuentes.</p>
+        </div>
+        <p class="page-desc" style="margin-top: 0.75rem;">El modelo BUSCA en internet en tiempo real. Cita fuentes reales. Esto es un agente.</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter" style="font-size: 12rem;">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- DEMO 6: Caso práctico inmediato -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-green);">Demo 6</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Algo que pueden<br>usar <span class="accent-green" style="color: var(--brand-green);">mañana</span></h2>
+        <p class="page-desc">De notas desordenadas a email profesional en segundos.</p>
+        <div class="prompt-box good" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Prompt</div>
+          <p>Tengo estas notas de una reunión: "Cliente quiere reducir costos 15%, plazo Q3, preocupados por calidad, necesitan propuesta para el viernes, mencionaron que competencia ofrece mejor precio." Genera un email profesional de seguimiento al cliente que aborde cada punto. Tono formal pero cercano. Máximo 200 palabras.</p>
+        </div>
+        <p class="page-desc" style="margin-top: 0.75rem;">Esto no reemplaza su criterio. Esto acelera su ejecución.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">
+          <svg width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        </span>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PENSAMIENTO CRÍTICO (slides 30+)           -->
+    <!-- ========================================== -->
+
+    <!-- 26: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-red); color: #fff;">
+      <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">Sección 4</span>
+      <h2 style="color: #fff;">Pensamiento<br>crítico</h2>
+      <p class="page-desc" style="color: rgba(255,255,255,0.55);">Usar IA sin criterio es más peligroso que no usarla.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.06);">04</span>
+    </div>
+
+    <!-- 27: ALUCINACIONES - Intro -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Riesgo 1</p>
+      <h2><span class="accent-red">Alucinaciones</span></h2>
+      <p class="page-desc">El modelo genera información que suena posible pero es completamente falsa. Ocurre porque optimiza coherencia, no verdad.</p>
+      <div class="quote-block" style="margin-top: 1.5rem; border-color: var(--brand-red);">
+        <p>Cuanto más <strong>confiada</strong> suena la IA, más <strong>cuidado</strong> debes tener.</p>
+      </div>
+      <p class="page-desc" style="margin-top: 1.5rem;">Veamos casos reales que demuestran el impacto de este problema.</p>
+    </div>
+
+    <!-- 27b: CASO 1 - Abogados -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Caso real 1</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Abogados <span class="accent-red">sancionados</span></h2>
+        <p class="page-desc">En junio de 2023, el abogado Steven Schwartz presentó un escrito legal ante un tribunal federal de Nueva York citando 6 casos judiciales que no existían. Todos fueron generados por ChatGPT.</p>
+        <div class="paper-card red-border" style="margin-top: 1rem;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">Consecuencias</h3>
+          <ul>
+            <li>El juez P. Kevin Castel impuso una multa de $5,000 USD al abogado y su firma</li>
+            <li>Los casos citados tenían nombres de jueces reales, pero combinados con hechos inventados</li>
+            <li>ChatGPT incluso "confirmó" que los casos eran reales cuando se le preguntó</li>
+          </ul>
+        </div>
+        <p style="font-size: 0.85rem; color: rgba(0,19,63,0.35); margin-top: 0.75rem;">Fuente: Mata v. Avianca, Inc. (1:22-cv-01461), S.D.N.Y., junio 2023</p>
+      </div>
+      <div class="split-right split-right-red">
+        <span class="big-letter">!</span>
+      </div>
+    </div>
+
+    <!-- 27c: CASO 2 - Papers falsos -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Caso real 2</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Papers <span class="accent-red">fabricados</span></h2>
+        <p class="page-desc">En 2024, varias editoriales científicas retractaron papers que contenían texto claramente generado por IA, incluyendo frases como "As an AI language model..." olvidadas en el texto.</p>
+        <div class="paper-card red-border" style="margin-top: 1rem;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">El problema</h3>
+          <ul>
+            <li>Springer Nature retractó más de 50 papers sospechosos de ser generados por IA en 2024</li>
+            <li>Wiley cerró 19 revistas por artículos fabricados con IA</li>
+            <li>Papers con autores, datos experimentales y resultados completamente inventados pasaron revisión por pares</li>
+          </ul>
+        </div>
+        <p style="font-size: 0.85rem; color: rgba(0,19,63,0.35); margin-top: 0.75rem;">Fuentes: Nature (2024), Retraction Watch, Wiley Communications (2024)</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter">F</span>
+      </div>
+    </div>
+
+    <!-- 27d: CASO 3 - Biografías falsas -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Caso real 3</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Biografías <span class="accent-red">inventadas</span></h2>
+        <p class="page-desc">En 2023, el profesor Jonathan Turley de la Universidad George Washington descubrió que ChatGPT lo acusaba de acoso sexual citando un artículo de The Washington Post que nunca existió.</p>
+        <div class="paper-card red-border" style="margin-top: 1rem;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">Patrón repetido</h3>
+          <ul>
+            <li>El alcalde de Hepburn Shire (Australia) amenazó con demandar a OpenAI por una biografía falsa que lo vinculaba a un escándalo de sobornos</li>
+            <li>ChatGPT genera datos biográficos con fechas, lugares y eventos precisos pero falsos</li>
+            <li>La confianza con la que escribe hace casi imposible distinguir lo real de lo inventado</li>
+          </ul>
+        </div>
+        <p style="font-size: 0.85rem; color: rgba(0,19,63,0.35); margin-top: 0.75rem;">Fuentes: USA Today (2023), The Guardian (2023), BBC News (2023)</p>
+      </div>
+      <div class="split-right split-right-orange">
+        <span class="big-letter">?</span>
+      </div>
+    </div>
+
+    <!-- 28: SESGO -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Riesgo 2</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;"><span class="accent-red">Sesgo</span></h2>
+        <p class="page-desc">Los datos de entrenamiento reflejan sesgos humanos. El modelo los amplifica.</p>
+        <div class="paper-card red-border" style="margin-top: 0.5rem;">
+          <ul>
+            <li>Estereotipos de género en descripciones de trabajo</li>
+            <li>Sesgo racial en generación y clasificación de imágenes</li>
+            <li>Subrepresentación de idiomas y culturas minoritarias</li>
+          </ul>
+        </div>
+        <p class="page-desc" style="margin-top: 0.5rem;">La IA no tiene opiniones. Pero reproduce los patrones de sus datos.</p>
+      </div>
+      <div class="split-right split-right-red">
+        <span class="big-letter">!</span>
+      </div>
+    </div>
+
+    <!-- 29: PRIVACIDAD -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-red);">Riesgo 3</p>
+      <h2>Privacidad y <span class="accent-red">datos</span></h2>
+      <p class="page-desc">¿Qué pasa cuando escribes algo en ChatGPT?</p>
+      <div class="steps" style="margin-top: 1rem;">
+        <div class="step">
+          <div class="step-num" style="color: var(--brand-red);">!</div>
+          <div class="step-content">
+            <strong>Tus datos pueden usarse para entrenamiento</strong>
+            <span>A menos que lo desactives explícitamente en configuración</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="color: var(--brand-red);">!</div>
+          <div class="step-content">
+            <strong>No pegues información sensible</strong>
+            <span>Datos de clientes, contratos, propiedad intelectual, información financiera, datos médicos</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="color: var(--brand-red);">!</div>
+          <div class="step-content">
+            <strong>Las conversaciones se almacenan</strong>
+            <span>Pueden ser revisadas por el proveedor para mejorar el servicio</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 30: LA PARADOJA -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Reflexión</p>
+      <h2>La <span class="accent-teal">paradoja</span></h2>
+      <p class="page-desc" style="font-size: 1.3rem; max-width: 700px;">Cuanto más fácil la IA hace algo por ti, menos aprendes haciéndolo.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card red-border" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-red);">Delegación</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">"Escribe mi ensayo sobre X"</li>
+            <li style="color: rgba(255,255,255,0.6);">"Resuelve este problema por mí"</li>
+            <li style="color: rgba(255,255,255,0.6);">Resultado: entregaste algo, no aprendiste nada</li>
+          </ul>
+        </div>
+        <div class="paper-card green-border" style="background: rgba(255,255,255,0.06); box-shadow: none;">
+          <h3 style="font-size: 1.5rem; color: var(--brand-green);">Aumentación</h3>
+          <ul>
+            <li style="color: rgba(255,255,255,0.6);">"Revisa la lógica de mi argumento"</li>
+            <li style="color: rgba(255,255,255,0.6);">"Explícame este concepto de otra forma"</li>
+            <li style="color: rgba(255,255,255,0.6);">Resultado: mejoraste tu trabajo Y tu comprensión</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 31: 5 REGLAS -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Guía</p>
+      <h2>5 reglas para uso <span class="accent">crítico</span></h2>
+      <div class="steps" style="margin-top: 1rem;">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Nunca confíes sin verificar</strong>
+            <span>Si no puedes comprobar la respuesta, no la uses como hecho</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Entiende lo que no puede hacer</strong>
+            <span>No accede a internet en tiempo real, no "sabe" cosas, no razona como humano</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Protege información sensible</strong>
+            <span>Lo que escribes puede almacenarse y usarse para entrenamiento</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>Aumenta, no reemplaces, tu pensamiento</strong>
+            <span>Úsala como herramienta, no como sustituto de aprender</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">05</div>
+          <div class="step-content">
+            <strong>Mantente curioso sobre cómo funciona</strong>
+            <span>Entender la tecnología te da ventaja sobre quien solo la usa</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PROMPT ENGINEERING (slides 34-37)           -->
+    <!-- ========================================== -->
+
+    <!-- 34: SECTION DIVIDER -->
+    <div class="slide slide-section slide-dark">
+      <span class="section-badge" style="background: var(--brand-blue); color: #fff;">Sección 5</span>
+      <h2>El arte de<br>la <span class="accent-teal">instrucción</span></h2>
+      <p class="page-desc">La calidad de la respuesta depende de la calidad de la pregunta.</p>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">05</span>
+    </div>
+
+    <!-- 35: POR QUÉ IMPORTAN -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Fundamento</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Programar en<br><span class="accent">lenguaje natural</span></h2>
+        <p class="page-desc">La calidad del output es directamente proporcional a la calidad del input. No es un hack ni un truco: es la interfaz entre intención humana y capacidad de máquina.</p>
+        <div class="prompt-box bad" style="margin-top: 1rem;">
+          <div class="prompt-box-label">Instrucción vaga</div>
+          <p>"Hazme un reporte de ventas"</p>
+        </div>
+        <div class="prompt-box good" style="margin-top: 0.75rem;">
+          <div class="prompt-box-label">Instrucción precisa</div>
+          <p>"Genera un reporte ejecutivo de ventas Q1 2026 para presentar al board. Incluye: tendencias vs Q4 2025, top 3 productos por revenue, y 2 riesgos identificados. Formato: bullet points. Máximo 300 palabras. Tono directo."</p>
+        </div>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">P</span>
+      </div>
+    </div>
+
+    <!-- 36: FRAMEWORK RAFAT -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Framework</p>
+      <h2>La fórmula: <span class="accent">RAFAT</span></h2>
+      <div class="framework-grid" style="margin-top: 1rem;">
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3>Rol</h3>
+          <p>Quién quieres que sea la IA</p>
+        </div>
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          </div>
+          <h3>Acción</h3>
+          <p>Qué necesitas que haga</p>
+        </div>
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+          </div>
+          <h3>Formato</h3>
+          <p>Cómo quieres la respuesta</p>
+        </div>
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <h3>Antecedentes</h3>
+          <p>Contexto y datos relevantes</p>
+        </div>
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          </div>
+          <h3>Temperatura</h3>
+          <p>Nivel de creatividad vs precisión</p>
+        </div>
+      </div>
+      <div class="prompt-box good" style="margin-top: 1.5rem;">
+        <div class="prompt-box-label">Ejemplo profesional</div>
+        <p><span class="prompt-tag">R</span> Actúa como consultor de operaciones con 20 años de experiencia en logística. <span class="prompt-tag">A</span> Analiza los cuellos de botella más comunes en una cadena de suministro B2B. <span class="prompt-tag">F</span> Tabla con problema, impacto y acción recomendada. <span class="prompt-tag">A</span> Somos una empresa mediana de distribución con 150 empleados y operaciones en 3 países. <span class="prompt-tag">T</span> Sé directo y práctico, sin jerga innecesaria.</p>
+      </div>
+    </div>
+
+    <!-- 37: CHAIN OF THOUGHT — Concepto -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Técnica clave</p>
+      <h2>Chain of <span class="accent-teal">Thought</span></h2>
+      <p class="page-desc">Pedirle a la IA que "piense paso a paso" mejora dramáticamente la calidad de sus respuestas. No es un truco — es cómo funciona mejor la arquitectura.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.5rem;">
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;">
+          <h3 style="font-size: 1.3rem; color: var(--brand-red);">Sin Chain of Thought</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 1.15rem;">Prompt: "Hazme una página web para venta de boletería"</p>
+          <p style="color: rgba(255,255,255,0.4); font-size: 1.05rem; margin-top: 0.5rem;">Respuesta: genera un HTML genérico con un formulario básico, sin considerar pagos, asientos, ni validaciones</p>
+        </div>
+        <div class="paper-card" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); box-shadow: none;">
+          <h3 style="font-size: 1.3rem; color: var(--brand-teal);">Con Chain of Thought</h3>
+          <p style="color: rgba(255,255,255,0.6); font-size: 1.15rem;">Prompt: "Piensa paso a paso: ¿qué necesita una página web de venta de boletería? Primero lista los requisitos, luego diseña la estructura, y finalmente genera el código."</p>
+          <p style="color: rgba(255,255,255,0.4); font-size: 1.05rem; margin-top: 0.5rem;">Respuesta: analiza requisitos (catálogo de eventos, selección de asientos, pasarela de pago, confirmación por email), propone arquitectura, y genera código completo y funcional</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 37b: CHAIN OF THOUGHT — Por qué funciona -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Mecanismo</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">¿Por qué <span class="accent">funciona</span>?</h2>
+        <p class="page-desc">El modelo genera un token a la vez. Cuando le pides razonar paso a paso, cada paso intermedio se convierte en contexto para el siguiente — como si le dieras más "espacio para pensar".</p>
+        <div class="steps" style="margin-top: 1rem;">
+          <div class="step">
+            <div class="step-num">01</div>
+            <div class="step-content">
+              <strong>Descompone el problema</strong>
+              <span>En vez de saltar a la respuesta, identifica sub-problemas</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">02</div>
+            <div class="step-content">
+              <strong>Genera contexto intermedio</strong>
+              <span>Cada paso que escribe se vuelve parte del input para el siguiente</span>
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-num">03</div>
+            <div class="step-content">
+              <strong>Reduce errores acumulados</strong>
+              <span>Los pasos visibles permiten "corregir el rumbo" antes de la conclusión</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter" style="font-size: 14rem;">1+1</span>
+      </div>
+    </div>
+
+    <!-- 37c: CHAIN OF THOUGHT — Cuándo usarlo -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Aplicación</p>
+      <h2>Cuándo usar <span class="accent">Chain of Thought</span></h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="card">
+          <span class="card-type">Ideal para</span>
+          <h3 style="color: var(--brand-green);">Problemas lógicos</h3>
+          <p>Matemáticas, programación, análisis de datos, diagnósticos</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Ideal para</span>
+          <h3 style="color: var(--brand-green);">Decisiones complejas</h3>
+          <p>"Evalúa los pros y contras paso a paso antes de recomendar"</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Ideal para</span>
+          <h3 style="color: var(--brand-green);">Análisis de textos</h3>
+          <p>"Lee este párrafo, identifica la tesis, luego evalúa la evidencia"</p>
+        </div>
+        <div class="card">
+          <span class="card-type">No necesario para</span>
+          <h3 style="color: rgba(0,19,63,0.3);">Tareas simples</h3>
+          <p>Traducciones, resúmenes cortos, preguntas de un solo dato</p>
+        </div>
+      </div>
+      <div class="prompt-box good" style="margin-top: 1.5rem;">
+        <div class="prompt-box-label">Frases que activan CoT</div>
+        <p>"Piensa paso a paso" / "Razona antes de responder" / "Muestra tu proceso de pensamiento" / "Primero analiza, luego concluye"</p>
+      </div>
+    </div>
+
+    <!-- 37d: OTRAS TÉCNICAS AVANZADAS -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Más técnicas</p>
+      <h2>Otras técnicas <span class="accent-teal">avanzadas</span></h2>
+      <div class="cards-grid" style="margin-top: 1rem;">
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Técnica</span>
+          <h3 style="color: var(--brand-teal);">Iteración</h3>
+          <p style="color: rgba(255,255,255,0.55);">"Mejora esto considerando X" — refinar en múltiples pasos hasta obtener lo que quieres</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Técnica</span>
+          <h3 style="color: var(--brand-teal);">Restricciones</h3>
+          <p style="color: rgba(255,255,255,0.55);">"No uses jerga técnica" / "Máximo 200 palabras" / "Formato de tabla"</p>
+        </div>
+        <div class="card" style="background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1); box-shadow: none;">
+          <span class="card-type" style="color: rgba(255,255,255,0.3);">Técnica</span>
+          <h3 style="color: var(--brand-teal);">Contradicción</h3>
+          <p style="color: rgba(255,255,255,0.55);">"Ahora argumenta en contra de tu propia respuesta"</p>
+        </div>
+      </div>
+      <div class="quote-block" style="margin-top: 1.5rem; border-color: var(--brand-orange);">
+        <p style="color: rgba(255,255,255,0.7);">Decirle al modelo lo que <strong style="color: var(--brand-orange);">NO</strong> debe hacer suele ser contraproducente. En vez de "no uses jerga técnica", dile "usa lenguaje simple y directo". Instrucciones positivas producen mejores resultados.</p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CIERRE                                     -->
+    <!-- ========================================== -->
+
+    <!-- 40: VISIÓN -->
+    <div class="slide slide-dark page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-teal);">Visión</p>
+      <h2 style="font-size: clamp(2.5rem,6vw,5rem);">70 años de<br>investigación.<br>Entender la historia =<br>tener <span class="accent-teal">perspectiva</span>.</h2>
+      <p class="page-desc" style="margin-top: 1.5rem;">La IA no apareció de la nada. Es el resultado de décadas de trabajo, fracasos y descubrimientos. La mayoría de usuarios no sabe esto. Ustedes ahora sí.</p>
+    </div>
+
+    <!-- 41: 3 COSAS -->
+    <div class="slide page-slide">
+      <p style="font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Para recordar</p>
+      <h2>3 ideas <span class="accent">clave</span></h2>
+      <div class="steps" style="margin-top: 1.5rem;">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>La IA predice, no piensa</strong>
+            <span>Verificar siempre. Nunca asumir que es correcto porque suena bien.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Tu capacidad de hacer buenas preguntas es tu mayor ventaja</strong>
+            <span>Prompt engineering no es un truco — es comunicación efectiva con la máquina.</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Usarla bien es una habilidad</strong>
+            <span>Empiecen a practicar hoy. Experimenten, fallen, mejoren.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CIERRE: CONTACTO -->
+    <div class="slide slide-contact">
+      <div class="contact-left">
+        <img src="images/jero-profile.png" alt="Jerónimo Martínez" class="contact-photo">
+        <h2 class="contact-name"><span style="color: var(--brand-teal);">Gracias</span></h2>
+        <p style="font-size: 1.3rem; color: rgba(255,255,255,0.5); line-height: 1.6;">¿Preguntas? Escríbanme.</p>
+        <div class="contact-info">
+          <span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            305 246 3800
+          </span>
+          <a href="https://instagram.com/jeromartinezj" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            @jeromartinezj
+          </a>
+        </div>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.2); margin-top: 0.5rem;">Próxima sesión: de entender qué es la IA, a ver claramente cómo aplicarla mejor y con más estructura.</p>
+      </div>
+      <div class="contact-right">
+        <img src="images/qr-instagram.jpeg" alt="QR Instagram @jeromartinezj">
+      </div>
+    </div>
+
+  </div><!-- /deck -->
+
+  <!-- NAV ARROWS -->
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="prev()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="nav-btn" onclick="next()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const bar = document.getElementById('progressBar');
+    const counter = document.getElementById('slideCounter');
+    let cur = 0;
+
+    function go(i) {
+      if (i < 0 || i >= slides.length || i === cur) return;
+      slides[cur].classList.remove('active');
+      cur = i;
+      slides[cur].classList.add('active');
+      update();
+    }
+
+    const brand = document.getElementById('fixedBrand');
+
+    function update() {
+      const pct = ((cur + 1) / slides.length) * 100;
+      bar.style.width = pct + '%';
+      counter.textContent = `${cur + 1} / ${slides.length}`;
+      history.replaceState(null, null, `#${cur}`);
+      // Toggle logo color for dark/colored slides
+      const s = slides[cur];
+      const isDark = s.classList.contains('slide-dark') || s.classList.contains('slide-contact') || s.style.background;
+      if (isDark) {
+        brand.querySelector('.brand-text').style.color = 'rgba(255,255,255,0.5)';
+        brand.querySelector('.brand-phone').style.color = 'rgba(255,255,255,0.3)';
+        brand.querySelector('svg path').setAttribute('stroke', 'rgba(255,255,255,0.5)');
+      } else {
+        brand.querySelector('.brand-text').style.color = '';
+        brand.querySelector('.brand-phone').style.color = '';
+        brand.querySelector('svg path').setAttribute('stroke', '#0047E9');
+      }
+    }
+
+    function next() { go(cur + 1); }
+    function prev() { go(cur - 1); }
+
+    document.addEventListener('keydown', e => {
+      switch(e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home': e.preventDefault(); go(0); break;
+        case 'End': e.preventDefault(); go(slides.length - 1); break;
+        case 'f': e.preventDefault();
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+          break;
+      }
+    });
+
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      const d = tx - e.changedTouches[0].screenX;
+      if (Math.abs(d) > 50) d > 0 ? next() : prev();
+    });
+
+    const h = parseInt(location.hash.slice(1));
+    if (!isNaN(h) && h >= 0 && h < slides.length) {
+      slides[0].classList.remove('active');
+      cur = h;
+      slides[cur].classList.add('active');
+    }
+    update();
+  </script>
+</body>
+</html>

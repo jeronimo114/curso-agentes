@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sesion 1: Fundamentos y Conceptos Esenciales de la IA</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --brand-orange: #FF9600;
+      --brand-red: #E93B3B;
+      --brand-green: #1DB954;
+      --bg: #F8F6F2;
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      overflow: hidden;
+      height: 100vh; width: 100vw;
+    }
+    h1,h2,h3,h4 {
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.85;
+    }
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 6rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .progress-bar { position: fixed; top: 0; left: 0; height: 5px; background: var(--brand-blue); transition: width 0.4s ease; z-index: 100; }
+    .slide-counter { position: fixed; bottom: 2rem; right: 3rem; font-size: 0.8rem; font-weight: 600; color: rgba(0,19,63,0.25); z-index: 100; }
+
+    /* TITLE */
+    .slide-title { align-items: flex-start; justify-content: flex-end; padding-bottom: 6rem; gap: 1rem; }
+    .slide-title h1 { font-size: clamp(5rem,12vw,11rem); letter-spacing: -3px; line-height: 0.82; }
+    .subtitle { font-size: 1rem; color: rgba(0,19,63,0.45); max-width: 500px; line-height: 1.5; }
+    .logo-tag { position: absolute; top: 3rem; left: 6rem; font-family: var(--display-font); font-weight: 800; font-size: 1rem; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3); }
+    .title-accent-block { position: absolute; top: 0; right: 0; width: 35vw; height: 100vh; background: var(--brand-blue); z-index: -1; }
+    .title-accent-block::after { content: "IA"; position: absolute; bottom: 4rem; right: 4rem; font-family: var(--display-font); font-weight: 800; font-size: 20rem; color: rgba(255,255,255,0.07); line-height: 0.8; }
+
+    /* ACCENT */
+    .accent { color: var(--brand-blue); }
+    .accent-teal { color: var(--brand-teal); }
+    .accent-orange { color: var(--brand-orange); }
+    .accent-red { color: var(--brand-red); }
+    .accent-green { color: var(--brand-green); }
+
+    /* SECTION DIVIDERS */
+    .slide-section { align-items: flex-start; gap: 1rem; }
+    .slide-section h2 { font-size: clamp(4rem,10vw,9rem); line-height: 0.82; letter-spacing: -2px; }
+    .section-badge { padding: 0.4rem 1rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; }
+    .slide-section .section-bg-num { position: absolute; right: -2rem; bottom: -4rem; font-family: var(--display-font); font-weight: 800; font-size: 28rem; line-height: 0.8; pointer-events: none; }
+
+    /* SPLIT LAYOUT */
+    .slide-split { flex-direction: row; padding: 0; gap: 0; }
+    .split-left { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 4rem 4rem 4rem 6rem; gap: 1.5rem; }
+    .split-right { width: 38%; display: flex; align-items: center; justify-content: center; position: relative; }
+    .split-right .big-letter { font-family: var(--display-font); font-weight: 800; font-size: 22rem; line-height: 0.75; opacity: 0.08; }
+    .split-right-blue { background: var(--brand-blue); }
+    .split-right-blue .big-letter { color: #fff; opacity: 0.12; }
+    .split-right-teal { background: var(--brand-teal); }
+    .split-right-teal .big-letter { color: var(--brand-blue-dark); opacity: 0.12; }
+    .split-right-dark { background: var(--brand-blue-dark); }
+    .split-right-dark .big-letter { color: #fff; opacity: 0.06; }
+    .split-right-orange { background: var(--brand-orange); }
+    .split-right-orange .big-letter { color: #fff; opacity: 0.12; }
+    .split-right-red { background: var(--brand-red); }
+    .split-right-red .big-letter { color: #fff; opacity: 0.12; }
+
+    /* PAGE SLIDE */
+    .page-slide { gap: 1.5rem; }
+    .page-slide h2 { font-size: clamp(2.5rem,6vw,5rem); letter-spacing: -1px; }
+    .page-desc { font-size: 1rem; color: rgba(0,19,63,0.5); max-width: 600px; line-height: 1.7; }
+
+    /* DARK SLIDE */
+    .slide-dark { background: var(--brand-blue-dark); color: #fff; }
+    .slide-dark h2 { color: #fff; }
+    .slide-dark .page-desc { color: rgba(255,255,255,0.5); }
+    .slide-dark .prompt-box { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.1); }
+    .slide-dark .prompt-box-label { color: var(--brand-teal); }
+    .slide-dark .prompt-box p { color: rgba(255,255,255,0.6); }
+    .slide-dark .prompt-tag { background: var(--brand-teal); color: var(--brand-blue-dark); }
+
+    /* BLUE SLIDE */
+    .slide-blue { background: var(--brand-blue); color: #fff; }
+    .slide-blue h2 { color: #fff; }
+    .slide-blue .page-desc { color: rgba(255,255,255,0.6); }
+    .slide-blue .prompt-box { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.15); }
+    .slide-blue .prompt-box-label { color: var(--brand-teal); }
+    .slide-blue .prompt-box p { color: rgba(255,255,255,0.7); }
+    .slide-blue .prompt-tag { background: var(--brand-teal); color: var(--brand-blue-dark); }
+
+    /* ORANGE SLIDE */
+    .slide-orange { background: var(--brand-orange); color: #fff; }
+    .slide-orange h2 { color: #fff; }
+
+    /* TEAL SLIDE */
+    .slide-teal { background: var(--brand-teal); color: var(--brand-blue-dark); }
+    .slide-teal h2 { color: var(--brand-blue-dark); }
+
+    /* PROMPT BOX */
+    .prompt-box { margin-top: 1rem; padding: 1.25rem 1.75rem; background: rgba(0,71,233,0.04); border: 1px solid rgba(0,71,233,0.12); border-radius: 14px; max-width: 700px; }
+    .prompt-box.bad { background: rgba(233,59,59,0.04); border-color: rgba(233,59,59,0.2); }
+    .prompt-box.good { background: rgba(29,185,84,0.04); border-color: rgba(29,185,84,0.2); }
+    .prompt-box-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-blue); margin-bottom: 0.4rem; }
+    .prompt-box.bad .prompt-box-label { color: var(--brand-red); }
+    .prompt-box.good .prompt-box-label { color: var(--brand-green); }
+    .prompt-box p { font-size: 0.9rem; color: rgba(0,19,63,0.6); line-height: 1.7; font-style: italic; }
+    .prompt-tag { display: inline; background: var(--brand-blue); color: #fff; padding: 0.1rem 0.45rem; border-radius: 4px; font-style: normal; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+
+    /* TOOLS GRID / CARDS */
+    .cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-top: 0.5rem; }
+    .card { padding: 1.5rem; background: #fff; border-radius: 16px; display: flex; flex-direction: column; gap: 0.4rem; box-shadow: 0 1px 3px rgba(0,19,63,0.06); border: 1px solid rgba(0,19,63,0.06); transition: transform 0.2s, box-shadow 0.2s; }
+    .card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,19,63,0.1); }
+    .card h3 { font-size: 1.8rem; color: var(--brand-blue); }
+    .card .card-type { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: rgba(0,19,63,0.3); }
+    .card p { font-size: 0.8rem; color: rgba(0,19,63,0.5); line-height: 1.5; }
+
+    /* EXERCISE STEPS */
+    .steps { display: flex; flex-direction: column; gap: 1rem; margin-top: 0.5rem; max-width: 700px; }
+    .step { display: flex; align-items: center; gap: 1.25rem; padding: 1rem 1.5rem; background: #fff; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .step-num { font-family: var(--display-font); font-weight: 800; font-size: 3rem; color: var(--brand-blue); min-width: 3.5rem; text-align: center; line-height: 1; opacity: 0.3; }
+    .step-content { display: flex; flex-direction: column; gap: 0.15rem; }
+    .step-content strong { font-size: 1rem; }
+    .step-content span { font-size: 0.85rem; color: rgba(0,19,63,0.45); }
+
+    /* PAPER CARD */
+    .paper-card { padding: 2rem; background: #fff; border-radius: 20px; display: flex; flex-direction: column; gap: 0.75rem; max-width: 700px; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .paper-card.blue-border { border-left: 4px solid var(--brand-blue); }
+    .paper-card.red-border { border-left: 4px solid var(--brand-red); }
+    .paper-card.green-border { border-left: 4px solid var(--brand-green); }
+    .paper-card h3 { font-size: 2rem; }
+    .paper-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .paper-card li { font-size: 0.9rem; color: rgba(0,19,63,0.6); line-height: 1.6; padding-left: 1.5rem; position: relative; }
+    .paper-card li::before { content: ""; position: absolute; left: 0; top: 0.5rem; width: 7px; height: 7px; border-radius: 50%; background: var(--brand-blue); }
+    .paper-card.red-border li::before { background: var(--brand-red); }
+    .paper-card.green-border li::before { background: var(--brand-green); }
+
+    /* CHAT INTERACTION */
+    .chat-box { margin-top: 1.5rem; padding: 2rem 2.5rem; background: #fff; border: 2px solid var(--brand-blue); border-radius: 20px; max-width: 600px; box-shadow: 0 4px 20px rgba(0,71,233,0.08); }
+    .chat-label { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: var(--brand-blue); margin-bottom: 0.75rem; }
+    .chat-box p { font-size: 1.15rem; color: var(--brand-blue-dark); line-height: 1.7; }
+    .chat-box .chat-options { margin-top: 1rem; font-size: 0.95rem; color: rgba(0,19,63,0.45); line-height: 1.6; }
+
+    /* QUOTE */
+    .quote-block { border-left: 4px solid var(--brand-blue); padding: 1.5rem 2rem; max-width: 650px; }
+    .quote-block p { font-size: 1.15rem; color: rgba(0,19,63,0.55); line-height: 1.7; font-style: italic; }
+    .quote-block strong { color: var(--brand-blue-dark); font-style: normal; }
+
+    /* FRAMEWORK GRID */
+    .framework-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-top: 1rem; }
+    .framework-card { padding: 1.5rem; background: #fff; border-radius: 16px; text-align: center; box-shadow: 0 1px 3px rgba(0,19,63,0.06); border-top: 3px solid var(--brand-blue); }
+    .framework-card .fw-icon { width: 48px; height: 48px; margin: 0 auto 0.75rem; display: flex; align-items: center; justify-content: center; background: rgba(0,71,233,0.06); border-radius: 12px; }
+    .framework-card h3 { font-size: 1.6rem; margin-bottom: 0.25rem; }
+    .framework-card p { font-size: 0.8rem; color: rgba(0,19,63,0.5); line-height: 1.5; }
+
+    /* TABLE */
+    .table-container { margin-top: 1rem; max-width: 800px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 0.9rem 1.25rem; text-align: left; border-bottom: 1px solid rgba(0,19,63,0.08); }
+    th { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--brand-blue); }
+    td { font-size: 0.9rem; color: rgba(0,19,63,0.6); }
+    tr:hover td { color: var(--brand-blue-dark); }
+
+    /* DIAGRAM */
+    .diagram { display: flex; align-items: center; gap: 1.5rem; margin-top: 1.5rem; flex-wrap: wrap; }
+    .diagram-box { background: #fff; border: 1px solid rgba(0,19,63,0.08); border-radius: 16px; padding: 1.25rem 1.75rem; text-align: center; box-shadow: 0 1px 3px rgba(0,19,63,0.06); }
+    .diagram-box.highlight { border-color: var(--brand-blue); box-shadow: 0 4px 16px rgba(0,71,233,0.12); }
+    .diagram-box strong { font-size: 0.95rem; display: block; }
+    .diagram-box small { font-size: 0.8rem; color: rgba(0,19,63,0.4); }
+    .diagram-arrow { color: var(--brand-blue); }
+
+    /* CLOSING */
+    .slide-closing { align-items: flex-start; gap: 1.5rem; }
+    .slide-closing h2 { font-size: clamp(5rem,12vw,11rem); letter-spacing: -3px; line-height: 0.82; }
+    .closing-sub { font-size: 1.05rem; color: rgba(0,19,63,0.4); max-width: 450px; line-height: 1.6; }
+    .closing-accent-block { position: absolute; bottom: 0; right: 0; width: 40vw; height: 35vh; background: var(--brand-teal); z-index: -1; border-radius: 40px 0 0 0; }
+
+    /* BREAK */
+    .slide-break { background: var(--brand-blue-dark); color: #fff; text-align: center; align-items: center; }
+    .slide-break h2 { color: #fff; font-size: clamp(3rem,8vw,6rem); }
+    .slide-break .page-desc { color: rgba(255,255,255,0.4); }
+
+    /* NAV */
+    .nav-arrows { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 100; }
+    .nav-btn { width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(0,19,63,0.12); background: #fff; color: var(--brand-blue-dark); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(0,19,63,0.08); }
+    .nav-btn:hover { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
+
+    /* RESPONSIVE */
+    @media (max-width: 1024px) {
+      .slide { padding: 3rem 4rem; }
+      .split-left { padding: 3rem; }
+      .cards-grid { grid-template-columns: repeat(2,1fr); }
+      .framework-grid { grid-template-columns: repeat(2,1fr); }
+    }
+    @media (max-width: 768px) {
+      .slide { padding: 2rem 2rem; }
+      .slide-split { flex-direction: column; }
+      .split-left { padding: 2rem; }
+      .split-right { width: 100%; height: 30vh; }
+      .cards-grid { grid-template-columns: 1fr; }
+      .framework-grid { grid-template-columns: 1fr 1fr; }
+      .diagram { flex-direction: column; }
+      .title-accent-block { display: none; }
+      .closing-accent-block { display: none; }
+      .slide-section .section-bg-num { font-size: 14rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter"></div>
+
+  <div class="deck" id="deck">
+
+    <!-- ========================================== -->
+    <!-- 1: TITLE -->
+    <!-- ========================================== -->
+    <div class="slide slide-title active">
+      <div class="title-accent-block"></div>
+      <span class="logo-tag">Escuela de IA &middot; Sesion 1</span>
+      <h1>Fundamentos<br>de la <span class="accent">IA</span></h1>
+      <p class="subtitle">Conceptos esenciales, casos practicos y primeros pasos para usar inteligencia artificial en tu trabajo</p>
+    </div>
+
+    <!-- 2: BIENVENIDA -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <p style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; color: rgba(0,19,63,0.3);">Bienvenidos</p>
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem); letter-spacing: -2px;">Simple,<br>practica<br>y <span class="accent">aterrizada</span></h2>
+        <p class="page-desc">No necesitas base tecnica. Hoy vamos a entender que es la IA, como funciona y como empezar a usarla con criterio en el trabajo.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">01</span>
+      </div>
+    </div>
+
+    <!-- 3: AGENDA -->
+    <div class="slide page-slide">
+      <h2>Hoy<br><span class="accent">vamos a</span></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Entender que es la IA</strong>
+            <span>Sin tecnicismos, con ejemplos claros</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Ver como funciona un modelo de lenguaje</strong>
+            <span>La logica detras de ChatGPT, Claude y otros</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Explorar casos de uso por area</strong>
+            <span>Ventas, marketing, operaciones, servicio, direccion</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">04</div>
+          <div class="step-content">
+            <strong>Aprender a usarla bien desde hoy</strong>
+            <span>Un framework simple para escribir buenos prompts</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4: CHAT - ROMPER HIELO -->
+    <div class="slide page-slide">
+      <h2>Primera<br><span class="accent">pregunta</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Una palabra: que les genera escuchar <strong>inteligencia artificial</strong>?</p>
+        <div class="chat-options">Curiosidad, emocion, duda, miedo, oportunidad...</div>
+      </div>
+    </div>
+
+    <!-- 5: CHAT - YA USAS IA? -->
+    <div class="slide page-slide">
+      <h2>Diagnostico<br><span class="accent">rapido</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Escribe <strong style="color: var(--brand-green);">si</strong> si usas IA varias veces a la semana.<br>Escribe <strong style="color: var(--brand-red);">no</strong> si todavia no la usas.</p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCION 01: QUE ES LA IA -->
+    <!-- ========================================== -->
+
+    <!-- 6: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-blue); color: #fff;">
+      <span class="section-badge" style="background: rgba(255,255,255,0.15); color: #fff;">Modulo 1</span>
+      <h2>Que es<br>la <span style="color: var(--brand-teal);">IA</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.04);">01</span>
+    </div>
+
+    <!-- 7: LA IA NO ES MAGIA -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(3rem,7vw,6rem); letter-spacing: -2px;">La IA<br><span class="accent-red">no</span> es<br>magia</h2>
+        <p class="page-desc">No piensa como humano. No tiene conciencia. Pero si puede producir resultados muy utiles cuando se usa bien.</p>
+      </div>
+      <div class="split-right split-right-red">
+        <span class="big-letter">!</span>
+      </div>
+    </div>
+
+    <!-- 8: TRABAJA CON PATRONES -->
+    <div class="slide page-slide slide-dark" style="padding: 4rem 6rem;">
+      <h2>Trabaja<br>con <span style="color: var(--brand-teal);">patrones</span></h2>
+      <p class="page-desc">Aprende de enormes cantidades de texto, identifica relaciones y genera respuestas basadas en lo que aprendio.</p>
+      <div style="display:flex; gap:1.5rem; margin-top:1.5rem;">
+        <div style="flex:1; padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:16px;">
+          <strong style="color: var(--brand-teal);">No es</strong>
+          <p style="color:rgba(255,255,255,0.5); margin-top:0.4rem; font-size:0.85rem; line-height:1.5;">Conciencia, comprension humana, ni una base de datos con respuestas guardadas.</p>
+        </div>
+        <div style="flex:1; padding:1.5rem; background:rgba(255,255,255,0.05); border-radius:16px;">
+          <strong style="color: var(--brand-teal);">Si es</strong>
+          <p style="color:rgba(255,255,255,0.5); margin-top:0.4rem; font-size:0.85rem; line-height:1.5;">Un sistema que predice la siguiente palabra mas probable segun el contexto que le das.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9: TABLA COMPARATIVA -->
+    <div class="slide page-slide">
+      <h2>No es<br><span class="accent">lo mismo</span></h2>
+      <div class="table-container">
+        <table>
+          <tr>
+            <th>Tipo</th>
+            <th>Que hace</th>
+            <th>Ejemplo</th>
+          </tr>
+          <tr>
+            <td><strong>Software tradicional</strong></td>
+            <td>Sigue reglas exactas</td>
+            <td>Calculadora, Excel</td>
+          </tr>
+          <tr>
+            <td><strong>Automatizacion</strong></td>
+            <td>Ejecuta pasos definidos</td>
+            <td>Filtro de email, macros</td>
+          </tr>
+          <tr>
+            <td><strong>Inteligencia Artificial</strong></td>
+            <td>Interpreta y decide con patrones</td>
+            <td>Recomendaciones, deteccion</td>
+          </tr>
+          <tr style="background: rgba(0,71,233,0.05);">
+            <td><strong style="color: var(--brand-blue);">IA Generativa</strong></td>
+            <td>Crea contenido nuevo</td>
+            <td>ChatGPT, Claude, DALL-E</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- 10: IA GENERATIVA - DIAGRAMA -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem);">IA que<br><span class="accent">crea</span></h2>
+        <p class="page-desc">No busca informacion guardada. Genera una respuesta nueva cada vez.</p>
+        <div class="diagram">
+          <div class="diagram-box">
+            <strong>Tu instruccion</strong>
+            <small>Texto, pregunta, tarea</small>
+          </div>
+          <div class="diagram-arrow">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="diagram-box highlight">
+            <strong>Modelo de IA</strong>
+            <small>Interpreta y genera</small>
+          </div>
+          <div class="diagram-arrow">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="diagram-box">
+            <strong>Contenido nuevo</strong>
+            <small>Texto, imagen, codigo</small>
+          </div>
+        </div>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter">IA</span>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEMO 1: PROMPT MALO VS BUENO -->
+    <!-- ========================================== -->
+
+    <!-- 11: SECTION DIVIDER DEMO 1 -->
+    <div class="slide slide-section" style="background: var(--brand-blue-dark); color: #fff;">
+      <span class="section-badge" style="background: rgba(10,228,195,0.2); color: var(--brand-teal);">Demo en vivo</span>
+      <h2>Prompt<br><span style="color: var(--brand-teal);">malo</span> vs<br>bueno</h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">D1</span>
+    </div>
+
+    <!-- 12: PROMPT MALO -->
+    <div class="slide page-slide">
+      <h2>El prompt<br><span class="accent-red">malo</span></h2>
+      <div class="prompt-box bad" style="max-width: 600px;">
+        <div class="prompt-box-label">Prompt vago</div>
+        <p style="font-size: 1.1rem;">"Hazme una estrategia de marketing."</p>
+      </div>
+      <p class="page-desc" style="margin-top: 1rem;">Sin contexto, sin objetivo, sin formato. La IA tiene que adivinar.</p>
+    </div>
+
+    <!-- 13: PROMPT BUENO -->
+    <div class="slide page-slide">
+      <h2>El prompt<br><span class="accent-green">bueno</span></h2>
+      <div class="prompt-box good" style="max-width: 700px;">
+        <div class="prompt-box-label">Prompt con estructura</div>
+        <p>"Actua como consultor de marketing para una pequena empresa de servicios. Crea una estrategia simple de 30 dias para atraer clientes potenciales, usando redes sociales y WhatsApp. Incluye acciones semanales, tono cercano y metricas basicas."</p>
+      </div>
+    </div>
+
+    <!-- 14: QUE HIZO LA DIFERENCIA -->
+    <div class="slide page-slide">
+      <h2>Que hizo la<br><span class="accent">diferencia</span></h2>
+      <div class="framework-grid">
+        <div class="framework-card">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <h3>Contexto</h3>
+          <p>Quien eres o para que</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-green);">
+          <div class="fw-icon" style="background: rgba(29,185,84,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-green)" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </div>
+          <h3>Claridad</h3>
+          <p>Que quieres exactamente</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-orange);">
+          <div class="fw-icon" style="background: rgba(255,150,0,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l2 2 4-4"/></svg>
+          </div>
+          <h3>Objetivo</h3>
+          <p>Para que lo necesitas</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-teal);">
+          <div class="fw-icon" style="background: rgba(10,228,195,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-teal)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3>Formato</h3>
+          <p>Como quieres la respuesta</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15: CHAT - QUE HIZO LA DIFERENCIA -->
+    <div class="slide page-slide">
+      <h2>Tu<br><span class="accent">opinion</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que creen que hizo la diferencia?</p>
+        <div class="chat-options">contexto, claridad, detalle, objetivo...</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCION 02: COMO FUNCIONA UN LLM -->
+    <!-- ========================================== -->
+
+    <!-- 16: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-teal); color: var(--brand-blue-dark);">
+      <span class="section-badge" style="background: rgba(0,19,63,0.1); color: var(--brand-blue-dark);">Modulo 2</span>
+      <h2>Como<br><span style="color: var(--brand-blue);">funciona</span></h2>
+      <span class="section-bg-num" style="color: rgba(0,19,63,0.04);">02</span>
+    </div>
+
+    <!-- 17: 4 IDEAS -->
+    <div class="slide page-slide">
+      <h2>4 ideas<br><span class="accent">simples</span></h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <strong>Recibe una instruccion</strong>
+            <span>Tu prompt, tu pregunta, tu tarea</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <strong>Usa el contexto para interpretar</strong>
+            <span>Analiza las palabras, el orden y la intencion</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <strong>Genera una respuesta probable y util</strong>
+            <span>No busca "la verdad", busca la respuesta mas coherente</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num" style="color: var(--brand-red);">04</div>
+          <div class="step-content">
+            <strong>Puede equivocarse</strong>
+            <span>Y cuando lo hace, suena muy convincente</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18: ANALOGIA -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem);">No es una<br>persona<br><span class="accent">pensando</span></h2>
+        <p class="page-desc">Es mas parecido a un sistema muy avanzado de <strong>prediccion del lenguaje</strong>.</p>
+        <p class="page-desc">No busca "la verdad". Busca producir la respuesta mas probable segun lo que entendio del mensaje.</p>
+      </div>
+      <div class="split-right split-right-dark">
+        <span class="big-letter">?</span>
+      </div>
+    </div>
+
+    <!-- 19: QUE SI Y QUE NO -->
+    <div class="slide page-slide">
+      <h2>Que <span class="accent-green">si</span> puede<br>y que <span class="accent-red">no</span></h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; max-width: 800px;">
+        <div class="paper-card green-border">
+          <h3 style="color: var(--brand-green);">Si puede</h3>
+          <ul>
+            <li>Redactar y resumir textos</li>
+            <li>Organizar y estructurar informacion</li>
+            <li>Traducir y adaptar tono</li>
+            <li>Generar ideas y opciones</li>
+            <li>Analizar datos y patrones</li>
+          </ul>
+        </div>
+        <div class="paper-card red-border">
+          <h3 style="color: var(--brand-red);">No puede</h3>
+          <ul>
+            <li>Garantizar que todo sea correcto</li>
+            <li>Entender emociones realmente</li>
+            <li>Acceder a datos en tiempo real*</li>
+            <li>Reemplazar juicio humano</li>
+            <li>Aprender de tu conversacion anterior</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 20: CHAT -->
+    <div class="slide page-slide">
+      <h2>Que les<br><span class="accent">sorprende</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que les parece mas sorprendente?</p>
+        <div class="chat-options">Que redacte, que resuma, que analice, o que responda tan rapido?</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCION 03: CASOS DE USO -->
+    <!-- ========================================== -->
+
+    <!-- 21: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-orange); color: #fff;">
+      <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">Modulo 3</span>
+      <h2>Casos<br>de <span style="color: var(--brand-blue-dark);">uso</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.08);">03</span>
+    </div>
+
+    <!-- 22: GRID DE CASOS -->
+    <div class="slide page-slide">
+      <h2>La IA aplicada<br>a tu <span class="accent">trabajo</span></h2>
+      <div class="cards-grid">
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Ventas</h3>
+          <p>Seguimiento de leads, propuestas personalizadas, manejo de objeciones</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Servicio</h3>
+          <p>Respuestas rapidas, clasificacion de consultas, tono empatico</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Marketing</h3>
+          <p>Ideas de campanas, copys, contenido para redes sociales</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Operaciones</h3>
+          <p>SOPs, checklists, documentacion de procesos</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Admin</h3>
+          <p>Correos, resumenes, organizacion de informacion</p>
+        </div>
+        <div class="card">
+          <span class="card-type">Area</span>
+          <h3>Direccion</h3>
+          <p>Sintesis de reportes, analisis de escenarios, toma de decisiones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 23: CHAT - AREA -->
+    <div class="slide page-slide">
+      <h2>Tu<br><span class="accent">area</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que area les suena mas cercana?</p>
+        <div class="chat-options">ventas, servicio, marketing, operaciones, administracion, direccion</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEMO 2: RESUMIR Y TRANSFORMAR -->
+    <!-- ========================================== -->
+
+    <!-- 24: SECTION DIVIDER DEMO 2 -->
+    <div class="slide slide-section" style="background: var(--brand-blue-dark); color: #fff;">
+      <span class="section-badge" style="background: rgba(10,228,195,0.2); color: var(--brand-teal);">Demo en vivo</span>
+      <h2>Resumir y<br><span style="color: var(--brand-teal);">transformar</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">D2</span>
+    </div>
+
+    <!-- 25: DIAGRAMA DEMO 2 -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem);">Un texto,<br><span class="accent">tres</span><br>resultados</h2>
+        <div class="diagram">
+          <div class="diagram-box">
+            <strong>Texto largo</strong>
+            <small>Nota de reunion</small>
+          </div>
+          <div class="diagram-arrow">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="diagram-box highlight">
+            <strong>Resumen + Tareas + Correo</strong>
+            <small>Todo estructurado</small>
+          </div>
+        </div>
+        <div class="prompt-box" style="margin-top: 1.5rem;">
+          <div class="prompt-box-label">Prompt sugerido</div>
+          <p>"Resume este texto en 5 puntos clave, luego extrae tareas pendientes y finalmente conviertelo en un correo breve y profesional."</p>
+        </div>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">D2</span>
+      </div>
+    </div>
+
+    <!-- 26: FRASE CLAVE -->
+    <div class="slide page-slide slide-blue" style="padding: 4rem 6rem;">
+      <h2 style="font-size: clamp(2.5rem,6vw,4.5rem); line-height: 0.9;">El mayor valor<br>de la IA</h2>
+      <div class="quote-block" style="border-left-color: var(--brand-teal); margin-top: 2rem;">
+        <p style="color: rgba(255,255,255,0.7);">Muchas veces no esta en hacer algo <strong style="color: #fff;">imposible</strong>.<br><br>Esta en hacer mas rapido algo que <strong style="color: #fff;">ya hacemos todos los dias</strong>.</p>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- PAUSA ACTIVA -->
+    <!-- ========================================== -->
+
+    <!-- 27: BREAK -->
+    <div class="slide slide-break">
+      <h2>Pausa<br><span style="color: var(--brand-teal);">rapida</span></h2>
+      <p class="page-desc" style="margin-top: 1rem;">Recarguemos energia</p>
+    </div>
+
+    <!-- 28: CHAT - TAREA REPETITIVA -->
+    <div class="slide page-slide">
+      <h2>Una tarea<br><span class="accent">repetitiva</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Escriban <strong>una tarea repetitiva</strong> que hagan en su semana. Solo una.</p>
+        <div class="chat-options">Redactar correos, responder clientes, organizar ideas, reportar avances, resumir reuniones...</div>
+      </div>
+    </div>
+
+    <!-- 29: CHAT - QUE TE QUITA TIEMPO -->
+    <div class="slide page-slide">
+      <h2>Que te quita<br>mas <span class="accent">tiempo</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que les quita mas tiempo hoy?</p>
+        <div class="chat-options">escribir, resumir, responder, organizar o analizar</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCION 04: RIESGOS Y LIMITES -->
+    <!-- ========================================== -->
+
+    <!-- 30: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-red); color: #fff;">
+      <span class="section-badge" style="background: rgba(255,255,255,0.2); color: #fff;">Modulo 4</span>
+      <h2>Riesgos<br>y <span style="color: var(--brand-blue-dark);">limites</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.06);">04</span>
+    </div>
+
+    <!-- 31: 5 RIESGOS -->
+    <div class="slide page-slide">
+      <h2>Lo que debes<br><span class="accent-red">saber</span></h2>
+      <div class="steps">
+        <div class="step" style="border-left: 3px solid var(--brand-red);">
+          <div class="step-num" style="color: var(--brand-red);">01</div>
+          <div class="step-content">
+            <strong>La IA puede inventar informacion</strong>
+            <span>Y hacerlo sonar completamente convincente</span>
+          </div>
+        </div>
+        <div class="step" style="border-left: 3px solid var(--brand-red);">
+          <div class="step-num" style="color: var(--brand-red);">02</div>
+          <div class="step-content">
+            <strong>Puede sonar bien y estar mal</strong>
+            <span>La fluencia no garantiza precision</span>
+          </div>
+        </div>
+        <div class="step" style="border-left: 3px solid var(--brand-red);">
+          <div class="step-num" style="color: var(--brand-red);">03</div>
+          <div class="step-content">
+            <strong>No entiende el contexto humano completo</strong>
+            <span>Le falta sentido comun y empatia real</span>
+          </div>
+        </div>
+        <div class="step" style="border-left: 3px solid var(--brand-red);">
+          <div class="step-num" style="color: var(--brand-red);">04</div>
+          <div class="step-content">
+            <strong>Hay que cuidar datos sensibles</strong>
+            <span>No compartir informacion confidencial sin precauciones</span>
+          </div>
+        </div>
+        <div class="step" style="border-left: 3px solid var(--brand-red);">
+          <div class="step-num" style="color: var(--brand-red);">05</div>
+          <div class="step-content">
+            <strong>No reemplaza el criterio humano</strong>
+            <span>Es una herramienta, no un sustituto</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 32: FRASE RIESGOS -->
+    <div class="slide page-slide slide-dark" style="padding: 4rem 6rem;">
+      <h2 style="font-size: clamp(2.5rem,6vw,4rem);">Porque<br>suena <span style="color: var(--brand-teal);">bien</span>,<br>no significa que<br>este <span style="color: var(--brand-red);">correcto</span></h2>
+      <p class="page-desc" style="margin-top: 1.5rem;">La IA puede ayudarnos muchisimo, pero no reemplaza juicio, revision ni responsabilidad.</p>
+    </div>
+
+    <!-- 33: CHAT - PREOCUPACIONES -->
+    <div class="slide page-slide">
+      <h2>Tu mayor<br><span class="accent">preocupacion</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que les preocuparia mas al usar IA en el trabajo?</p>
+        <div class="chat-options">privacidad, errores, dependencia, calidad, reemplazo</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEMO 3: ERRORES Y LIMITES -->
+    <!-- ========================================== -->
+
+    <!-- 34: SECTION DIVIDER DEMO 3 -->
+    <div class="slide slide-section" style="background: var(--brand-blue-dark); color: #fff;">
+      <span class="section-badge" style="background: rgba(233,59,59,0.2); color: var(--brand-red);">Demo en vivo</span>
+      <h2>Limites en<br><span style="color: var(--brand-red);">accion</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">D3</span>
+    </div>
+
+    <!-- 35: APRENDIZAJE DEMO 3 -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem);">No solo<br>depende<br>del <span class="accent">modelo</span></h2>
+        <p class="page-desc">Depende muchisimo de la <strong>calidad de la instruccion</strong> y del <strong>contexto</strong> que le damos.</p>
+        <div class="quote-block" style="margin-top: 1rem;">
+          <p>Una mala instruccion produce un mal resultado, sin importar que tan avanzado sea el modelo.</p>
+        </div>
+      </div>
+      <div class="split-right split-right-red">
+        <span class="big-letter">D3</span>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- SECCION 05: COMO EMPEZAR -->
+    <!-- ========================================== -->
+
+    <!-- 36: SECTION DIVIDER -->
+    <div class="slide slide-section" style="background: var(--brand-blue); color: #fff;">
+      <span class="section-badge" style="background: rgba(255,255,255,0.15); color: #fff;">Modulo 5</span>
+      <h2>Como<br><span style="color: var(--brand-teal);">empezar</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.04);">05</span>
+    </div>
+
+    <!-- 37: FRAMEWORK -->
+    <div class="slide page-slide">
+      <h2>La formula<br>del buen <span class="accent">prompt</span></h2>
+      <div class="framework-grid">
+        <div class="framework-card" style="border-top-color: var(--brand-blue);">
+          <div class="fw-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-blue)" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          </div>
+          <h3 style="color: var(--brand-blue);">Contexto</h3>
+          <p>Quien eres o para que lo necesitas</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-green);">
+          <div class="fw-icon" style="background: rgba(29,185,84,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-green)" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          </div>
+          <h3 style="color: var(--brand-green);">Tarea</h3>
+          <p>Que quieres que haga exactamente</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-orange);">
+          <div class="fw-icon" style="background: rgba(255,150,0,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-orange)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+          </div>
+          <h3 style="color: var(--brand-orange);">Formato</h3>
+          <p>Como quieres la respuesta</p>
+        </div>
+        <div class="framework-card" style="border-top-color: var(--brand-teal);">
+          <div class="fw-icon" style="background: rgba(10,228,195,0.08);">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-teal)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 style="color: var(--brand-teal);">Criterio</h3>
+          <p>Tono, longitud, restricciones</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 38: EJEMPLO FRAMEWORK -->
+    <div class="slide page-slide slide-dark" style="padding: 4rem 6rem;">
+      <h2>En la<br><span style="color: var(--brand-teal);">practica</span></h2>
+      <div class="prompt-box" style="max-width: 700px;">
+        <div class="prompt-box-label">Ejemplo completo</div>
+        <p>
+          <span class="prompt-tag">contexto</span> Actua como asistente administrativo.<br><br>
+          <span class="prompt-tag">tarea</span> Necesito redactar un correo para reagendar una reunion con un cliente.<br><br>
+          <span class="prompt-tag">formato</span> Propon tres versiones: formal, cercana y neutra.<br><br>
+          <span class="prompt-tag" style="background: var(--brand-teal); color: var(--brand-blue-dark);">criterio</span> Hazlo breve, amable y profesional.
+        </p>
+      </div>
+    </div>
+
+    <!-- 39: CHAT - QUE FALTA -->
+    <div class="slide page-slide">
+      <h2>Que falta<br><span class="accent">mas</span></h2>
+      <div class="chat-box">
+        <div class="chat-label">Escriban en el chat</div>
+        <p>Que creen que falta mas en los prompts de la mayoria de personas?</p>
+        <div class="chat-options">contexto, claridad o formato</div>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- DEMO 4: HERRAMIENTA PROPIA -->
+    <!-- ========================================== -->
+
+    <!-- 40: SECTION DIVIDER DEMO 4 -->
+    <div class="slide slide-section" style="background: var(--brand-blue-dark); color: #fff;">
+      <span class="section-badge" style="background: rgba(10,228,195,0.2); color: var(--brand-teal);">Demo final</span>
+      <h2>Idea de<br>IA para<br><span style="color: var(--brand-teal);">tu trabajo</span></h2>
+      <span class="section-bg-num" style="color: rgba(255,255,255,0.03);">D4</span>
+    </div>
+
+    <!-- 41: HERRAMIENTA -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(2.5rem,5vw,4.5rem);">Tu caso<br>de uso<br><span class="accent">personalizado</span></h2>
+        <div class="diagram">
+          <div class="diagram-box" style="min-width: 160px;">
+            <strong>Tu escribes</strong>
+            <small>A que te dedicas<br>Que tarea te quita tiempo</small>
+          </div>
+          <div class="diagram-arrow">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </div>
+          <div class="diagram-box highlight" style="min-width: 180px;">
+            <strong>Recibes</strong>
+            <small>Caso de uso<br>Prompt sugerido<br>Idea de automatizacion</small>
+          </div>
+        </div>
+        <p class="page-desc" style="margin-top: 1.5rem;">No quiero que esto se quede en teoria.</p>
+      </div>
+      <div class="split-right split-right-teal">
+        <span class="big-letter">D4</span>
+      </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- CIERRE -->
+    <!-- ========================================== -->
+
+    <!-- 42: MENSAJE CIERRE -->
+    <div class="slide page-slide slide-blue" style="padding: 4rem 6rem;">
+      <h2 style="font-size: clamp(3rem,7vw,5.5rem); line-height: 0.85;">La IA no<br>reemplaza el<br><span style="color: var(--brand-teal);">criterio humano</span></h2>
+      <p class="page-desc" style="margin-top: 2rem; color: rgba(255,255,255,0.6);">Pero si puede convertirse en una herramienta muy poderosa para ahorrar tiempo, organizar mejor el trabajo y aumentar nuestra capacidad.</p>
+    </div>
+
+    <!-- 43: PRIMER PASO -->
+    <div class="slide slide-split">
+      <div class="split-left">
+        <h2 style="font-size: clamp(3rem,7vw,6rem); letter-spacing: -2px;">El primer<br><span class="accent">paso</span></h2>
+        <p class="page-desc" style="font-size: 1.15rem;">No es dominar todas las herramientas.<br><br>Es <strong style="color: var(--brand-blue);">identificar tareas reales</strong> donde la IA pueda aportar valor.</p>
+      </div>
+      <div class="split-right split-right-blue">
+        <span class="big-letter">01</span>
+      </div>
+    </div>
+
+    <!-- 44: PROXIMA SESION -->
+    <div class="slide page-slide">
+      <h2>Proxima<br><span class="accent">sesion</span></h2>
+      <p class="page-desc" style="font-size: 1.1rem;">Vamos a pasar de entender que es, a ver con mas claridad <strong>como aplicarla mejor y con mas estructura</strong>.</p>
+    </div>
+
+    <!-- 45: CIERRE -->
+    <div class="slide slide-closing">
+      <div class="closing-accent-block"></div>
+      <h2><span class="accent">Gracias</span></h2>
+      <p class="closing-sub">Preguntas?</p>
+    </div>
+
+  </div>
+
+  <!-- NAV -->
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="prev()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="nav-btn" onclick="next()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const bar = document.getElementById('progressBar');
+    const counter = document.getElementById('slideCounter');
+    let cur = 0;
+
+    function go(i) {
+      if (i < 0 || i >= slides.length || i === cur) return;
+      slides[cur].classList.remove('active');
+      cur = i;
+      slides[cur].classList.add('active');
+      update();
+    }
+
+    function update() {
+      const pct = ((cur + 1) / slides.length) * 100;
+      bar.style.width = pct + '%';
+      counter.textContent = `${cur + 1} / ${slides.length}`;
+      history.replaceState(null, null, `#${cur}`);
+    }
+
+    function next() { go(cur + 1); }
+    function prev() { go(cur - 1); }
+
+    document.addEventListener('keydown', e => {
+      switch(e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home': e.preventDefault(); go(0); break;
+        case 'End': e.preventDefault(); go(slides.length - 1); break;
+        case 'f': e.preventDefault();
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+          break;
+      }
+    });
+
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      const d = tx - e.changedTouches[0].screenX;
+      if (Math.abs(d) > 50) d > 0 ? next() : prev();
+    });
+
+    // Load from hash
+    const h = parseInt(location.hash.slice(1));
+    if (!isNaN(h) && h >= 0 && h < slides.length) {
+      slides[0].classList.remove('active');
+      cur = h;
+      slides[cur].classList.add('active');
+    }
+    update();
+  </script>
+</body>
+</html>
