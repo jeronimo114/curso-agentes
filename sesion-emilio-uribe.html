@@ -127,9 +127,8 @@
     }
     .nav-btn-prev{background:rgba(255,255,255,0.08);color:var(--white)}
     .nav-btn-prev:hover{background:rgba(255,255,255,0.12)}
-    .nav-btn-next{background:var(--accent);color:#fff}
+    .nav-btn-next{background:var(--accent);color:#fff;transition:all 0.25s}
     .nav-btn-next:hover{background:#1648C4}
-    .nav-btn-next:disabled{opacity:0.3;cursor:not-allowed}
     .nav-btn-submit{background:var(--success);color:#fff}
     .nav-btn-submit:hover{background:#059669}
 
@@ -383,7 +382,7 @@
 
     // State
     const questions = document.querySelectorAll('.question');
-    const totalQuestions = questions.length - 1; // exclude thank you
+    const totalQuestions = questions.length - 1;
     let currentQ = 0;
     const answers = {};
 
@@ -393,6 +392,21 @@
     const progressFill = document.getElementById('progressFill');
     const stepCount = document.getElementById('stepCount');
 
+    // Check if current question has an answer
+    function hasAnswer() {
+      const q = questions[currentQ];
+      // Text input
+      const input = q.querySelector('.text-input');
+      if (input && input.value.trim()) return true;
+      // Single select option
+      if (q.querySelector('.option-btn.selected')) return true;
+      // Multi select option
+      if (q.querySelector('.multi-opt.selected')) return true;
+      // Slider (always has a value)
+      if (q.querySelector('.scale-slider')) return true;
+      return false;
+    }
+
     // Update UI
     function updateUI() {
       questions.forEach((q, i) => {
@@ -401,7 +415,6 @@
         else if (i < currentQ) q.classList.add('exit-up');
       });
 
-      const isLast = currentQ === questions.length - 1;
       const isDone = questions[currentQ].dataset.q === 'done';
 
       btnPrev.style.display = currentQ > 0 ? 'inline-flex' : 'none';
@@ -419,29 +432,21 @@
       progressFill.style.width = `${(qNum / totalQuestions) * 100}%`;
       stepCount.textContent = `${qNum} / ${totalQuestions}`;
 
-      validateCurrent();
+      // Update button visual state
+      refreshButton();
     }
 
-    // Validate current question
-    function validateCurrent() {
-      const q = questions[currentQ];
-      const field = q.dataset.field;
-      if (!field) return;
-
-      let isValid = false;
-      const input = q.querySelector('.text-input');
-      if (input && input.value.trim()) isValid = true;
-
-      const selected = q.querySelector('.option-btn.selected, .multi-opt.selected');
-      if (selected) isValid = true;
-
-      const slider = q.querySelector('.scale-slider');
-      if (slider) isValid = true; // sliders always have value
-
-      btnNext.disabled = !isValid;
-      if (btnNext.textContent.includes('Enviar')) {
-        btnNext.classList.toggle('nav-btn-submit', isValid);
-        btnNext.disabled = !isValid;
+    function refreshButton() {
+      const valid = hasAnswer();
+      const isLast = currentQ === questions.length - 2;
+      if (isLast) {
+        btnNext.classList.add('nav-btn-submit');
+        btnNext.style.opacity = valid ? '1' : '0.3';
+        btnNext.style.pointerEvents = valid ? 'auto' : 'none';
+      } else {
+        btnNext.classList.remove('nav-btn-submit');
+        btnNext.style.opacity = valid ? '1' : '0.3';
+        btnNext.style.pointerEvents = valid ? 'auto' : 'none';
       }
     }
 
@@ -477,7 +482,7 @@
 
     // Navigate
     function goNext() {
-      if (btnNext.disabled) return;
+      if (!hasAnswer()) return;
       collectAnswer();
 
       const isLast = currentQ === questions.length - 2;
@@ -500,7 +505,7 @@
     // Submit to n8n webhook
     async function submitForm() {
       btnNext.textContent = 'Enviando...';
-      btnNext.disabled = true;
+      btnNext.style.pointerEvents = 'none';
 
       try {
         const payload = {
@@ -522,7 +527,7 @@
       } catch (err) {
         console.error('Error submitting form:', err);
         btnNext.textContent = 'Reintentar';
-        btnNext.disabled = false;
+        btnNext.style.pointerEvents = 'auto';
         // Still show thank you even if webhook fails
         currentQ = questions.length - 1;
         updateUI();
@@ -543,8 +548,9 @@
       }
     });
 
-    // Text input auto-advance
+    // Text input real-time validation
     document.querySelectorAll('.text-input').forEach(input => {
+      input.addEventListener('input', () => refreshButton());
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
@@ -559,7 +565,7 @@
         const parent = btn.closest('.options');
         parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
-        validateCurrent();
+        refreshButton();
         // Auto-advance after short delay
         setTimeout(goNext, 400);
       });
@@ -569,7 +575,7 @@
     document.querySelectorAll('.multi-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         btn.classList.toggle('selected');
-        validateCurrent();
+        refreshButton();
       });
     });
 
@@ -579,7 +585,7 @@
     if (slider) {
       slider.addEventListener('input', () => {
         scaleValue.textContent = slider.value;
-        validateCurrent();
+        refreshButton();
       });
     }
 
