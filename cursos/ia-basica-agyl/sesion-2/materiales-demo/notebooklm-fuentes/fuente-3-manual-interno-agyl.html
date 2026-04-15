@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Manual interno Agyl — Procedimiento de gestión de incidentes v3.2</title>
+<style>
+  @page { size: Letter; margin: 2.2cm 2cm; }
+  body { font-family: "Helvetica Neue", Arial, sans-serif; color: #1a1a1a; font-size: 11pt; line-height: 1.55; max-width: 780px; margin: 0 auto; padding: 2rem; }
+  .hdr { border-bottom: 3px solid #048dad; padding-bottom: 0.8rem; margin-bottom: 1.4rem; }
+  .hdr .ent { font-size: 9pt; letter-spacing: 2px; text-transform: uppercase; color: #036078; }
+  .hdr h1 { font-size: 16pt; margin: 0.4rem 0 0.2rem; color: #0B0B0F; }
+  .hdr .meta { font-size: 9.5pt; color: #555; }
+  h2 { font-size: 12pt; color: #036078; border-bottom: 1px solid #ccd; padding-bottom: 0.2rem; margin-top: 1.6rem; }
+  h3 { font-size: 11pt; margin-top: 1rem; }
+  ol, ul { margin-top: 0.3rem; }
+  .nota { background: #eef7fa; border-left: 3px solid #048dad; padding: 0.6rem 0.9rem; font-size: 10pt; margin: 0.8rem 0; }
+  .alerta { background: #fdf5e1; border-left: 3px solid #ccad00; padding: 0.6rem 0.9rem; font-size: 10pt; margin: 0.8rem 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 9.5pt; margin-top: 0.6rem; }
+  th, td { border: 1px solid #bbb; padding: 0.35rem 0.5rem; text-align: left; }
+  th { background: #e8f2f6; }
+  .foot { margin-top: 2.5rem; font-size: 9pt; color: #666; border-top: 1px solid #ccc; padding-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="ent">Agyl · Dirección de Cumplimiento y Riesgo Operativo</div>
+  <h1>Procedimiento interno de gestión y reporte de incidentes — versión 3.2</h1>
+  <div class="meta">Aprobado por el Comité de Riesgos · Vigente desde: 1 de marzo de 2026 · Próxima revisión: 1 de marzo de 2027 · Código PRI-CUM-003</div>
+</div>
+
+<p><em>Documento ficticio creado con fines pedagógicos para la sesión de IA Básica · Agyl — 2026.</em></p>
+
+<h2>1. Propósito</h2>
+<p>Unificar la forma en que las diferentes unidades operativas de Agyl detectan, documentan, escalan y reportan incidentes operativos y de privacidad, asegurando el cumplimiento de las obligaciones regulatorias vigentes y la mejora continua del Sistema Integrado de Gestión.</p>
+
+<h2>2. Marco normativo de referencia</h2>
+<ul>
+  <li>Circular Externa SFC 012 de 2026 — Reporte mensual de incidentes operativos.</li>
+  <li>Circular Externa SFC 019 de 2026 — Protección de datos en canales digitales.</li>
+  <li>Ley 1581 de 2012 y decretos reglamentarios sobre protección de datos personales.</li>
+  <li>Política interna de Agyl PCI-001 — Clasificación de información.</li>
+</ul>
+
+<h2>3. Clasificación interna de incidentes</h2>
+<p>Agyl utiliza una clasificación interna que mapea directamente a la clasificación regulatoria, pero es <strong>más estricta</strong> en los umbrales para forzar reporte temprano:</p>
+
+<table>
+  <tr><th>Nivel interno</th><th>Impacto económico</th><th>Usuarios afectados</th><th>Equivalente regulatorio (Circ. 012)</th></tr>
+  <tr><td>P4 · Menor</td><td>&lt; 30 SMLMV</td><td>&lt; 50</td><td>Bajo</td></tr>
+  <tr><td>P3 · Moderado</td><td>30–300 SMLMV</td><td>50–300</td><td>Bajo / Medio</td></tr>
+  <tr><td>P2 · Alto</td><td>300–1.500 SMLMV</td><td>300–1.200</td><td>Medio / Alto</td></tr>
+  <tr><td>P1 · Severo</td><td>&gt; 1.500 SMLMV</td><td>&gt; 1.200</td><td>Alto / Crítico</td></tr>
+</table>
+
+<div class="alerta"><strong>Diferencia relevante.</strong> Los umbrales internos de Agyl son aproximadamente 30-40% más bajos que los umbrales regulatorios con el fin de <em>forzar escalamiento temprano</em>. Un incidente P1 interno puede clasificarse como "Alto" y no "Crítico" para la SFC.</div>
+
+<h2>4. Flujo operativo</h2>
+<ol>
+  <li><strong>Detección:</strong> toda persona de Agyl que identifique un incidente debe reportarlo al jefe directo en menos de 30 minutos y registrar en la plataforma OpsTrack.</li>
+  <li><strong>Clasificación inicial:</strong> el jefe directo clasifica en P1-P4 en menos de 2 horas desde la detección.</li>
+  <li><strong>Activación del comité:</strong> incidentes P1 y P2 activan el Comité de Crisis en menos de 4 horas.</li>
+  <li><strong>Contención:</strong> acciones correctivas aplicadas en las primeras 24 horas.</li>
+  <li><strong>Análisis de causa raíz:</strong> se completa en no más de 5 días hábiles.</li>
+  <li><strong>Reporte regulatorio:</strong> si aplica, se sigue la ruta del numeral 5.</li>
+  <li><strong>Cierre y lecciones aprendidas:</strong> en no más de 30 días calendario desde la detección.</li>
+</ol>
+
+<h2>5. Rutas de reporte externo</h2>
+
+<h3>5.1. Reporte a SFC por Circular 012</h3>
+<p>Todos los incidentes P1, P2 y P3 se consolidan en el reporte mensual SEDI. Los incidentes P1 (equivalentes a Crítico regulatorio) se reportan adicionalmente como incidente extraordinario dentro de las <strong>24 horas</strong> siguientes al cierre, conforme al numeral 4.1 de la Circular 012.</p>
+
+<h3>5.2. Reporte a SFC por Circular 019 (privacidad)</h3>
+<p>Cuando el incidente comprometa datos personales de consumidores financieros, adicional al reporte operativo se activa el protocolo de privacidad con los siguientes plazos internos, que son <strong>más estrictos</strong> que los regulatorios:</p>
+<ul>
+  <li>Notificación a SFC: <strong>48 horas</strong> (regulatorio: 72 horas).</li>
+  <li>Notificación a titulares: <strong>7 días calendario</strong> (regulatorio: 10 días).</li>
+  <li>Informe consolidado final: <strong>25 días calendario</strong> (regulatorio: 30 días).</li>
+</ul>
+
+<div class="nota"><strong>Nota 5.3.</strong> Los plazos internos buscan dejar margen de revisión por el área de Cumplimiento antes del envío formal al regulador. Nunca reportar al regulador sin visto bueno escrito de la Dirección de Cumplimiento.</div>
+
+<h2>6. Responsables</h2>
+<ul>
+  <li><strong>Jefe directo:</strong> detección, clasificación inicial, contención de primer nivel.</li>
+  <li><strong>Director de Cumplimiento:</strong> validación de clasificación, visto bueno para reportes externos, seguimiento de lecciones aprendidas.</li>
+  <li><strong>Oficial de Protección de Datos:</strong> activación de protocolo de privacidad cuando aplique.</li>
+  <li><strong>Comité de Crisis:</strong> decisiones sobre P1 y P2, comunicación externa, autorización de comunicaciones a medios.</li>
+</ul>
+
+<h2>7. Conservación de evidencias</h2>
+<p>Las evidencias documentales se conservan en OpsTrack por <strong>siete (7) años</strong>, excediendo el mínimo regulatorio de cinco años establecido en el numeral 7 de la Circular 012 de 2026. Esta decisión responde a lineamientos del Comité de Riesgos para cubrir posibles reclamaciones civiles con periodos de prescripción más largos.</p>
+
+<h2>8. Indicadores de desempeño</h2>
+<ol>
+  <li>% de incidentes detectados en menos de 30 minutos (meta: 85%).</li>
+  <li>Tiempo promedio de contención P1 (meta: &lt; 4 horas).</li>
+  <li>% de cumplimiento de plazos internos de reporte (meta: 100%).</li>
+  <li>Tasa de recurrencia a 90 días (meta: &lt; 5%).</li>
+  <li>% de lecciones aprendidas implementadas a tiempo (meta: 90%).</li>
+</ol>
+
+<h2>9. Revisión y actualización</h2>
+<p>Este procedimiento se revisa anualmente o de manera extraordinaria cuando cambie el marco regulatorio. La próxima revisión ordinaria está programada para el <strong>1 de marzo de 2027</strong>.</p>
+
+<div class="foot">Agyl · Dirección de Cumplimiento y Riesgo Operativo · Documento académico con contenido ficticio para el curso IA Básica.</div>
+
+</body>
+</html>
