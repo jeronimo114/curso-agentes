@@ -169,12 +169,12 @@
     .chip-title.gold { background: var(--agyl-gold); color: #fff; }
 
     .slide-page h2 {
-      font-size: clamp(2.4rem, 5vw, 4rem);
+      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
       letter-spacing: -1px; color: var(--agyl-teal-deep);
       max-width: 900px;
     }
     .slide-page .desc {
-      font-size: 1.3rem; color: var(--agyl-muted);
+      font-size: 1.5rem; color: var(--agyl-muted);
       max-width: 850px; line-height: 1.65;
     }
     .slide-page .desc strong { color: var(--agyl-teal-deep); font-weight: 600; }
@@ -183,7 +183,7 @@
     .agyl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; max-width: 800px; }
     .agyl-bullets li {
       position: relative; padding-left: 2rem;
-      font-size: 1.2rem; color: var(--agyl-ink); line-height: 1.55;
+      font-size: 1.35rem; color: var(--agyl-ink); line-height: 1.55;
     }
     .agyl-bullets li::before {
       content: ""; position: absolute; left: 0; top: 0.45rem;
@@ -209,9 +209,9 @@
       text-transform: uppercase; color: var(--agyl-gold);
     }
     .card h3 {
-      font-size: 1.6rem; color: var(--agyl-teal-deep); letter-spacing: -0.5px;
+      font-size: 1.7rem; color: var(--agyl-teal-deep); letter-spacing: -0.5px;
     }
-    .card p { font-size: 1.05rem; color: var(--agyl-muted); line-height: 1.5; }
+    .card p { font-size: 1.15rem; color: var(--agyl-muted); line-height: 1.5; }
 
     /* ===== PROMPT BOX ===== */
     .prompt-box {
@@ -254,7 +254,7 @@
     }
     .split-pane.teal-bg .pane-tag { color: var(--agyl-gold-soft); }
     .split-pane h3 {
-      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-size: clamp(2.2rem, 4vw, 3.2rem);
       color: var(--agyl-teal-deep); letter-spacing: -0.5px;
     }
     .split-pane .prompt-box { max-width: 100%; }
@@ -768,6 +768,164 @@
       <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
     </section>
 
+    <!-- SLIDE 12b — EL CONTEXTO (lo más importante) -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag gold">La pieza más importante</div>
+      <h2><span class="gold">Contexto.</span><br>Lo más importante para el modelo.</h2>
+      <p class="statement-sub">Si todo lo que le das al modelo es un verbo y un objeto — "resume esto" — obtendrás lo que obtiene cualquier otro. El contexto es lo que transforma la respuesta de <strong>genérica a útil.</strong></p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 12c — Por qué el contexto es fundamental -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">¿Por qué el contexto es la pieza clave?</div></div>
+      <h2>3 razones por las que el contexto lo cambia todo</h2>
+      <ul class="agyl-bullets" style="margin-top: 1.2rem;">
+        <li><strong>El modelo no adivina tu realidad.</strong> No conoce tu empresa, tu audiencia, tu historia ni tus restricciones. Sin contexto, responde con el promedio estadístico de todo internet — que no sirve para tu caso.</li>
+        <li><strong>El contexto elimina ambigüedad.</strong> "Escríbeme un correo" → ¿a quién?, ¿con qué tono?, ¿cuál es el objetivo?, ¿qué pasó antes? Cada respuesta que no das, la inventa el modelo.</li>
+        <li><strong>El contexto convierte la IA en experta de tu mundo.</strong> Cuando le das antecedentes — quién recibe, qué se intentó antes, qué es no negociable — el modelo razona sobre <em>tu</em> problema, no sobre un problema genérico.</li>
+      </ul>
+      <div class="cards-grid cards-grid-3" style="margin-top: 1.5rem;">
+        <div class="card gold">
+          <div class="card-label">Sin contexto</div>
+          <h3 style="color: #C93A3A;">Respuesta promedio</h3>
+          <p>Genérica, genérica, genérica. Cualquiera la escribió. No resuelve tu problema.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Con contexto</div>
+          <h3>Respuesta específica</h3>
+          <p>Considera tu audiencia, tu historia, tus restricciones. Resuelve tu problema real.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">La regla mental</div>
+          <h3>El consultor externo</h3>
+          <p>Imagínate explicándole a alguien que llega hoy. Todo lo que necesitaría saber, va aquí.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 12d — Comparativa servicios IA -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Comparativa · abril 2026</div></div>
+      <h2>¿Cuál servicio de IA pagar?</h2>
+      <p class="desc" style="margin-bottom: 1rem;">Precios verificados al 15 de abril de 2026. Pueden variar por país, impuestos, promos y facturación anual vs mensual.</p>
+      <style>
+        .comparison-table {
+          width: 100%; border-collapse: collapse; font-size: 0.78rem;
+          margin-top: 0.5rem;
+        }
+        .comparison-table th {
+          background: var(--agyl-teal); color: #fff; padding: 0.6rem 0.5rem;
+          font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+          font-size: 0.68rem; text-align: left;
+        }
+        .comparison-table td {
+          padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--agyl-line);
+          vertical-align: top;
+        }
+        .comparison-table tr:nth-child(even) td { background: var(--agyl-bg-soft); }
+        .comparison-table .svc-name { font-weight: 700; color: var(--agyl-teal-deep); white-space: nowrap; }
+        .comparison-table .svc-plan { font-weight: 600; color: var(--agyl-gold); }
+        .comparison-table .svc-price { font-weight: 700; white-space: nowrap; }
+        .comparison-table .svc-best { font-size: 0.72rem; color: var(--agyl-muted); }
+        .comparison-table .svc-pick { font-weight: 600; }
+        .comparison-table .star { color: var(--agyl-gold); }
+        .quick-picks {
+          display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;
+        }
+        .quick-pick {
+          padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
+          background: #fff; border: 1px solid var(--agyl-line);
+        }
+        .quick-pick.teal { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
+        .quick-pick.gold { background: var(--agyl-gold); color: #fff; border-color: var(--agyl-gold); }
+        .src-notes {
+          margin-top: 1rem; font-size: 0.65rem; color: var(--agyl-muted); line-height: 1.5;
+        }
+        .src-notes a { color: var(--agyl-teal); }
+      </style>
+      <table class="comparison-table">
+        <thead><tr>
+          <th>Servicio</th><th>Plan</th><th>Precio</th><th>Mejor modelo</th><th>Mejor para</th><th>Facilidad</th><th>Velocidad</th><th>Clave</th><th>Límite</th>
+        </tr></thead>
+        <tbody>
+          <tr>
+            <td class="svc-name"><span class="star">★</span> ChatGPT</td>
+            <td class="svc-plan">Plus</td>
+            <td class="svc-price">$20/mo</td>
+            <td class="svc-best">GPT-5.4 Thinking</td>
+            <td class="svc-pick">All-around</td>
+            <td>Muy fácil</td><td>Rápido</td>
+            <td>Voz, imágenes, Deep Research, GPTs custom</td>
+            <td>Plus es tier ligero; heavy users → Pro</td>
+          </tr>
+          <tr>
+            <td class="svc-name"><span class="star">★</span> Claude</td>
+            <td class="svc-plan">Pro</td>
+            <td class="svc-price">$20/mo</td>
+            <td class="svc-best">Opus 4.6</td>
+            <td class="svc-pick">Mejor escritor</td>
+            <td>Muy fácil</td><td>Ráp-medio</td>
+            <td>Claude Code, Research, projects, voice, Excel/PP beta</td>
+            <td>Caps importan; Max es power-user</td>
+          </tr>
+          <tr>
+            <td class="svc-name"><span class="star">★</span> Gemini</td>
+            <td class="svc-plan">Google AI Pro</td>
+            <td class="svc-price">$19.99/mo</td>
+            <td class="svc-best">Gemini 3.1 Pro</td>
+            <td class="svc-pick">Ecosistema Google</td>
+            <td>Fácil</td><td>Rápido</td>
+            <td>Gmail/Docs/Vids, 5 TB, NotebookLM, Veo video</td>
+            <td>Límites varían por país/idioma</td>
+          </tr>
+          <tr>
+            <td class="svc-name"><span class="star">★</span> Perplexity</td>
+            <td class="svc-plan">Pro</td>
+            <td class="svc-price">$200/año</td>
+            <td class="svc-best">GPT-5.2 / Sonnet 4.6 / 3.1 Pro</td>
+            <td class="svc-pick">Investigación</td>
+            <td>Muy fácil</td><td>Rápido</td>
+            <td>10x citas, model selector, Research, image gen</td>
+            <td>Max tiene más acceso a features nuevas</td>
+          </tr>
+          <tr>
+            <td class="svc-name"><span class="star">★</span> Poe</td>
+            <td class="svc-plan">1M pts/mo</td>
+            <td class="svc-price">$16.67/mo</td>
+            <td class="svc-best">GPT-5.4 / Opus 4.6 / 3.1 Pro</td>
+            <td class="svc-pick">Muchos modelos</td>
+            <td>Medio</td><td>Variable</td>
+            <td>Un sub = muchos modelos, más contexto</td>
+            <td>Sistema de puntos no es ilimitado</td>
+          </tr>
+          <tr>
+            <td class="svc-name">Le Chat</td>
+            <td class="svc-plan">Pro</td>
+            <td class="svc-price">$14.99/mo</td>
+            <td class="svc-best">Mistral SOTA</td>
+            <td class="svc-pick">Budget</td>
+            <td>Fácil</td><td>Rápido</td>
+            <td>Deep research, 15GB, 1000 projects, Vibe coding</td>
+            <td>Ecosistema menor, menos mainstream</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="quick-picks">
+        <span class="quick-pick teal"><span class="star">★</span> Default: ChatGPT Plus</span>
+        <span class="quick-pick">Escritor: Claude Pro</span>
+        <span class="quick-pick">Google: AI Pro</span>
+        <span class="quick-pick gold">Citas: Perplexity Pro</span>
+        <span class="quick-pick">Multi-modelo: Poe</span>
+        <span class="quick-pick">Budget: Le Chat Pro</span>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
     <!-- SLIDE 13 — Anti-patrón -->
     <section class="slide slide-page">
       <div class="watermark-a">A</div>
@@ -977,28 +1135,28 @@
       <div class="watermark-a">A</div>
       <div class="page-head"><div class="chip-title">T · Temperatura</div></div>
       <h2 style="color: var(--agyl-teal-deep);"><span style="font-size: 1.4em; color: var(--agyl-teal); font-weight: 800;">T</span> de Temperatura — Cuán creativo, cuán arriesgado</h2>
-      <p class="desc" style="margin-top: 0.5rem;">El término viene del parámetro técnico del modelo, pero en RAFAT lo usamos para describir <strong>tono + nivel de creatividad</strong>. Cero significa conservador, predecible, factual. Diez significa creativo, arriesgado, emocional.</p>
+      <p class="desc" style="margin-top: 0.5rem;">El término viene del parámetro técnico del modelo, pero en RAFAT lo usamos para describir <strong>tono + nivel de creatividad</strong>. <strong>Por defecto, los LLM operan al ~70% de temperatura</strong> — son más creativos que puntuales. Si quieres precisión, tienes que bajársela.</p>
       <div class="cards-grid" style="margin-top: 1rem;">
         <div class="card">
-          <div class="card-label">Temperatura baja (0-3)</div>
+          <div class="card-label">Temperatura baja (0-30%)</div>
           <h3>Conservador y factual</h3>
           <p style="font-family: 'Courier New', monospace; font-size: 0.85rem;">"Tono neutro, profesional, sin adjetivos. No inventes nada que no esté en la fuente."</p>
           <p style="font-size: 0.85rem; color: var(--agyl-muted); margin-top: 0.4rem;"><strong>Para:</strong> reportes regulatorios, comunicaciones legales, análisis de datos, actas.</p>
         </div>
         <div class="card gold">
-          <div class="card-label">Temperatura media (4-6)</div>
+          <div class="card-label">Temperatura media (40-60%)</div>
           <h3>Profesional con personalidad</h3>
           <p style="font-family: 'Courier New', monospace; font-size: 0.85rem;">"Tono firme pero cálido. Permite alguna metáfora o frase con personalidad si encaja."</p>
           <p style="font-size: 0.85rem; color: var(--agyl-muted); margin-top: 0.4rem;"><strong>Para:</strong> propuestas comerciales, correos a clientes, presentaciones internas.</p>
         </div>
         <div class="card">
-          <div class="card-label">Temperatura alta (7-10)</div>
+          <div class="card-label">Temperatura alta (70-100%)</div>
           <h3>Creativo y arriesgado</h3>
           <p style="font-family: 'Courier New', monospace; font-size: 0.85rem;">"Tono disruptivo. Atrévete con metáforas raras. Prioriza memorabilidad sobre seguridad."</p>
           <p style="font-size: 0.85rem; color: var(--agyl-muted); margin-top: 0.4rem;"><strong>Para:</strong> brainstorming, naming, copys de campañas, ganchos de presentación.</p>
         </div>
       </div>
-      <p class="desc" style="margin-top: 1rem; font-size: 0.95rem;"><strong>Tip:</strong> el mismo prompt con distintas temperaturas da resultados muy distintos. Si el output sale "demasiado seguro" o "demasiado loco", es probablemente esto lo que está mal calibrado.</p>
+      <p class="desc" style="margin-top: 1rem; font-size: 0.95rem;"><strong>⚡ Dato clave:</strong> el modelo por defecto viene al 70% — más creativo que puntual. Si el output sale "demasiado seguro" o "demasiado loco", es probablemente esto lo que está mal calibrado.</p>
       <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
     </section>
 
@@ -1166,21 +1324,26 @@
       </div>
 
       <div class="cot-controls">
-        <button class="cot-btn ghost" onclick="cotReset()">↺ Reiniciar</button>
         <span class="cot-progress" id="cotProgress">Paso 1 de 5</span>
-        <button class="cot-btn" onclick="cotNext()">Siguiente paso →</button>
+        <span style="font-size: 0.8rem; color: var(--agyl-muted); font-style: italic;">Usa las flechas ← → para avanzar paso a paso</span>
       </div>
 
       <script>
         (function(){
           let cotIdx = 0;
+          const COT_MAX = 4;
           const steps = () => document.querySelectorAll('#cotDiagram .cot-step');
           const arrows = () => document.querySelectorAll('#cotDiagram .cot-arrow');
           window.cotNext = function(){
-            cotIdx = Math.min(cotIdx + 1, 4);
+            cotIdx = Math.min(cotIdx + 1, COT_MAX);
+            update();
+          };
+          window.cotPrev = function(){
+            cotIdx = Math.max(cotIdx - 1, 0);
             update();
           };
           window.cotReset = function(){ cotIdx = 0; update(); };
+          window.cotIsComplete = function(){ return cotIdx >= COT_MAX; };
           function update(){
             steps().forEach((el, i) => el.classList.toggle('on', i <= cotIdx));
             arrows().forEach((el, i) => el.classList.toggle('on', i < cotIdx));
@@ -1411,17 +1574,19 @@
       </div>
 
       <div class="cot-controls">
-        <button class="cot-btn ghost" onclick="spReset()">↺ Reiniciar</button>
         <span class="cot-progress" id="spProgress">Mensaje 1 de 6</span>
-        <button class="cot-btn" onclick="spNext()">Siguiente mensaje →</button>
+        <span style="font-size: 0.8rem; color: var(--agyl-muted); font-style: italic;">Usa las flechas ← → para avanzar paso a paso</span>
       </div>
 
       <script>
         (function(){
           let spIdx = 0;
+          const SP_MAX = 5;
           const turns = () => document.querySelectorAll('#spTurns .sp-turn');
-          window.spNext = function(){ spIdx = Math.min(spIdx + 1, 5); update(); };
+          window.spNext = function(){ spIdx = Math.min(spIdx + 1, SP_MAX); update(); };
+          window.spPrev = function(){ spIdx = Math.max(spIdx - 1, 0); update(); };
           window.spReset = function(){ spIdx = 0; update(); };
+          window.spIsComplete = function(){ return spIdx >= SP_MAX; };
           function update(){
             turns().forEach((el, i) => el.classList.toggle('on', i <= spIdx));
             const p = document.getElementById('spProgress');
@@ -1643,7 +1808,6 @@
     <section class="slide slide-page">
       <div class="watermark-a">A</div>
       <div class="page-head"><div class="chip-title">Demo 1 · El prompt, desglosado</div></div>
-      <h2>Cada letra de RAFAT, visible en el prompt</h2>
 
       <style>
         .rafat-break { display: grid; grid-template-columns: 90px 1fr; gap: 0.5rem 1rem; margin-top: 0.8rem; }
@@ -2224,11 +2388,41 @@ Turno 3: Revisa tu guion. Quita toda frase que suene a plantilla corporativa. Qu
       slides[cur].classList.remove('active');
       cur = i;
       slides[cur].classList.add('active');
+      // Reset diagrams when navigating to their slides
+      const s = slides[cur];
+      if (s.querySelector('#cotDiagram') && typeof cotReset === 'function') cotReset();
+      if (s.querySelector('#spTurns') && typeof spReset === 'function') spReset();
       update();
     }
 
-    function next() { go(cur + 1); }
-    function prev() { go(cur - 1); }
+    function next() {
+      const s = slides[cur];
+      // Check if we're on the CoT diagram slide
+      if (s.querySelector('#cotDiagram') && typeof cotIsComplete === 'function' && !cotIsComplete()) {
+        cotNext();
+        return;
+      }
+      // Check if we're on the System prompt diagram slide
+      if (s.querySelector('#spTurns') && typeof spIsComplete === 'function' && !spIsComplete()) {
+        spNext();
+        return;
+      }
+      go(cur + 1);
+    }
+    function prev() {
+      const s = slides[cur];
+      // Check if we're on the CoT diagram slide
+      if (s.querySelector('#cotDiagram') && typeof cotPrev === 'function') {
+        cotPrev();
+        return;
+      }
+      // Check if we're on the System prompt diagram slide
+      if (s.querySelector('#spTurns') && typeof spPrev === 'function') {
+        spPrev();
+        return;
+      }
+      go(cur - 1);
+    }
 
     document.addEventListener('keydown', e => {
       switch (e.key) {

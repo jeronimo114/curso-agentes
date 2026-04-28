@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IA Básica — Jerónimo Martínez</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --black:#0B0B0F;--white:#FAFAFA;--accent:#1E5BE6;--accent-light:#E8EEFB;
+      --gray-100:#f4f4f5;--gray-400:#a1a1aa;--gray-600:#52525b;
+      --success:#10B981;--error:#EF4444;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:system-ui,-apple-system,sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;min-height:100vh}
+
+    /* Progress bar */
+    .progress-track{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.08);z-index:200}
+    .progress-fill{height:100%;background:var(--accent);transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%}
+
+    /* Question container */
+    .question-container{
+      position:relative;min-height:100vh;display:flex;flex-direction:column;
+      justify-content:center;padding:6rem 2rem 4rem;max-width:800px;margin:0 auto;
+    }
+
+    /* Each question */
+    .question{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      justify-content:center;padding:6rem 2rem 4rem;max-width:800px;margin:0 auto;
+      opacity:0;transform:translateY(40px);transition:all 0.6s cubic-bezier(0.4,0,0.2,1);
+      pointer-events:none;
+    }
+    .question.active{opacity:1;transform:translateY(0);pointer-events:auto}
+    .question.exit-up{opacity:0;transform:translateY(-40px)}
+
+    /* Step counter */
+    .step-count{
+      position:fixed;top:2rem;left:2rem;font-size:0.8rem;color:var(--gray-400);
+      font-weight:500;letter-spacing:0.05em;z-index:100;
+    }
+
+    /* Question number badge */
+    .q-number{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:50%;background:var(--accent);
+      font-size:0.85rem;font-weight:600;margin-bottom:1.5rem;
+    }
+
+    /* Question label */
+    .q-label{
+      font-size:0.75rem;color:var(--gray-400);text-transform:uppercase;
+      letter-spacing:0.1em;margin-bottom:0.75rem;font-weight:500;
+    }
+
+    /* Question text */
+    .q-text{
+      font-size:clamp(1.75rem,4vw,2.75rem);font-weight:600;line-height:1.2;
+      letter-spacing:-0.02em;margin-bottom:2.5rem;max-width:650px;
+    }
+
+    /* Input styles */
+    .input-group{display:flex;flex-direction:column;gap:1rem;max-width:500px}
+
+    .text-input{
+      width:100%;padding:1rem 1.25rem;background:rgba(255,255,255,0.06);
+      border:2px solid rgba(255,255,255,0.1);border-radius:12px;
+      color:var(--white);font-size:1.125rem;font-family:inherit;
+      transition:all 0.3s ease;outline:none;
+    }
+    .text-input:focus{border-color:var(--accent);background:rgba(30,91,230,0.08)}
+    .text-input::placeholder{color:var(--gray-600)}
+
+    textarea.text-input{min-height:120px;resize:vertical}
+
+    /* Option buttons */
+    .options{display:flex;flex-direction:column;gap:0.75rem;max-width:500px}
+    .option-btn{
+      padding:1.125rem 1.5rem;background:rgba(255,255,255,0.04);
+      border:2px solid rgba(255,255,255,0.08);border-radius:12px;
+      color:var(--white);font-size:1rem;text-align:left;cursor:pointer;
+      transition:all 0.25s ease;font-family:inherit;
+    }
+    .option-btn:hover{background:rgba(30,91,230,0.12);border-color:var(--accent)}
+    .option-btn.selected{background:var(--accent);border-color:var(--accent)}
+    .option-btn .opt-label{font-weight:500}
+    .option-btn .opt-desc{font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem}
+    .option-btn.selected .opt-desc{color:rgba(255,255,255,0.7)}
+
+    /* Multi-select */
+    .multi-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem;max-width:600px}
+    .multi-opt{
+      padding:1rem 1.25rem;background:rgba(255,255,255,0.04);
+      border:2px solid rgba(255,255,255,0.08);border-radius:12px;
+      color:var(--white);font-size:0.95rem;cursor:pointer;transition:all 0.25s;
+      text-align:center;font-family:inherit;
+    }
+    .multi-opt:hover{border-color:var(--accent)}
+    .multi-opt.selected{background:var(--accent);border-color:var(--accent)}
+
+    /* Scale slider */
+    .scale-container{max-width:500px}
+    .scale-slider{
+      width:100%;-webkit-appearance:none;appearance:none;height:8px;
+      background:rgba(255,255,255,0.1);border-radius:4px;outline:none;
+      margin:1.5rem 0;
+    }
+    .scale-slider::-webkit-slider-thumb{
+      -webkit-appearance:none;appearance:none;width:28px;height:28px;
+      border-radius:50%;background:var(--accent);cursor:pointer;
+      box-shadow:0 2px 8px rgba(30,91,230,0.4);
+    }
+    .scale-labels{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--gray-400)}
+    .scale-value{
+      text-align:center;font-size:2.5rem;font-weight:700;color:var(--accent);
+      margin-bottom:0.5rem;
+    }
+
+    /* Navigation */
+    .nav-actions{
+      position:fixed;bottom:3rem;left:2rem;display:flex;gap:1rem;z-index:100;
+    }
+    .nav-btn{
+      padding:0.875rem 2rem;border-radius:12px;font-size:0.95rem;
+      font-weight:600;cursor:pointer;transition:all 0.25s;font-family:inherit;
+      border:none;
+    }
+    .nav-btn-prev{background:rgba(255,255,255,0.08);color:var(--white)}
+    .nav-btn-prev:hover{background:rgba(255,255,255,0.12)}
+    .nav-btn-next{background:var(--accent);color:#fff;transition:all 0.25s}
+    .nav-btn-next:hover{background:#1648C4}
+    .nav-btn-submit{background:var(--success);color:#fff}
+    .nav-btn-submit:hover{background:#059669}
+
+    /* Keyboard hint */
+    .key-hint{
+      position:fixed;bottom:3.25rem;right:2rem;font-size:0.75rem;
+      color:var(--gray-400);z-index:100;
+    }
+    .key-hint kbd{
+      display:inline-block;padding:0.2rem 0.5rem;background:rgba(255,255,255,0.08);
+      border-radius:4px;font-family:inherit;margin:0 0.25rem;
+    }
+
+    /* Thank you screen */
+    .thank-you{
+      text-align:center;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:1.5rem;
+    }
+    .thank-you h2{font-size:clamp(2.5rem,6vw,4rem);font-weight:600;letter-spacing:-0.02em}
+    .thank-you p{font-size:1.125rem;color:var(--gray-400);max-width:450px;line-height:1.6}
+    .check-circle{
+      width:80px;height:80px;border-radius:50%;background:var(--success);
+      display:flex;align-items:center;justify-content:center;margin-bottom:1rem;
+    }
+    .check-circle svg{width:40px;height:40px;stroke:#fff;stroke-width:3;fill:none}
+
+    /* Logo */
+    .logo-mark{
+      position:fixed;top:2rem;right:2rem;font-weight:600;font-size:1.125rem;
+      color:var(--gray-400);z-index:100;
+    }
+    .logo-mark a{color:var(--gray-400);text-decoration:none}
+    .logo-mark a:hover{color:var(--white)}
+
+    /* Animations */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-in{animation:fadeIn 0.6s ease forwards}
+
+    /* Responsive */
+    @media(max-width:768px){
+      .question,.question-container{padding:5rem 1.5rem 6rem}
+      .q-text{font-size:1.5rem}
+      .multi-options{grid-template-columns:1fr}
+      .nav-actions{bottom:2rem;left:1.5rem}
+      .key-hint{display:none}
+      .step-count{top:1.5rem;left:1.5rem}
+      .logo-mark{top:1.5rem;right:1.5rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="step-count" id="stepCount"></div>
+  <div class="logo-mark"><a href="index.html">JM</a></div>
+
+  <div id="formContainer">
+
+    <!-- Q1: Nombre -->
+    <div class="question active" data-q="1" data-field="nombre">
+      <div class="q-number">1</div>
+      <div class="q-label">Para empezar</div>
+      <div class="q-text">¿Cómo te llamas?</div>
+      <div class="input-group">
+        <input type="text" class="text-input" id="q-nombre" placeholder="Tu nombre completo" autocomplete="name">
+      </div>
+    </div>
+
+    <!-- Q2: Email -->
+    <div class="question" data-q="2" data-field="email">
+      <div class="q-number">2</div>
+      <div class="q-label">Para contactarte</div>
+      <div class="q-text">¿Cuál es tu email?</div>
+      <div class="input-group">
+        <input type="email" class="text-input" id="q-email" placeholder="tu@email.com" autocomplete="email">
+      </div>
+    </div>
+
+    <!-- Q3: Rol / Empresa -->
+    <div class="question" data-q="3" data-field="rol">
+      <div class="q-number">3</div>
+      <div class="q-label">Contexto</div>
+      <div class="q-text">¿Cuál es tu rol y en qué tipo de empresa o sector trabajas?</div>
+      <div class="input-group">
+        <input type="text" class="text-input" id="q-rol" placeholder="Ej: Gerente comercial en empresa de logística...">
+      </div>
+    </div>
+
+    <!-- Q4: Nivel de uso de IA (escala) -->
+    <div class="question" data-q="4" data-field="nivel_ia">
+      <div class="q-number">4</div>
+      <div class="q-label">Diagnóstico</div>
+      <div class="q-text">En una escala del 1 al 10, ¿qué tan cómodo te sientes usando herramientas de IA hoy?</div>
+      <div class="scale-container">
+        <div class="scale-value" id="scaleValue">5</div>
+        <input type="range" class="scale-slider" id="q-nivel_ia" min="1" max="10" value="5">
+        <div class="scale-labels">
+          <span>1 — Nunca las he usado</span>
+          <span>10 — Las uso a diario</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5: Frecuencia de uso -->
+    <div class="question" data-q="5" data-field="frecuencia">
+      <div class="q-number">5</div>
+      <div class="q-label">Diagnóstico</div>
+      <div class="q-text">¿Con qué frecuencia usas IA actualmente?</div>
+      <div class="options">
+        <button class="option-btn" data-value="Nunca">
+          <div class="opt-label">Nunca</div>
+          <div class="opt-desc">No la he usado todavía</div>
+        </button>
+        <button class="option-btn" data-value="Ocasionalmente">
+          <div class="opt-label">Ocasionalmente</div>
+          <div class="opt-desc">La he probado un par de veces</div>
+        </button>
+        <button class="option-btn" data-value="Semanal">
+          <div class="opt-label">Una o dos veces por semana</div>
+          <div class="opt-desc">La uso para tareas puntuales</div>
+        </button>
+        <button class="option-btn" data-value="Diaria">
+          <div class="opt-label">Casi todos los días</div>
+          <div class="opt-desc">Ya forma parte de mi rutina</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q6: Herramientas que ya conoce -->
+    <div class="question" data-q="6" data-field="herramientas">
+      <div class="q-number">6</div>
+      <div class="q-label">Diagnóstico</div>
+      <div class="q-text">¿Cuáles de estas herramientas has usado o conoces?</div>
+      <div class="multi-options" id="herramientas">
+        <button class="multi-opt" data-value="ChatGPT">ChatGPT</button>
+        <button class="multi-opt" data-value="Claude">Claude</button>
+        <button class="multi-opt" data-value="Gemini">Gemini (Google)</button>
+        <button class="multi-opt" data-value="Copilot">Copilot (Microsoft)</button>
+        <button class="multi-opt" data-value="NotebookLM">NotebookLM</button>
+        <button class="multi-opt" data-value="Perplexity">Perplexity</button>
+        <button class="multi-opt" data-value="Generadores de imagen">Generadores de imagen (Midjourney, DALL-E)</button>
+        <button class="multi-opt" data-value="Ninguna">Ninguna todavía</button>
+      </div>
+    </div>
+
+    <!-- Q7: Caso de uso real -->
+    <div class="question" data-q="7" data-field="caso_uso">
+      <div class="q-number">7</div>
+      <div class="q-label">Aplicación</div>
+      <div class="q-text">¿Qué tarea de tu día a día te gustaría acelerar o mejorar con IA?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-caso_uso" placeholder="Sé concreto: 'redactar correos a clientes', 'resumir reuniones', 'crear contenido para redes', 'analizar Excel'..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q8: Fricciones -->
+    <div class="question" data-q="8" data-field="fricciones">
+      <div class="q-number">8</div>
+      <div class="q-label">Barreras</div>
+      <div class="q-text">¿Qué te ha frenado de usar IA hasta ahora?</div>
+      <div class="multi-options">
+        <button class="multi-opt" data-value="No sé cómo escribir buenos prompts">No sé cómo pedirle bien</button>
+        <button class="multi-opt" data-value="Desconfío de la calidad">Desconfío de la calidad</button>
+        <button class="multi-opt" data-value="Privacidad y seguridad">Privacidad / seguridad</button>
+        <button class="multi-opt" data-value="No veo el caso de uso">No veo cómo aplicarla a mi trabajo</button>
+        <button class="multi-opt" data-value="Demasiadas herramientas">Hay demasiadas y no sé cuál elegir</button>
+        <button class="multi-opt" data-value="Falta de tiempo">No he tenido tiempo de aprender</button>
+        <button class="multi-opt" data-value="Nada">Ninguna, solo quiero aprender más</button>
+      </div>
+    </div>
+
+    <!-- Q9: Resultado esperado -->
+    <div class="question" data-q="9" data-field="resultado_esperado">
+      <div class="q-number">9</div>
+      <div class="q-label">Objetivo</div>
+      <div class="q-text">Al terminar la sesión, ¿qué te gustaría llevarte?</div>
+      <div class="options">
+        <button class="option-btn" data-value="Un flujo concreto que pueda usar mañana">
+          <div class="opt-label">Un flujo concreto que pueda usar mañana</div>
+          <div class="opt-desc">Quiero salir aplicando algo específico de inmediato</div>
+        </button>
+        <button class="option-btn" data-value="Entender el panorama general">
+          <div class="opt-label">Entender el panorama general</div>
+          <div class="opt-desc">Quiero saber qué existe y para qué sirve cada cosa</div>
+        </button>
+        <button class="option-btn" data-value="Decidir qué herramienta adoptar">
+          <div class="opt-label">Decidir qué herramienta adoptar</div>
+          <div class="opt-desc">Necesito orientación para elegir entre opciones</div>
+        </button>
+        <button class="option-btn" data-value="Inspiración con casos reales">
+          <div class="opt-label">Inspiración con casos reales</div>
+          <div class="opt-desc">Ver ejemplos concretos de cómo otros la están usando</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q10: Algo más -->
+    <div class="question" data-q="10" data-field="algo_mas">
+      <div class="q-number">10</div>
+      <div class="q-label">Opcional</div>
+      <div class="q-text">¿Algo más que quieras contarme antes de la sesión?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-algo_mas" placeholder="Lo que sea útil para preparar la sesión a tu medida..." style="min-height:100px"></textarea>
+      </div>
+    </div>
+
+    <!-- Thank you screen -->
+    <div class="question" data-q="done">
+      <div class="thank-you">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>¡Listo!</h2>
+        <p>Gracias por completar el cuestionario. Con esto puedo orientar la sesión a tu nivel y a lo que realmente quieres lograr. Te contactaré pronto.</p>
+        <a href="index.html" class="nav-btn nav-btn-next" style="text-decoration:none;margin-top:1rem">Volver al sitio</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-prev" id="btnPrev" style="display:none">← Atrás</button>
+    <button class="nav-btn nav-btn-next" id="btnNext">Continuar →</button>
+  </div>
+
+  <div class="key-hint">Presiona <kbd>Enter</kbd> para continuar</div>
+
+  <script>
+    // ============================================
+    // CONFIG: misma webhook que sesion-emilio-uribe
+    // El campo `source` distingue de qué formulario vino el lead.
+    // ============================================
+    const N8N_WEBHOOK_URL = 'https://n8n.jeroooo.com/webhook/sesion-emilio-uribe';
+    const FORM_SOURCE = 'ia-basica';
+
+    // State
+    const questions = document.querySelectorAll('.question');
+    const totalQuestions = questions.length - 1;
+    let currentQ = 0;
+    const answers = {};
+
+    // Elements
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const progressFill = document.getElementById('progressFill');
+    const stepCount = document.getElementById('stepCount');
+
+    // Check if current question has an answer
+    function hasAnswer() {
+      const q = questions[currentQ];
+      const input = q.querySelector('.text-input');
+      if (input && input.value.trim()) return true;
+      if (q.querySelector('.option-btn.selected')) return true;
+      if (q.querySelector('.multi-opt.selected')) return true;
+      if (q.querySelector('.scale-slider')) return true;
+      return false;
+    }
+
+    // Update UI
+    function updateUI() {
+      questions.forEach((q, i) => {
+        q.classList.remove('active', 'exit-up');
+        if (i === currentQ) q.classList.add('active');
+        else if (i < currentQ) q.classList.add('exit-up');
+      });
+
+      const isDone = questions[currentQ].dataset.q === 'done';
+
+      btnPrev.style.display = currentQ > 0 ? 'inline-flex' : 'none';
+
+      if (isDone) {
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+        progressFill.style.width = '100%';
+        stepCount.textContent = 'Completo';
+        return;
+      }
+
+      const qNum = parseInt(questions[currentQ].dataset.q);
+      btnNext.textContent = qNum === totalQuestions ? 'Enviar ✓' : 'Continuar →';
+      progressFill.style.width = `${(qNum / totalQuestions) * 100}%`;
+      stepCount.textContent = `${qNum} / ${totalQuestions}`;
+
+      refreshButton();
+    }
+
+    function refreshButton() {
+      const valid = hasAnswer();
+      const isLast = currentQ === questions.length - 2;
+      if (isLast) {
+        btnNext.classList.add('nav-btn-submit');
+      } else {
+        btnNext.classList.remove('nav-btn-submit');
+      }
+      btnNext.style.opacity = valid ? '1' : '0.3';
+      btnNext.style.pointerEvents = valid ? 'auto' : 'none';
+    }
+
+    // Collect answer from current question
+    function collectAnswer() {
+      const q = questions[currentQ];
+      const field = q.dataset.field;
+      if (!field) return;
+
+      const input = q.querySelector('.text-input');
+      if (input) {
+        answers[field] = input.value.trim();
+        return;
+      }
+
+      const selectedSingle = q.querySelectorAll('.option-btn.selected');
+      if (selectedSingle.length) {
+        answers[field] = Array.from(selectedSingle).map(b => b.dataset.value).join(', ');
+        return;
+      }
+
+      const selectedMulti = q.querySelectorAll('.multi-opt.selected');
+      if (selectedMulti.length) {
+        answers[field] = Array.from(selectedMulti).map(b => b.dataset.value).join(', ');
+        return;
+      }
+
+      const slider = q.querySelector('.scale-slider');
+      if (slider) {
+        answers[field] = slider.value;
+      }
+    }
+
+    // Navigate
+    function goNext() {
+      if (!hasAnswer()) return;
+      collectAnswer();
+
+      const isLast = currentQ === questions.length - 2;
+      if (isLast) {
+        submitForm();
+        return;
+      }
+
+      currentQ = Math.min(currentQ + 1, questions.length - 1);
+      updateUI();
+    }
+
+    function goPrev() {
+      if (currentQ > 0) {
+        currentQ--;
+        updateUI();
+      }
+    }
+
+    // Submit to n8n webhook
+    async function submitForm() {
+      btnNext.textContent = 'Enviando...';
+      btnNext.style.pointerEvents = 'none';
+
+      try {
+        const payload = {
+          ...answers,
+          timestamp: new Date().toISOString(),
+          source: FORM_SOURCE,
+          url: window.location.href
+        };
+
+        await fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        console.log('Form submitted:', payload);
+        currentQ = questions.length - 1;
+        updateUI();
+      } catch (err) {
+        console.error('Error submitting form:', err);
+        btnNext.textContent = 'Reintentar';
+        btnNext.style.pointerEvents = 'auto';
+        currentQ = questions.length - 1;
+        updateUI();
+      }
+    }
+
+    // Event listeners
+    btnNext.addEventListener('click', goNext);
+    btnPrev.addEventListener('click', goPrev);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        const active = document.activeElement;
+        if (active.tagName === 'TEXTAREA') return;
+        e.preventDefault();
+        goNext();
+      }
+    });
+
+    document.querySelectorAll('.text-input').forEach(input => {
+      input.addEventListener('input', () => refreshButton());
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          goNext();
+        }
+      });
+    });
+
+    document.querySelectorAll('.options .option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.closest('.options');
+        parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        refreshButton();
+        setTimeout(goNext, 400);
+      });
+    });
+
+    document.querySelectorAll('.multi-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+        refreshButton();
+      });
+    });
+
+    const scaleValue = document.getElementById('scaleValue');
+    const slider = document.getElementById('q-nivel_ia');
+    if (slider) {
+      slider.addEventListener('input', () => {
+        scaleValue.textContent = slider.value;
+        refreshButton();
+      });
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>

@@ -1,0 +1,760 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]: 17 / 53
+  - img "AGYL" [ref=e4]
+  - generic [ref=e5]:
+    - generic:
+      - img "AGYL"
+      - generic:
+        - generic:
+          - heading "Cómo hablarle bien a la IA" [level=1]:
+            - text: Cómo hablarle
+            - text: bien a la IA
+        - paragraph: Sesión 2 · Prompt engineering aplicado + multimodal. Métodos que pueden usar mañana.
+        - generic:
+          - generic:
+            - text: Programa IA Básica
+            - strong: AGYL
+          - generic:
+            - text: Sesión
+            - strong: 02 / 04
+          - generic:
+            - text: Duración
+            - strong: 120 min
+    - generic:
+      - generic: A
+      - generic: Arranque · 0:01
+      - heading "La semana pasada entendimos qué es la IA. Hoy vamos a aprender a hablarle bien." [level=2]:
+        - text: La semana pasada entendimos qué es la IA.
+        - text: Hoy vamos a aprender a hablarle bien.
+      - paragraph: Todos la usan. Muy pocos saben hacerle las preguntas correctas. Eso es lo que cambiamos en las próximas 2 horas.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Recap · Sesión 1
+      - heading "Tres ideas que nos dejó la primera sesión" [level=2]
+      - generic:
+        - generic:
+          - generic: "01"
+          - heading "Predice, no piensa" [level=3]
+          - paragraph: Los modelos generan la siguiente palabra más probable. No entienden. Por eso inventan con confianza.
+        - generic:
+          - generic: "02"
+          - heading "Verificar siempre" [level=3]
+          - paragraph: Los datos, las citas, los números. Las alucinaciones suenan perfectas — y son falsas.
+        - generic:
+          - generic: "03"
+          - heading "Privacidad primero" [level=3]
+          - paragraph: Nunca datos sensibles, contratos, ni info de clientes en chats sin control. Desactivar entrenamiento.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Pendiente · Sesión 1
+      - heading "¿Los CAPTCHAs entrenan a la IA?" [level=2]
+      - paragraph: Alguien preguntó esto la semana pasada y la conexión se interrumpió. Respuesta completa ahora.
+      - list:
+        - listitem:
+          - strong: Sí, históricamente.
+          - text: Google usó reCAPTCHA para digitalizar libros (reconocer palabras borrosas) y hoy lo usa para entrenar Street View y modelos de visión.
+        - listitem:
+          - strong: "Cuando ves \"selecciona los semáforos\":"
+          - text: estás etiquetando datos para modelos de conducción autónoma.
+        - listitem:
+          - strong: "El objetivo es inverso:"
+          - text: hacer tareas que las máquinas aún no resuelven bien, para distinguir humanos de bots — y de paso, enseñarle a la máquina.
+        - listitem:
+          - strong: "Hoy:"
+          - text: los modelos ya resuelven la mayoría de CAPTCHAs. La carrera sigue.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Interacción
+      - heading "Antes de empezar" [level=2]
+      - generic:
+        - generic:
+          - img
+          - text: Escriban en el chat
+        - paragraph: ¿Cuál fue la tarea más útil que le pidieron a una IA esta semana?
+        - paragraph: Vamos a leer 3 o 4 respuestas en voz alta.
+    - generic:
+      - generic:
+        - generic: Prompt vago
+        - heading "\"Hazme un reporte de ventas\"" [level=3]
+        - generic:
+          - generic: Qué obtienes
+          - paragraph:
+            - emphasis: Un texto genérico con estructura inventada, cifras ficticias sin aviso, y tono indefinido. Inservible sin reescribir todo.
+      - generic:
+        - generic: Mismo modelo · prompt estructurado
+        - heading "Con rol, contexto, formato y restricciones" [level=3]
+        - generic:
+          - generic: Qué obtienes
+          - paragraph:
+            - emphasis: "Un reporte directamente utilizable: estructura ejecutiva, cifras marcadas como [ficticias], tono coherente, longitud controlada."
+    - generic:
+      - generic: A
+      - generic: La tesis de hoy
+      - heading "Esto no es magia. Es método." [level=2]:
+        - text: Esto no es magia.
+        - text: Es método.
+      - paragraph: "Hoy aprenden el método y salen con prompts que pueden usar mañana. Ni genialidad, ni misterio: una caja de herramientas transferible."
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Hoja de ruta
+      - heading "Lo que haremos en las próximas 2 horas" [level=2]
+      - generic:
+        - generic:
+          - generic: Bloque 2 · 13 min
+          - heading "Por qué importa" [level=3]
+          - paragraph: La intuición input → output.
+        - generic:
+          - generic: Bloque 3 · 40 min
+          - heading "5 frameworks" [level=3]
+          - paragraph: RACTF, CoT, few-shot, system, iteración.
+        - generic:
+          - generic: Bloque 4 · 25 min
+          - heading "Multimodal" [level=3]
+          - paragraph: Imágenes, PDFs, audio.
+        - generic:
+          - generic: Bloque 5 · 20 min
+          - heading "Aplicado por rol" [level=3]
+          - paragraph: 4 casos reales de Agyl.
+    - generic:
+      - generic: Bloque 02 · 13 min
+      - heading "Calidad de pregunta = calidad de respuesta." [level=2]:
+        - text: Calidad de pregunta
+        - text: = calidad de
+        - text: respuesta.
+      - paragraph: "Antes de los frameworks, la intuición base: lo que le entregues al modelo determina lo que te devuelve. No hay atajos."
+    - generic:
+      - generic: A
+      - generic: Analogía · 0:13
+      - heading "Imaginen un asistente nuevo, brillante, primer día." [level=2]
+      - paragraph: No conoce su empresa, ni sus clientes, ni sus procesos. Si le piden "hazme un reporte" sin contexto — ¿qué esperarían recibir? Exacto. Con la IA es igual.
+    - generic:
+      - generic:
+        - generic: Lo que NO sabe el modelo
+        - heading "Sobre ti ni tu empresa" [level=3]
+        - list:
+          - listitem: No te conoce ni sabe tu rol
+          - listitem: No sabe de Agyl ni de tus clientes
+          - listitem: No tiene acceso a tus sistemas
+          - listitem: No recuerda conversaciones previas (salvo en la misma sesión)
+          - listitem: No tiene datos de los últimos meses (si no tiene búsqueda activa)
+      - generic:
+        - generic: Lo que SÍ tiene
+        - heading "Patrones generales del mundo" [level=3]
+        - list:
+          - listitem: Patrones de lenguaje y estructura
+          - listitem: Conocimiento general hasta su fecha de corte
+          - listitem: Capacidad de razonar sobre lo que le cuentes
+          - listitem: Habilidad para seguir instrucciones detalladas
+          - listitem: Creatividad dentro de los límites que le pongas
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Los 4 bloques mínimos
+      - heading "Todo buen prompt tiene al menos estos 4 elementos" [level=2]
+      - generic:
+        - generic:
+          - generic: 01 · Rol
+          - heading "¿Quién habla?" [level=3]
+          - paragraph: Qué experiencia o perfil debe adoptar el modelo.
+        - generic:
+          - generic: 02 · Tarea
+          - heading "¿Qué hace?" [level=3]
+          - paragraph: "La acción concreta: redactar, analizar, comparar, resumir."
+        - generic:
+          - generic: 03 · Contexto
+          - heading "¿Para quién?" [level=3]
+          - paragraph: Situación, audiencia, antecedentes, restricciones de negocio.
+        - generic:
+          - generic: 04 · Formato
+          - heading "¿Cómo entrega?" [level=3]
+          - paragraph: Estructura, longitud, tono, idioma, nivel de detalle.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Alerta
+      - heading "El anti-patrón más común" [level=2]
+      - generic:
+        - generic: Lo que muchos hacen
+        - paragraph:
+          - emphasis: "\"Hazme un correo.\" · \"Resume esto.\" · \"Dame ideas.\" · \"¿Qué opinas?\""
+      - paragraph:
+        - text: Sin rol, sin contexto, sin formato, sin restricciones. El modelo entrega lo
+        - strong: promedio estadístico
+        - text: de todo lo que vio parecido — y eso casi nunca sirve para tu caso específico.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Refactoricemos uno
+      - heading "El prompt más vago de su semana" [level=2]
+      - generic:
+        - generic:
+          - img
+          - text: Escriban en el chat
+        - paragraph: Mándenme el prompt más vago que usaron esta semana. Sin vergüenza — lo refactorizamos al aire.
+        - paragraph: Tomaré 1 o 2 y los reescribiré en vivo aplicando los 4 bloques.
+    - generic:
+      - generic: Bloque 03 · 40 min · Corazón de la sesión
+      - heading "Los 5 frameworks esenciales." [level=2]:
+        - text: Los 5 frameworks
+        - text: esenciales.
+      - paragraph: Cinco herramientas memorables que pueden combinar. Cada una con demo o ejemplo concreto.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: 5 frameworks
+      - heading "Su caja de herramientas a partir de hoy" [level=2]
+      - generic:
+        - generic:
+          - generic: "01"
+          - heading "RACTF" [level=4]
+          - paragraph: Rol · Acción · Contexto · Tono · Formato. El piso mínimo.
+        - generic:
+          - generic: "02"
+          - heading "Chain of Thought" [level=4]
+          - paragraph: "\"Piensa paso a paso.\" Razonamiento desglosado."
+        - generic:
+          - generic: "03"
+          - heading "Few-shot" [level=4]
+          - paragraph: Ejemplos del output que quieres. El modelo replica patrón.
+        - generic:
+          - generic: "04"
+          - heading "System prompt" [level=4]
+          - paragraph: Instrucciones permanentes del asistente.
+        - generic:
+          - generic: "05"
+          - heading "Iteración" [level=4]
+          - paragraph: El prompt es una conversación, no una orden.
+    - generic [ref=e6]:
+      - generic: A
+      - generic [ref=e8]: 01 · RACTF · 10 min
+      - heading "RACTF — El piso mínimo de todo prompt" [level=2] [ref=e9]
+      - generic [ref=e10]:
+        - generic [ref=e11]:
+          - generic [ref=e12]: R
+          - generic [ref=e13]: Rol
+          - generic [ref=e14]: ¿Quién habla? Qué perfil adopta el modelo.
+        - generic [ref=e15]:
+          - generic [ref=e16]: A
+          - generic [ref=e17]: Acción
+          - generic [ref=e18]: Qué tarea concreta ejecuta.
+        - generic [ref=e19]:
+          - generic [ref=e20]: C
+          - generic [ref=e21]: Contexto
+          - generic [ref=e22]: Situación, audiencia, restricciones.
+        - generic [ref=e23]:
+          - generic [ref=e24]: T
+          - generic [ref=e25]: Tono
+          - generic [ref=e26]: Registro, emoción, estilo verbal.
+        - generic [ref=e27]:
+          - generic [ref=e28]: F
+          - generic [ref=e29]: Formato
+          - generic [ref=e30]: Estructura, longitud, idioma.
+      - paragraph [ref=e31]: Si falta una sola letra, el output se degrada. Si las tienen las 5 — ya están por encima del 90% de los usuarios.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: RACTF · ejemplo completo
+      - heading "Respuesta a un cliente insatisfecho" [level=2]
+      - generic:
+        - generic: Prompt completo
+        - paragraph:
+          - strong: "ROL:"
+          - text: Eres gerente de cuenta senior de una consultora de aseguramiento con 15 años atendiendo clientes corporativos.
+          - strong: "ACCIÓN:"
+          - text: Redacta una respuesta a un cliente que se quejó por retraso de 2 semanas en un informe regulatorio.
+          - strong: "CONTEXTO:"
+          - text: El retraso se debió a cambios de alcance solicitados por el mismo cliente a mitad de proyecto. Relación de 4 años, valiosa. Sostener sin aceptar culpa que no es nuestra.
+          - strong: "TONO:"
+          - text: Firme, empático, profesional. Ni defensivo ni complaciente.
+          - strong: "FORMATO:"
+          - text: Correo máximo 180 palabras. Asunto incluido. Cierra con próximo paso concreto.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo en vivo
+      - heading "Sin RACTF vs con RACTF" [level=2]
+      - paragraph: Mismo modelo (Claude). Mismo objetivo. Dos prompts distintos, dos outputs radicalmente diferentes.
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+        - link "Abrir ChatGPT →":
+          - /url: https://chat.openai.com
+    - generic:
+      - generic: A
+      - generic: 02 · Chain of Thought · 8 min
+      - heading "\"Piensa paso a paso.\"" [level=2]
+      - paragraph: Tres palabras que fuerzan al modelo a desglosar su razonamiento antes de responder. No es un truco — es pedirle que muestre el trabajo.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Cuándo usar Chain of Thought
+      - heading "Cuatro situaciones donde CoT transforma el output" [level=2]
+      - list:
+        - listitem:
+          - strong: Decisiones multivariable.
+          - text: "Ej: elegir proveedor, priorizar proyectos, distribuir presupuesto."
+        - listitem:
+          - strong: Análisis con muchos datos.
+          - text: "Ej: interpretar una gráfica, diagnosticar un incidente, leer un informe."
+        - listitem:
+          - strong: Cálculos y lógica.
+          - text: Matemáticas, cálculos financieros, inferencias escalonadas.
+        - listitem:
+          - strong: Explicaciones didácticas.
+          - text: Cuando alguien más leerá el resultado y necesita entender por qué.
+    - generic:
+      - generic:
+        - generic: Sin CoT
+        - heading "Respuesta genérica" [level=3]
+        - generic:
+          - generic: Prompt
+          - paragraph: Tengo $50,000 USD para marketing digital de una empresa B2B de software. ¿Cómo lo distribuyo?
+        - paragraph: → Listado plano, porcentajes sin justificar, riesgo ignorado.
+      - generic:
+        - generic: Con CoT
+        - heading "Razonamiento estructurado" [level=3]
+        - generic:
+          - generic: Prompt
+          - paragraph: "...Piensa paso a paso: 1) canales B2B efectivos, 2) ROI típico de cada uno, 3) distribución justificada, 4) riesgos y mitigación."
+        - paragraph: → Análisis profundo, distribución defendible, gaps identificados.
+    - generic:
+      - generic: A
+      - generic: 03 · Few-shot · 8 min
+      - heading "Dale 2 o 3 ejemplos y el modelo replica el patrón." [level=2]:
+        - text: Dale 2 o 3 ejemplos
+        - text: y el modelo replica el patrón.
+      - paragraph: "La forma más rápida de alinear el tono, la estructura y los criterios: mostrarle cómo se ve el resultado correcto."
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Few-shot · casos en Agyl
+      - heading "Tres aplicaciones inmediatas" [level=2]
+      - generic:
+        - generic:
+          - generic: Clasificación
+          - heading "Tickets y correos" [level=3]
+          - paragraph: Muestra 3 tickets clasificados como urgente/rutina/escalable. El modelo replica el criterio para los nuevos.
+        - generic:
+          - generic: Estandarización
+          - heading "Reportes con formato" [level=3]
+          - paragraph: Pega 2 reportes previos como plantilla. Pide un tercero con los mismos bloques y tono.
+        - generic:
+          - generic: Tono de marca
+          - heading "Comunicación cliente" [level=3]
+          - paragraph: Muéstrale 3 correos que representen la voz de Agyl. Pídele responder en ese mismo registro.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo · clasificación de tickets
+      - heading "Sin ejemplos vs con 3 ejemplos" [level=2]
+      - paragraph: "Misma tarea en ChatGPT: clasificar 5 tickets. Sin ejemplos las categorías cambian de significado en cada respuesta. Con 3 ejemplos el modelo queda alineado."
+      - generic:
+        - link "Abrir ChatGPT →":
+          - /url: https://chat.openai.com
+    - generic:
+      - generic: A
+      - generic:
+        - generic: 04 · System prompt · 6 min
+      - heading "Dos niveles de instrucción" [level=2]
+      - generic:
+        - generic:
+          - generic: System prompt
+          - heading "Instrucciones permanentes" [level=3]
+          - paragraph: Define quién es el asistente, cómo debe comportarse, qué tono usa, qué reglas sigue. Aplica a toda la conversación.
+        - generic:
+          - generic: User prompt
+          - heading "La tarea específica" [level=3]
+          - paragraph: La pregunta o instrucción concreta de cada turno. Cambia en cada mensaje.
+      - paragraph:
+        - text: El system prompt es
+        - strong: estable
+        - text: . El user prompt
+        - strong: varía
+        - text: . Configurar un buen system prompt una vez evita repetir rol y contexto cada vez.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Dónde se configura
+      - heading "En las herramientas que ya usan" [level=2]
+      - generic:
+        - generic:
+          - generic: ChatGPT
+          - heading "Custom Instructions" [level=3]
+          - paragraph: "Configuración → Personalizar ChatGPT. Dos campos: \"sobre ti\" y \"cómo debe responder\". Aplica a TODAS tus conversaciones."
+        - generic:
+          - generic: Claude
+          - heading "Projects" [level=3]
+          - paragraph: Crea un Project. Define instrucciones + conocimientos (docs de referencia). Cada chat dentro hereda ese contexto.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Caso Agyl
+      - 'heading "Un asistente fijo: \"Editor financiero senior de Agyl\"" [level=2]'
+      - generic:
+        - generic: System prompt (se configura una vez)
+        - paragraph: "Eres editor financiero senior con 10 años en consultoría de aseguramiento. Revisas textos y cifras con rigor. Siempre: (1) marcas ambigüedades entre corchetes, (2) propones 2 alternativas cuando detectas algo mejorable, (3) usas español neutro corporativo, (4) nunca inventas cifras — si faltan, las pides. Nunca respondes sin haber leído todo el texto."
+      - paragraph: "Cada user prompt después solo dice: \"revísame este correo\", \"valida este reporte\". El rol y las reglas ya están ahí."
+    - generic:
+      - generic: A
+      - generic: 05 · Iteración · 8 min
+      - heading "El prompt es una conversación, no una orden." [level=2]:
+        - text: El prompt es una conversación,
+        - text: no una orden.
+      - paragraph: El primer output casi nunca es el final. Quien mejor usa la IA no escribe prompts perfectos — itera con criterio hasta que sirva.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Iteración · 4 turnos para pulir un correo
+      - heading "De primera versión a correo listo para enviar" [level=2]
+      - generic:
+        - generic:
+          - generic: "1"
+          - generic:
+            - strong: Generar base
+            - generic: "\"Redacta un correo al comité anunciando retraso de 6 semanas por dependencia de proveedor externo.\""
+        - generic:
+          - generic: "2"
+          - generic:
+            - strong: Comprimir
+            - generic: "\"Más corto. Máximo 120 palabras.\""
+        - generic:
+          - generic: "3"
+          - generic:
+            - strong: Agregar estructura
+            - generic: "\"Ahora agrega 3 opciones de mitigación concretas. Total: 180 palabras.\""
+        - generic:
+          - generic: "4"
+          - generic:
+            - strong: Autoevaluar
+            - generic: "\"Evalúa tu propio correo: ¿qué mejorarías si fueras el director? Reescríbelo con esa crítica.\""
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Técnicas avanzadas
+      - heading "Dos frases que cambian la iteración" [level=2]
+      - list:
+        - listitem:
+          - strong: "\"Antes de responder, pregúntame lo que te falte saber.\""
+          - text: El modelo deja de asumir. Te hace 3-4 preguntas precisas. Tú respondes. La respuesta final es 10× más útil.
+        - listitem:
+          - strong: "\"Evalúa tu propia respuesta como si fueras un experto crítico. Luego reescríbela.\""
+          - text: El modelo corrige sus propios descuidos, redundancias, generalidades.
+        - listitem:
+          - strong: "\"Dame 3 versiones distintas: formal, directa y creativa. Luego elige la mejor y explica por qué.\""
+          - text: Variedad + criterio en una sola vuelta.
+    - generic:
+      - generic: Bloque 04 · 25 min
+      - heading "La IA ya no solo lee texto." [level=2]:
+        - text: La IA ya no
+        - text: solo lee texto.
+      - paragraph: Ve imágenes, transcribe audio, procesa documentos. Lo que manejan a diario ya es materia prima.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: 4 tipos de entrada
+      - heading "Más allá del texto escrito" [level=2]
+      - generic:
+        - generic:
+          - generic: 01 · Visión
+          - heading "Imágenes y gráficas" [level=3]
+          - paragraph: Analiza dashboards, screenshots, fotos de pizarra.
+        - generic:
+          - generic: 02 · Documentos
+          - heading "PDFs largos" [level=3]
+          - paragraph: Informes, contratos, circulares regulatorias.
+        - generic:
+          - generic: 03 · Audio
+          - heading "Reuniones grabadas" [level=3]
+          - paragraph: Transcripción + resumen + actas automáticas.
+        - generic:
+          - generic: 04 · OCR
+          - heading "Texto en imágenes" [level=3]
+          - paragraph: Notas manuscritas, recibos, documentos escaneados.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo 1 · Visión
+      - heading "Analizar una gráfica financiera" [level=2]
+      - generic:
+        - generic: Prompt · Claude
+        - paragraph: "Analiza esta gráfica. Piensa paso a paso: 1) qué mide y en qué periodo, 2) las 3 tendencias más relevantes, 3) anomalías o puntos de inflexión, 4) 2 decisiones de negocio posibles, 5) qué información adicional necesitarías."
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo 2 · OCR
+      - heading "Notas manuscritas → acta de reunión" [level=2]
+      - generic:
+        - generic: Prompt · ChatGPT
+        - paragraph: "Transcribe estas notas manuscritas. Luego reorganízalas como acta: fecha y asistentes si se deducen, decisiones tomadas, acciones comprometidas (qué/quién/cuándo), temas pendientes, próximos pasos. Marca [ilegible] cuando aplique."
+      - generic:
+        - link "Abrir ChatGPT →":
+          - /url: https://chat.openai.com
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo 3 · Documentos
+      - heading "PDF largo → resumen ejecutivo + riesgos" [level=2]
+      - generic:
+        - generic: Prompt · Claude
+        - paragraph: "Acabo de subirte un informe. Haz: 1) resumen en 5 bullets ≤25 palabras, 2) 3 riesgos principales con la página donde aparece cada uno, 3) cláusulas o cifras ambiguas que requieran validación, 4) pregúntame qué quiero profundizar antes de seguir. No inventes datos que no estén en el documento."
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Demo 4 · Audio (flujo)
+      - heading "Reunión grabada → acta con acuerdos" [level=2]
+      - generic:
+        - generic:
+          - generic: "1"
+          - generic:
+            - strong: Grabar
+            - generic: Grabador del sistema, app de notas, o integración en Teams/Zoom.
+        - generic:
+          - generic: "2"
+          - generic:
+            - strong: Subir archivo
+            - generic: .m4a o .mp3 a Claude o ChatGPT.
+        - generic:
+          - generic: "3"
+          - generic:
+            - strong: Prompt estructurado
+            - generic: Transcripción por hablante + resumen + tabla de acuerdos + pendientes + citas clave.
+        - generic:
+          - generic: "4"
+          - generic:
+            - strong: Revisar antes de enviar
+            - generic: Siempre. La IA puede confundir hablantes o inventar nombres.
+    - generic:
+      - generic:
+        - generic: ChatGPT
+        - heading "Más conciso, más directo" [level=3]
+        - list:
+          - listitem: Respuestas más breves por defecto
+          - listitem: Excelente en OCR y texto en imágenes
+          - listitem: Búsqueda web integrada más natural
+          - listitem: Mejor integración con herramientas (browsing, Python)
+      - generic:
+        - generic: Claude
+        - heading "Más profundo, más matizado" [level=3]
+        - list:
+          - listitem: Mejor en análisis largo y documentos extensos
+          - listitem: Razonamiento más cuidadoso
+          - listitem: Más humilde — pide aclaraciones antes
+          - listitem: Mejor en tono profesional corporativo
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Interacción
+      - heading "Antes de pasar a los casos" [level=2]
+      - generic:
+        - generic:
+          - img
+          - text: Escriban en el chat
+        - paragraph: ¿Qué tipo de archivos manejan a diario que podrían pasarle a una IA?
+        - paragraph: Las respuestas alimentan la sesión 3 — herramientas y automatizaciones.
+    - generic:
+      - generic: Bloque 05 · 20 min
+      - heading "Casos aplicados por rol." [level=2]:
+        - text: Casos aplicados
+        - text: por rol.
+      - paragraph: Cuatro casos reales. Cada uno combina RACTF + CoT + restricciones + multimodal cuando aplica.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Voten en el chat · 1, 2, 3 o 4
+      - heading "¿Cuáles dos profundizamos en vivo?" [level=2]
+      - generic:
+        - generic:
+          - generic: 01 · Comercial
+          - heading "Propuesta desde brief" [level=3]
+          - paragraph: RACTF + few-shot con propuestas previas ganadoras.
+        - generic:
+          - generic: 02 · Operaciones
+          - heading "Análisis de incidente" [level=3]
+          - paragraph: CoT + tabla de acciones priorizadas por impacto.
+        - generic:
+          - generic: 03 · Análisis / Riesgo
+          - heading "Resumen regulatorio" [level=3]
+          - paragraph: Multimodal (PDF) + CoT + extracción de KPIs.
+        - generic:
+          - generic: 04 · Liderazgo
+          - heading "Prep reunión difícil" [level=3]
+          - paragraph: Iteración 3 turnos + tono diplomático/directo.
+      - paragraph: Cuento los votos en 60 segundos. Los 2 más votados los hacemos en vivo. Los otros 2 tienen el prompt completo en el material.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Caso 01 · Comercial
+      - heading "Propuesta comercial desde un brief de 1 página" [level=2]
+      - list:
+        - listitem:
+          - strong: "Framework usado:"
+          - text: RACTF + few-shot (2 propuestas anteriores como ejemplo)
+        - listitem:
+          - strong: "Input:"
+          - text: brief del cliente anonimizado + 2 propuestas previas ganadoras
+        - listitem:
+          - strong: "Output:"
+          - text: propuesta de 2 páginas con Entendimiento / Enfoque / Equipo / Entregables / Plan / Inversión
+        - listitem:
+          - strong: "Regla de oro:"
+          - text: revisa cifras, verifica nombres. La IA acelera, no aprueba.
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Caso 02 · Operaciones
+      - heading "Análisis de incidente + plan de acción priorizado" [level=2]
+      - list:
+        - listitem:
+          - strong: "Framework usado:"
+          - text: CoT explícito + rol de analista senior + formato tabla
+        - listitem:
+          - strong: "Input:"
+          - text: descripción del incidente (fecha, hora, usuarios afectados, causa preliminar)
+        - listitem:
+          - strong: "Output:"
+          - text: línea de tiempo, causa raíz + 2 alternativas, acciones correctivas (hoy), preventivas (2 semanas), KPIs de monitoreo
+        - listitem:
+          - strong: "Formato final:"
+          - text: tabla con columnas Acción / Responsable / Plazo / Criterio de cierre
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+        - link "Abrir ChatGPT →":
+          - /url: https://chat.openai.com
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Caso 03 · Análisis / Riesgo
+      - heading "Resumen ejecutivo de documento regulatorio + KPIs" [level=2]
+      - list:
+        - listitem:
+          - strong: "Framework usado:"
+          - text: Multimodal (PDF) + CoT + formato estructurado
+        - listitem:
+          - strong: "Input:"
+          - text: PDF de circular regulatoria o informe de supervisor
+        - listitem:
+          - strong: "Output:"
+          - text: 5 cambios normativos clave + impacto (alto/medio/bajo) + procesos afectados + deadlines + roadmap 90 días
+        - listitem:
+          - strong: "KPIs extraíbles:"
+          - text: plazos, límites cuantitativos, porcentajes, sanciones
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Caso 04 · Liderazgo
+      - heading "Preparación de reunión con stakeholder difícil" [level=2]
+      - list:
+        - listitem:
+          - strong: "Framework usado:"
+          - text: Iteración en 3 turnos + control de tono
+        - listitem:
+          - strong: "Turno 1:"
+          - text: escenarios probables + argumentos que traerá + respuestas que validan sin ceder
+        - listitem:
+          - strong: "Turno 2:"
+          - text: profundizar el escenario más probable + guion del primer minuto palabra por palabra
+        - listitem:
+          - strong: "Turno 3:"
+          - text: quitar frases corporativas genéricas — que suene a ti, no a manual
+      - generic:
+        - link "Abrir Claude →":
+          - /url: https://claude.ai
+    - generic:
+      - generic: Bloque 06 · 10 min
+      - heading "3 ideas para llevarse." [level=2]:
+        - text: 3 ideas para
+        - text: llevarse.
+      - paragraph: Si se van hoy con estas tres grabadas, la sesión hizo lo que tenía que hacer.
+    - generic:
+      - generic: A
+      - generic: Idea 01
+      - heading "La calidad del output es la calidad del input." [level=2]:
+        - text: La calidad del output
+        - text: es la calidad del input.
+      - paragraph: RACTF es su piso mínimo — rol, acción, contexto, tono, formato. Si les falta una, el output se degrada. Si las tienen las cinco, están por encima del 90% de los usuarios.
+    - generic:
+      - generic: A
+      - generic: Idea 02
+      - 'heading "La IA no solo lee: ve, oye, procesa documentos." [level=2]':
+        - text: "La IA no solo lee:"
+        - text: ve, oye, procesa documentos.
+      - paragraph: Las gráficas, PDFs, notas manuscritas y audios que manejan a diario ya son materia prima. No hace falta convertir nada — solo subirlo con un buen prompt.
+    - generic:
+      - generic: A
+      - generic: Idea 03
+      - heading "El prompt es una conversación." [level=2]
+      - paragraph: No escriban prompts perfectos. Iteren. Pídanle al modelo que se autoevalúe, que les pregunte lo que le falta, que les dé tres versiones. La mejor IA es la conversada.
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Tarea antes de Sesión 3
+      - heading "Un compromiso chico que cambia la próxima semana" [level=2]
+      - generic:
+        - generic:
+          - img
+          - text: Para la próxima sesión
+        - paragraph:
+          - text: Refactoricen
+          - strong: 1 prompt
+          - text: que usen semanalmente, aplicando RACTF.
+          - text: Mándenlo por chat antes de que arranquemos Sesión 3.
+        - paragraph: Vamos a usar sus prompts refactorizados como material real en S3.
+    - generic:
+      - generic: A
+      - generic: Próxima sesión
+      - heading "Hoy le hablamos bien a la IA. La próxima le enseñamos a actuar por nosotros." [level=2]:
+        - text: Hoy le hablamos bien a la IA.
+        - text: La próxima le enseñamos a actuar por nosotros.
+      - paragraph: "Sesión 3: herramientas, flujos y agentes. De generar texto a ejecutar tareas reales. Es el siguiente salto — y es mayor que este."
+    - generic:
+      - generic: A
+      - generic:
+        - generic: Preguntas
+      - heading "Últimos 4 minutos — ¿qué quedó pendiente?" [level=2]
+      - generic:
+        - generic:
+          - img
+          - text: Chat abierto
+        - paragraph: Escriban lo que quedó sin responder, dudas sobre prompts específicos, o qué les gustaría ver aplicado a su área.
+    - generic:
+      - generic:
+        - img "Jerónimo Martínez"
+        - heading "Gracias." [level=2]
+        - generic:
+          - link "@jeromartinezj":
+            - /url: https://www.instagram.com/jeromartinezj
+            - img
+            - text: "@jeromartinezj"
+          - link "jeroooo.com":
+            - /url: https://jeroooo.com
+            - img
+            - text: jeroooo.com
+          - generic: Sesión 2 de 4 · Programa IA Básica Agyl
+      - generic:
+        - generic:
+          - heading "Nos vemos la próxima." [level=3]:
+            - text: Nos vemos
+            - text: la próxima.
+          - paragraph: "La tarea: refactoricen un prompt con RACTF y mándenlo antes de Sesión 3."
+  - generic [ref=e35]:
+    - button "Anterior" [ref=e36] [cursor=pointer]:
+      - img [ref=e37]
+    - button "Siguiente" [ref=e39] [cursor=pointer]:
+      - img [ref=e40]
