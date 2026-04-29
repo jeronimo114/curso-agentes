@@ -141,8 +141,9 @@ This skill captures best practices and patterns for generating polished, profess
 - When on a diagram slide, pressing → advances the diagram step-by-step
 - Only after the last step does it move to the next slide
 - Pressing ← goes back through diagram steps
+- If the diagram is already at its first step, pressing ← must return to the previous slide instead of trapping navigation on the same slide
 - Diagrams reset when navigating to their slide
-- Show progress text + instruction hint
+- Keep support copy minimal; prefer a compact progress label over facilitator-facing instructions like "Aprieta..." or "Usa las flechas..."
 
 ---
 

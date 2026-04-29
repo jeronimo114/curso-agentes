@@ -807,125 +807,6 @@
       <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
     </section>
 
-    <!-- SLIDE 12d — Comparativa servicios IA -->
-    <section class="slide slide-page">
-      <div class="watermark-a">A</div>
-      <div class="page-head"><div class="chip-title">Comparativa · abril 2026</div></div>
-      <h2>¿Cuál servicio de IA pagar?</h2>
-      <p class="desc" style="margin-bottom: 1rem;">Precios verificados al 15 de abril de 2026. Pueden variar por país, impuestos, promos y facturación anual vs mensual.</p>
-      <style>
-        .comparison-table {
-          width: 100%; border-collapse: collapse; font-size: 0.78rem;
-          margin-top: 0.5rem;
-        }
-        .comparison-table th {
-          background: var(--agyl-teal); color: #fff; padding: 0.6rem 0.5rem;
-          font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
-          font-size: 0.68rem; text-align: left;
-        }
-        .comparison-table td {
-          padding: 0.55rem 0.5rem; border-bottom: 1px solid var(--agyl-line);
-          vertical-align: top;
-        }
-        .comparison-table tr:nth-child(even) td { background: var(--agyl-bg-soft); }
-        .comparison-table .svc-name { font-weight: 700; color: var(--agyl-teal-deep); white-space: nowrap; }
-        .comparison-table .svc-plan { font-weight: 600; color: var(--agyl-gold); }
-        .comparison-table .svc-price { font-weight: 700; white-space: nowrap; }
-        .comparison-table .svc-best { font-size: 0.72rem; color: var(--agyl-muted); }
-        .comparison-table .svc-pick { font-weight: 600; }
-        .comparison-table .star { color: var(--agyl-gold); }
-        .quick-picks {
-          display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;
-        }
-        .quick-pick {
-          padding: 0.4rem 0.9rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600;
-          background: #fff; border: 1px solid var(--agyl-line);
-        }
-        .quick-pick.teal { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
-        .quick-pick.gold { background: var(--agyl-gold); color: #fff; border-color: var(--agyl-gold); }
-        .src-notes {
-          margin-top: 1rem; font-size: 0.65rem; color: var(--agyl-muted); line-height: 1.5;
-        }
-        .src-notes a { color: var(--agyl-teal); }
-      </style>
-      <table class="comparison-table">
-        <thead><tr>
-          <th>Servicio</th><th>Plan</th><th>Precio</th><th>Mejor modelo</th><th>Mejor para</th><th>Facilidad</th><th>Velocidad</th><th>Clave</th><th>Límite</th>
-        </tr></thead>
-        <tbody>
-          <tr>
-            <td class="svc-name"><span class="star">★</span> ChatGPT</td>
-            <td class="svc-plan">Plus</td>
-            <td class="svc-price">$20/mo</td>
-            <td class="svc-best">GPT-5.4 Thinking</td>
-            <td class="svc-pick">All-around</td>
-            <td>Muy fácil</td><td>Rápido</td>
-            <td>Voz, imágenes, Deep Research, GPTs custom</td>
-            <td>Plus es tier ligero; heavy users → Pro</td>
-          </tr>
-          <tr>
-            <td class="svc-name"><span class="star">★</span> Claude</td>
-            <td class="svc-plan">Pro</td>
-            <td class="svc-price">$20/mo</td>
-            <td class="svc-best">Opus 4.6</td>
-            <td class="svc-pick">Mejor escritor</td>
-            <td>Muy fácil</td><td>Ráp-medio</td>
-            <td>Claude Code, Research, projects, voice, Excel/PP beta</td>
-            <td>Caps importan; Max es power-user</td>
-          </tr>
-          <tr>
-            <td class="svc-name"><span class="star">★</span> Gemini</td>
-            <td class="svc-plan">Google AI Pro</td>
-            <td class="svc-price">$19.99/mo</td>
-            <td class="svc-best">Gemini 3.1 Pro</td>
-            <td class="svc-pick">Ecosistema Google</td>
-            <td>Fácil</td><td>Rápido</td>
-            <td>Gmail/Docs/Vids, 5 TB, NotebookLM, Veo video</td>
-            <td>Límites varían por país/idioma</td>
-          </tr>
-          <tr>
-            <td class="svc-name"><span class="star">★</span> Perplexity</td>
-            <td class="svc-plan">Pro</td>
-            <td class="svc-price">$200/año</td>
-            <td class="svc-best">GPT-5.2 / Sonnet 4.6 / 3.1 Pro</td>
-            <td class="svc-pick">Investigación</td>
-            <td>Muy fácil</td><td>Rápido</td>
-            <td>10x citas, model selector, Research, image gen</td>
-            <td>Max tiene más acceso a features nuevas</td>
-          </tr>
-          <tr>
-            <td class="svc-name"><span class="star">★</span> Poe</td>
-            <td class="svc-plan">1M pts/mo</td>
-            <td class="svc-price">$16.67/mo</td>
-            <td class="svc-best">GPT-5.4 / Opus 4.6 / 3.1 Pro</td>
-            <td class="svc-pick">Muchos modelos</td>
-            <td>Medio</td><td>Variable</td>
-            <td>Un sub = muchos modelos, más contexto</td>
-            <td>Sistema de puntos no es ilimitado</td>
-          </tr>
-          <tr>
-            <td class="svc-name">Le Chat</td>
-            <td class="svc-plan">Pro</td>
-            <td class="svc-price">$14.99/mo</td>
-            <td class="svc-best">Mistral SOTA</td>
-            <td class="svc-pick">Budget</td>
-            <td>Fácil</td><td>Rápido</td>
-            <td>Deep research, 15GB, 1000 projects, Vibe coding</td>
-            <td>Ecosistema menor, menos mainstream</td>
-          </tr>
-        </tbody>
-      </table>
-      <div class="quick-picks">
-        <span class="quick-pick teal"><span class="star">★</span> Default: ChatGPT Plus</span>
-        <span class="quick-pick">Escritor: Claude Pro</span>
-        <span class="quick-pick">Google: AI Pro</span>
-        <span class="quick-pick gold">Citas: Perplexity Pro</span>
-        <span class="quick-pick">Multi-modelo: Poe</span>
-        <span class="quick-pick">Budget: Le Chat Pro</span>
-      </div>
-      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
-    </section>
-
     <!-- SLIDE 13 — Anti-patrón -->
     <section class="slide slide-page">
       <div class="watermark-a">A</div>
@@ -1204,13 +1085,12 @@
     <section class="slide slide-page">
       <div class="watermark-a">A</div>
       <div class="page-head"><div class="chip-title gold">Demo en vivo</div></div>
-      <h2>Hagámoslo ahora — abro Claude Sonnet 4.5</h2>
-      <p class="desc">Mismo modelo, dos prompts, dos outputs radicalmente diferentes. Lo hacemos los dos en vivo y leemos el output completo.</p>
+      <h2>Demo en vivo en Claude</h2>
+      <p class="desc">Mismo caso, dos prompts, dos resultados.</p>
       <div class="demo-buttons" style="margin-top: 1rem;">
         <a class="demo-btn primary" href="https://claude.ai/new" target="_blank">Abrir Claude · Sonnet 4.5 →</a>
         <a class="demo-btn" href="https://chat.openai.com" target="_blank">Abrir ChatGPT →</a>
       </div>
-      <p class="desc" style="margin-top: 1rem; font-size: 0.92rem; color: var(--agyl-muted);"><strong>Tip:</strong> en Claude, abre el menú de modelos arriba a la derecha y elige <strong>Sonnet 4.5</strong> — el más fuerte hoy en redacción corporativa. Para análisis profundo: Opus 4. Para tareas rápidas: Haiku.</p>
       <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
     </section>
 
@@ -1230,7 +1110,6 @@
       <div class="watermark-a">A</div>
       <div class="page-head"><div class="chip-title">Cómo funciona por dentro</div></div>
       <h2>El modelo razonando — paso por paso</h2>
-      <p class="desc">Aprieta <strong>"Siguiente paso →"</strong> para ver cómo se desglosa internamente.</p>
 
       <style>
         .cot-diagram {
@@ -1325,7 +1204,6 @@
 
       <div class="cot-controls">
         <span class="cot-progress" id="cotProgress">Paso 1 de 5</span>
-        <span style="font-size: 0.8rem; color: var(--agyl-muted); font-style: italic;">Usa las flechas ← → para avanzar paso a paso</span>
       </div>
 
       <script>
@@ -1342,6 +1220,7 @@
             cotIdx = Math.max(cotIdx - 1, 0);
             update();
           };
+          window.cotCanPrev = function(){ return cotIdx > 0; };
           window.cotReset = function(){ cotIdx = 0; update(); };
           window.cotIsComplete = function(){ return cotIdx >= COT_MAX; };
           function update(){
@@ -1489,7 +1368,6 @@
       <div class="watermark-a">A</div>
       <div class="page-head"><div class="chip-title">Cómo opera en cada conversación</div></div>
       <h2>El system prompt persiste. Los user prompts cambian.</h2>
-      <p class="desc">Aprieta <strong>"Siguiente mensaje →"</strong> para ver cómo se va formando una conversación.</p>
 
       <style>
         .sp-diagram {
@@ -1575,7 +1453,6 @@
 
       <div class="cot-controls">
         <span class="cot-progress" id="spProgress">Mensaje 1 de 6</span>
-        <span style="font-size: 0.8rem; color: var(--agyl-muted); font-style: italic;">Usa las flechas ← → para avanzar paso a paso</span>
       </div>
 
       <script>
@@ -1585,6 +1462,7 @@
           const turns = () => document.querySelectorAll('#spTurns .sp-turn');
           window.spNext = function(){ spIdx = Math.min(spIdx + 1, SP_MAX); update(); };
           window.spPrev = function(){ spIdx = Math.max(spIdx - 1, 0); update(); };
+          window.spCanPrev = function(){ return spIdx > 0; };
           window.spReset = function(){ spIdx = 0; update(); };
           window.spIsComplete = function(){ return spIdx >= SP_MAX; };
           function update(){
@@ -1830,19 +1708,19 @@
 
       <div class="rafat-break">
         <div class="rb-letter">R</div>
-        <div class="rb-body"><b>Rol</b>Eres <strong>analista financiero senior</strong> con experiencia en aseguramiento corporativo.</div>
+        <div class="rb-body"><b>Rol</b>Eres <strong>analista financiero senior</strong> con experiencia en aseguramiento corporativo y modelación ejecutiva en Excel.</div>
 
         <div class="rb-letter gold">A</div>
-        <div class="rb-body gold"><b>Acción</b><strong>Construye</strong> en la hoja activa un <strong>modelo de proyección de ingresos a 12 meses</strong> a partir del histórico que estoy mirando, con escenario base / optimista / pesimista, y detecta 2 inconsistencias si las hay.</div>
+        <div class="rb-body gold"><b>Acción</b><strong>Construye desde cero</strong> en el archivo Excel activo un <strong>modelo de proyección de ingresos a 12 meses</strong> con escenario base / optimista / pesimista usando únicamente los datos básicos que te voy a dar. Si falta un dato crítico, pídelo antes de construir.</div>
 
         <div class="rb-letter">F</div>
-        <div class="rb-body"><b>Formato</b><strong>3 tablas</strong> (una por escenario) + fila de supuestos arriba + <strong>gráfica de líneas</strong> comparando los 3. Celdas de entrada <strong>en amarillo</strong>, fórmulas sin tocar, totales en negrita. Agrega una hoja nueva llamada <strong>"Modelo_12M"</strong>.</div>
+        <div class="rb-body"><b>Formato</b><strong>3 tablas</strong> (una por escenario) + fila superior de supuestos + <strong>gráfica de líneas</strong> comparando los 3. Celdas de entrada <strong>en amarillo</strong>, totales en negrita, supuestos nombrados y comentados. Crea una hoja nueva llamada <strong>"Modelo_12M"</strong>.</div>
 
         <div class="rb-letter gold">A</div>
-        <div class="rb-body gold"><b>Antecedentes</b>Los datos son ingresos mensuales 2024-2025 de una consultora B2B. La hoja actual tiene columnas: Mes · Ingresos · Nuevos clientes · Churn. El comité revisa este modelo el viernes. No inventes cifras — si falta algo, pídemelo <strong>antes</strong> de construir.</div>
+        <div class="rb-body gold"><b>Antecedentes</b>El Excel estará <strong>completamente vacío</strong>. Yo solo te daré datos básicos del negocio: ingreso actual o promedio, número de clientes, nuevos clientes por mes, churn, ticket promedio y supuestos de crecimiento. Es una consultora B2B y el comité revisa este modelo el viernes.</div>
 
         <div class="rb-letter">T</div>
-        <div class="rb-body"><b>Temperatura</b><strong>Conservador y auditable.</strong> Cada supuesto debe ser una celda nombrada y comentada. Nada de estimaciones "creativas". Si una suposición es fuerte, márcala en rojo con una nota.</div>
+        <div class="rb-body"><b>Temperatura</b><strong>Conservador y auditable.</strong> Nada de estimaciones "creativas". Si usa un supuesto no crítico, debe explicitarlo. Si una suposición es fuerte o sensible, márcala en rojo con una nota.</div>
       </div>
       <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
     </section>
@@ -1854,18 +1732,40 @@
       <h2>Copiar · pegar en el panel de Claude en Excel</h2>
       <div class="prompt-box good" style="max-width: 1040px; margin-top: 0.8rem;">
         <div class="prompt-label">Prompt · Claude para Excel</div>
-        <pre style="font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.55; white-space: pre-wrap; color: var(--agyl-ink); margin: 0;">Actúa como analista financiero senior con experiencia en aseguramiento corporativo.
+        <pre style="font-family: 'Courier New', monospace; font-size: 0.82rem; line-height: 1.55; white-space: pre-wrap; color: var(--agyl-ink); margin: 0;">Eres analista financiero senior con experiencia en aseguramiento corporativo y modelación en Excel para comité directivo.
 
-A partir del histórico de esta hoja (Mes · Ingresos · Nuevos clientes · Churn, 2024-2025), construye un modelo de proyección a 12 meses con 3 escenarios: base, optimista y pesimista.
+Voy a darte datos básicos del negocio y, con eso, debes construir desde cero en el archivo Excel activo un modelo de proyección de ingresos a 12 meses. No asumas que ya existe histórico cargado ni estructura previa en la hoja: crea todo desde cero.
 
-Crea una hoja nueva llamada "Modelo_12M" con:
-  - Fila superior con supuestos nombrados (crecimiento mensual, churn asumido, ticket promedio), celdas de entrada en amarillo.
-  - 3 tablas, una por escenario, con fórmulas (no valores pegados).
-  - Totales anuales en negrita.
-  - Gráfica de líneas comparando los 3 escenarios.
-  - Detecta hasta 2 inconsistencias en el histórico original y márcalas con un comentario rojo.
+Tu tarea es:
+1. Crear una hoja nueva llamada "Modelo_12M".
+2. Construir un modelo mensual de ingresos a 12 meses con tres escenarios: base, optimista y pesimista.
+3. Usar exclusivamente los datos básicos que te entregue como insumo inicial.
+4. Si falta un dato indispensable para que el modelo sea financieramente coherente, detente y pídemelo antes de continuar.
+5. Si un dato no es indispensable, usa un supuesto conservador, explícitalo y déjalo visible en el modelo.
 
-Sé conservador y auditable: cada supuesto fuerte debe ir comentado. Si te falta algún dato esencial, pregúntame ANTES de construir. No inventes cifras.
+Formato del entregable:
+- Fila superior con supuestos clave.
+- Todos los supuestos en celdas separadas, nombradas y comentadas.
+- 3 tablas mensuales completas, una por escenario.
+- Gráfica de líneas comparando los 3 escenarios.
+- Celdas de entrada en amarillo.
+- Totales y subtotales en negrita.
+- Si una suposición es fuerte o sensible, márcala en rojo con una nota.
+
+Lógica mínima del modelo:
+- Ingresos iniciales o punto de partida.
+- Nuevos clientes por mes.
+- Churn o pérdida de clientes.
+- Ticket promedio o ingreso promedio por cliente.
+- Supuestos diferenciados por escenario.
+- Proyección mensual por 12 meses.
+
+Además:
+- Detecta y señala 2 posibles inconsistencias, riesgos o alertas en los datos o supuestos, si las hay.
+- No inventes cifras críticas no soportadas.
+- Prioriza un enfoque conservador, claro y auditable.
+
+Antes de construir, resume en 5 bullets cómo vas a estructurar el modelo. Luego ejecútalo.
 
 El comité lo revisa el viernes.</pre>
       </div>
@@ -2412,12 +2312,12 @@ Turno 3: Revisa tu guion. Quita toda frase que suene a plantilla corporativa. Qu
     function prev() {
       const s = slides[cur];
       // Check if we're on the CoT diagram slide
-      if (s.querySelector('#cotDiagram') && typeof cotPrev === 'function') {
+      if (s.querySelector('#cotDiagram') && typeof cotPrev === 'function' && typeof cotCanPrev === 'function' && cotCanPrev()) {
         cotPrev();
         return;
       }
       // Check if we're on the System prompt diagram slide
-      if (s.querySelector('#spTurns') && typeof spPrev === 'function') {
+      if (s.querySelector('#spTurns') && typeof spPrev === 'function' && typeof spCanPrev === 'function' && spCanPrev()) {
         spPrev();
         return;
       }

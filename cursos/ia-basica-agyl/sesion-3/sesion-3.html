@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contexto, privacidad y NotebookLM — Sesión 3 AGYL</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --agyl-teal: #048dad;
+      --agyl-teal-dark: #078fa7;
+      --agyl-teal-deep: #036078;
+      --agyl-gold: #ccad00;
+      --agyl-gold-soft: #e6c70d;
+      --agyl-bg: #FFFFFF;
+      --agyl-bg-soft: #F6F5F1;
+      --agyl-ink: #0B0B0F;
+      --agyl-muted: #5B5F6A;
+      --agyl-line: rgba(4,141,173,0.15);
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--agyl-bg);
+      color: var(--agyl-ink);
+      overflow: hidden;
+      height: 100vh; width: 100vw;
+    }
+    h1,h2,h3,h4 {
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.88;
+    }
+
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 6rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+      overflow: hidden;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--agyl-gold); transition: width 0.4s ease; z-index: 100; }
+    .slide-counter { position: fixed; bottom: 1.2rem; right: 1.5rem; font-size: 0.72rem; font-weight: 600; color: rgba(11,11,15,0.3); z-index: 100; letter-spacing: 1px; }
+
+    .logo-corner {
+      position: fixed; top: 1.8rem; right: 2.5rem; z-index: 99;
+      height: 46px;
+      opacity: 0.95;
+      transition: opacity 0.3s, filter 0.3s;
+    }
+
+    .watermark-a {
+      position: absolute;
+      font-family: var(--display-font);
+      font-weight: 800;
+      font-size: 38rem;
+      color: rgba(4,141,173,0.05);
+      line-height: 0.8;
+      bottom: -6rem;
+      left: -3rem;
+      pointer-events: none;
+      user-select: none;
+      font-style: italic;
+    }
+
+    .footer-stripe {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: stretch; height: 22px;
+    }
+    .footer-stripe .teal { flex: 1; background: var(--agyl-teal); }
+    .footer-stripe .gold { width: 80px; background: var(--agyl-gold); }
+
+    /* ===== COVER ===== */
+    .slide-cover { padding: 0; justify-content: center; align-items: center; background: var(--agyl-bg); }
+    .cover-inner { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 6rem 8rem; z-index: 2; }
+    .cover-chip {
+      background: var(--agyl-teal); color: #fff;
+      padding: 1.8rem 3rem; border-radius: 12px;
+      display: inline-block; max-width: 85%;
+    }
+    .cover-chip h1 {
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      color: #fff; letter-spacing: -1.5px; line-height: 0.9;
+    }
+    .cover-subtitle {
+      margin-top: 2rem; font-size: 1.35rem; color: var(--agyl-muted);
+      max-width: 720px; line-height: 1.6;
+    }
+    .cover-meta {
+      position: absolute; bottom: 8rem; left: 8rem;
+      display: flex; gap: 2.5rem; color: var(--agyl-muted); font-size: 0.85rem;
+      text-transform: uppercase; letter-spacing: 2px; font-weight: 600;
+    }
+    .cover-meta span strong { color: var(--agyl-teal); display: block; font-size: 1rem; margin-top: 0.25rem; font-family: var(--display-font); letter-spacing: 1px; }
+    .cover-deco-tr, .cover-deco-bl {
+      position: absolute; width: 40vw; height: 30vh;
+      pointer-events: none; z-index: 1;
+    }
+    .cover-deco-tr { top: 0; right: 0; }
+    .cover-deco-bl { bottom: 0; left: 0; }
+    .deco-stripe { position: absolute; transform-origin: center; border-radius: 2px; }
+    .cover-deco-tr .s1 { top: 2rem; right: 6rem; width: 120px; height: 28px; background: var(--agyl-teal); transform: skewX(-25deg); }
+    .cover-deco-tr .s2 { top: 2.5rem; right: 1rem; width: 70px; height: 26px; background: var(--agyl-teal-dark); transform: skewX(-25deg); }
+    .cover-deco-tr .s3 { top: 5rem; right: 3rem; width: 50px; height: 20px; background: var(--agyl-gold); transform: skewX(-25deg); }
+    .cover-deco-bl .s1 { bottom: 3rem; left: 8rem; width: 100px; height: 28px; background: var(--agyl-teal); transform: skewX(-25deg); }
+    .cover-deco-bl .s2 { bottom: 3.5rem; left: 2rem; width: 80px; height: 26px; background: var(--agyl-teal-dark); transform: skewX(-25deg); }
+    .cover-deco-bl .s3 { bottom: 6rem; left: 5rem; width: 45px; height: 20px; background: var(--agyl-gold); transform: skewX(-25deg); }
+    .cover-logo { position: absolute; top: 3rem; left: 3rem; height: 70px; z-index: 3; }
+
+    /* ===== SECTION DIVIDER ===== */
+    .slide-section { background: var(--agyl-teal); color: #fff; justify-content: center; align-items: flex-start; padding: 6rem 8rem; }
+    .slide-section::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: url('images/logo-agyl.png');
+      background-repeat: no-repeat;
+      background-position: -3rem center;
+      background-size: 75vh auto;
+      opacity: 0.12; filter: brightness(0) invert(1);
+      pointer-events: none;
+    }
+    .slide-section .section-tag {
+      font-size: 0.85rem; letter-spacing: 4px; font-weight: 700;
+      text-transform: uppercase; color: var(--agyl-gold-soft);
+      margin-bottom: 1.5rem;
+    }
+    .slide-section h2 {
+      font-size: clamp(4rem, 10vw, 8rem); letter-spacing: -2px; line-height: 0.88;
+      color: #fff; max-width: 80%;
+    }
+    .slide-section .section-desc {
+      margin-top: 2rem; font-size: 1.2rem; color: rgba(255,255,255,0.8);
+      max-width: 650px; line-height: 1.7;
+    }
+
+    /* ===== PAGE ===== */
+    .slide-page { padding: 4rem 6rem 3rem; gap: 1.5rem; justify-content: center; }
+    .slide-page .page-head { display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem; }
+    .chip-title {
+      background: var(--agyl-teal); color: #fff;
+      padding: 0.9rem 2.2rem; border-radius: 8px;
+      font-family: var(--display-font); font-weight: 800;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing: -0.5px; text-transform: uppercase;
+      display: inline-block;
+    }
+    .chip-title.gold { background: var(--agyl-gold); color: #fff; }
+    .slide-page h2 {
+      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+      letter-spacing: -1px; color: var(--agyl-teal-deep);
+      max-width: 900px;
+    }
+    .slide-page .desc { font-size: 1.5rem; color: var(--agyl-muted); max-width: 850px; line-height: 1.65; }
+    .slide-page .desc strong { color: var(--agyl-teal-deep); font-weight: 600; }
+
+    /* ===== BULLETS ===== */
+    .agyl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; max-width: 900px; }
+    .agyl-bullets li {
+      position: relative; padding-left: 2rem;
+      font-size: 1.3rem; color: var(--agyl-ink); line-height: 1.55;
+    }
+    .agyl-bullets li::before {
+      content: ""; position: absolute; left: 0; top: 0.45rem;
+      width: 14px; height: 14px; background: var(--agyl-gold);
+    }
+    .agyl-bullets li strong { color: var(--agyl-teal-deep); }
+
+    /* ===== CARDS ===== */
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 0.5rem; }
+    .cards-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .cards-grid-5 { grid-template-columns: repeat(5, 1fr); }
+    .card {
+      background: #fff; border: 1px solid var(--agyl-line);
+      border-top: 4px solid var(--agyl-teal);
+      padding: 1.4rem 1.5rem;
+      display: flex; flex-direction: column; gap: 0.45rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card.gold { border-top-color: var(--agyl-gold); }
+    .card:hover { transform: translateY(-3px); }
+    .card .card-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--agyl-gold);
+    }
+    .card h3 { font-size: 1.55rem; color: var(--agyl-teal-deep); letter-spacing: -0.5px; }
+    .card p { font-size: 1.05rem; color: var(--agyl-muted); line-height: 1.5; }
+
+    /* ===== PROMPT BOX ===== */
+    .prompt-box {
+      margin-top: 1rem; padding: 1.25rem 1.6rem;
+      background: var(--agyl-bg-soft); border-left: 4px solid var(--agyl-teal);
+      max-width: 900px;
+    }
+    .prompt-box.bad { border-left-color: #C93A3A; background: rgba(201,58,58,0.05); }
+    .prompt-box.good { border-left-color: var(--agyl-gold); background: rgba(204,173,0,0.07); }
+    .prompt-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--agyl-teal); margin-bottom: 0.5rem;
+    }
+    .prompt-box.bad .prompt-label { color: #C93A3A; }
+    .prompt-box.good .prompt-label { color: var(--agyl-gold); }
+    .prompt-box p {
+      font-size: 1.05rem; color: var(--agyl-ink); line-height: 1.6;
+      font-family: 'Courier New', monospace;
+    }
+    .prompt-box p em { font-style: italic; color: var(--agyl-muted); }
+    .split-pane.teal-bg .prompt-box p,
+    .split-pane.teal-bg .prompt-box p em { color: rgba(255,255,255,0.95); }
+
+    /* ===== SPLIT LAYOUT ===== */
+    .slide-split { padding: 0; flex-direction: row; gap: 0; }
+    .split-pane {
+      flex: 1; padding: 4rem 3rem; display: flex; flex-direction: column; justify-content: center; gap: 1rem;
+      position: relative;
+    }
+    .split-pane + .split-pane { border-left: 1px solid var(--agyl-line); }
+    .split-pane.teal-bg { background: var(--agyl-teal); color: #fff; }
+    .split-pane.teal-bg h3, .split-pane.teal-bg p { color: #fff; }
+    .split-pane.gold-bg { background: var(--agyl-gold); color: #fff; }
+    .split-pane.soft-bg { background: var(--agyl-bg-soft); }
+    .split-pane .pane-tag {
+      font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal);
+    }
+    .split-pane.teal-bg .pane-tag { color: var(--agyl-gold-soft); }
+    .split-pane h3 {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      color: var(--agyl-teal-deep); letter-spacing: -0.5px;
+    }
+    .split-pane .prompt-box { max-width: 100%; }
+
+    /* ===== STATEMENT ===== */
+    .slide-statement { justify-content: center; align-items: flex-start; padding: 6rem 8rem; }
+    .slide-statement .statement-tag {
+      font-size: 0.85rem; letter-spacing: 4px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-gold); margin-bottom: 1.5rem;
+    }
+    .slide-statement h2 {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      letter-spacing: -2px; line-height: 0.92;
+      color: var(--agyl-teal-deep); max-width: 90%;
+    }
+    .slide-statement h2 span.accent { color: var(--agyl-teal); }
+    .slide-statement h2 span.gold { color: var(--agyl-gold); }
+    .slide-statement .statement-sub {
+      margin-top: 2rem; font-size: 1.3rem; color: var(--agyl-muted);
+      max-width: 720px; line-height: 1.65;
+    }
+
+    /* ===== CHAT CARD ===== */
+    .chat-card {
+      margin-top: 1.5rem; padding: 2rem 2.5rem;
+      background: #fff; border: 2px solid var(--agyl-teal);
+      border-radius: 4px; max-width: 720px;
+      box-shadow: 0 6px 20px rgba(4,141,173,0.08);
+    }
+    .chat-card .chat-label {
+      font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chat-card p { font-size: 1.35rem; color: var(--agyl-ink); line-height: 1.55; }
+    .chat-card .chat-hint {
+      margin-top: 0.8rem; font-size: 1rem; color: var(--agyl-muted);
+      font-style: italic;
+    }
+
+    /* ===== STEPS ===== */
+    .steps { display: flex; flex-direction: column; gap: 0.8rem; margin-top: 0.5rem; max-width: 900px; }
+    .step {
+      display: flex; gap: 1.25rem; padding: 1.1rem 1.5rem;
+      background: var(--agyl-bg-soft); border-left: 3px solid var(--agyl-teal);
+    }
+    .step.turn-1 { border-left-color: var(--agyl-teal); }
+    .step.turn-2 { border-left-color: var(--agyl-teal-dark); }
+    .step.turn-3 { border-left-color: var(--agyl-gold); }
+    .step.turn-4 { border-left-color: var(--agyl-gold-soft); }
+    .step-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 2.6rem; color: var(--agyl-teal);
+      min-width: 2.5rem; line-height: 1;
+    }
+    .step.turn-3 .step-num, .step.turn-4 .step-num { color: var(--agyl-gold); }
+    .step-body { flex: 1; display: flex; flex-direction: column; gap: 0.25rem; }
+    .step-body strong { font-size: 1.1rem; color: var(--agyl-teal-deep); }
+    .step-body span { font-size: 1rem; color: var(--agyl-muted); line-height: 1.5; font-family: 'Courier New', monospace; }
+
+    /* ===== RAFAT grid ===== */
+    .rafat-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .rafat-card {
+      background: #fff; border: 1px solid var(--agyl-line);
+      padding: 1.3rem 1rem; text-align: center;
+      border-top: 4px solid var(--agyl-teal);
+    }
+    .rafat-card.gold { border-top-color: var(--agyl-gold); }
+    .rafat-letter {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 4rem; color: var(--agyl-teal); line-height: 1;
+    }
+    .rafat-card.gold .rafat-letter { color: var(--agyl-gold); }
+    .rafat-name {
+      font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal-deep); margin-top: 0.4rem;
+    }
+    .rafat-desc { font-size: 0.9rem; color: var(--agyl-muted); margin-top: 0.4rem; line-height: 1.4; }
+
+    /* ===== TOOLS GRID (NotebookLM tools) ===== */
+    .tools-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .tool-card {
+      background: #fff; border: 1px solid var(--agyl-line);
+      padding: 1.2rem 1rem;
+      border-top: 3px solid var(--agyl-teal);
+      display: flex; flex-direction: column; gap: 0.35rem;
+    }
+    .tool-card.gold { border-top-color: var(--agyl-gold); }
+    .tool-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 1.6rem; color: var(--agyl-teal); line-height: 1;
+    }
+    .tool-card.gold .tool-num { color: var(--agyl-gold); }
+    .tool-card h4 { font-size: 1.15rem; color: var(--agyl-teal-deep); letter-spacing: -0.3px; }
+    .tool-card p { font-size: 0.85rem; color: var(--agyl-muted); line-height: 1.45; }
+
+    /* ===== EXERCISE BLOCK ===== */
+    .exercise-block {
+      margin-top: 1rem; padding: 1.8rem 2.2rem;
+      background: var(--agyl-bg-soft); border-left: 4px solid var(--agyl-teal);
+      max-width: 100%;
+    }
+    .exercise-block .ex-label {
+      font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal); margin-bottom: 0.6rem;
+    }
+    .exercise-block h3 {
+      font-size: 1.9rem; color: var(--agyl-teal-deep); letter-spacing: -0.5px;
+      margin-bottom: 0.8rem;
+    }
+    .exercise-block p { font-size: 1.05rem; color: var(--agyl-ink); line-height: 1.55; }
+    .exercise-block .ex-prompt {
+      margin-top: 0.9rem; padding: 0.85rem 1.1rem;
+      background: #fff; border: 1px dashed var(--agyl-teal);
+      font-family: 'Courier New', monospace; font-size: 0.95rem;
+      color: var(--agyl-ink); line-height: 1.5;
+    }
+    .exercise-block.gold { border-left-color: var(--agyl-gold); }
+    .exercise-block.gold .ex-label, .exercise-block.gold h3 { color: var(--agyl-gold); }
+    .exercise-block.gold .ex-prompt { border-color: var(--agyl-gold); }
+
+    /* ===== DEMO BUTTONS ===== */
+    .demo-buttons { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+    .demo-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem; border-radius: 999px;
+      text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      background: #fff; color: var(--agyl-ink);
+      border: 1px solid var(--agyl-line);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .demo-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(4,141,173,0.15); }
+    .demo-btn.primary { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
+    .demo-btn.gold { background: var(--agyl-gold); color: #fff; border-color: var(--agyl-gold); }
+
+    /* ===== CONTACT ===== */
+    .slide-contact { padding: 0; flex-direction: row; gap: 0; background: var(--agyl-teal-deep); color: #fff; }
+    .contact-left { flex: 1; padding: 5rem 5rem; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+    .contact-left h2 { font-size: clamp(3rem, 6vw, 5rem); color: #fff; letter-spacing: -1.5px; }
+    .contact-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--agyl-gold); }
+    .contact-info { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.5rem; }
+    .contact-info a, .contact-info span {
+      font-size: 1.05rem; color: rgba(255,255,255,0.75);
+      text-decoration: none; display: flex; align-items: center; gap: 0.55rem;
+    }
+    .contact-info a:hover { color: var(--agyl-gold-soft); }
+    .contact-right { width: 40%; background: var(--agyl-teal); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .contact-right::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: url('images/logo-agyl.png');
+      background-repeat: no-repeat; background-position: center;
+      background-size: 80% auto;
+      opacity: 0.15; filter: brightness(0) invert(1);
+    }
+    .contact-right-content { position: relative; z-index: 2; text-align: center; color: #fff; }
+    .contact-right-content h3 { font-size: 2.5rem; color: #fff; line-height: 0.9; letter-spacing: -1px; }
+    .contact-right-content p { margin-top: 1rem; font-size: 1.05rem; color: rgba(255,255,255,0.8); max-width: 320px; line-height: 1.6; }
+
+    /* ===== NAV ===== */
+    .nav-arrows { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 100; }
+    .nav-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--agyl-line); background: #fff;
+      color: var(--agyl-teal-deep); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(4,141,173,0.1); transition: all 0.2s;
+    }
+    .nav-btn:hover { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
+
+    .accent-teal { color: var(--agyl-teal); }
+    .accent-gold { color: var(--agyl-gold); }
+    .accent-deep { color: var(--agyl-teal-deep); }
+    .strike { text-decoration: line-through; opacity: 0.5; }
+
+    @media (max-width: 1024px) {
+      .slide { padding: 3rem 4rem; }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid-4, .cards-grid-5 { grid-template-columns: repeat(2, 1fr); }
+      .rafat-grid, .tools-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .slide { padding: 2rem 2rem; }
+      .slide-split { flex-direction: column; }
+      .cards-grid, .cards-grid-4, .cards-grid-5 { grid-template-columns: 1fr; }
+      .rafat-grid, .tools-grid { grid-template-columns: 1fr 1fr; }
+      .logo-corner { height: 32px; top: 1rem; right: 1rem; }
+      .slide-contact { flex-direction: column; }
+      .contact-right { width: 100%; height: 30vh; }
+      .watermark-a { font-size: 20rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter"></div>
+  <img src="images/logo-agyl.png" alt="AGYL" class="logo-corner" id="logoCorner">
+
+  <div class="deck">
+
+    <!-- ========================================================== -->
+    <!-- SLIDE 1 — COVER                                             -->
+    <!-- ========================================================== -->
+    <section class="slide slide-cover active">
+      <img src="images/logo-agyl.png" alt="AGYL" class="cover-logo">
+      <div class="cover-deco-tr">
+        <div class="deco-stripe s1"></div>
+        <div class="deco-stripe s2"></div>
+        <div class="deco-stripe s3"></div>
+      </div>
+      <div class="cover-deco-bl">
+        <div class="deco-stripe s1"></div>
+        <div class="deco-stripe s2"></div>
+        <div class="deco-stripe s3"></div>
+      </div>
+      <div class="cover-inner">
+        <div class="cover-chip">
+          <h1>Contexto, privacidad<br>y NotebookLM</h1>
+        </div>
+        <p class="cover-subtitle">Sesión 3 · Consolidamos lo aprendido, hablamos de datos sensibles, y abrimos la herramienta que más va a cambiar su semana.</p>
+        <div class="cover-meta">
+          <span>Programa IA Básica<strong>AGYL</strong></span>
+          <span>Sesión<strong>03 / 04</strong></span>
+          <span>Duración<strong>120 min</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 0 — BIENVENIDA + REENCUADRE (0:00 - 0:05)            -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 2 — Hook -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Arranque · 0:01</div>
+      <h2>La semana pasada aprendimos a <span class="accent">hablarle</span>.<br>Hoy le vamos a dar <span class="gold">contexto.</span></h2>
+      <p class="statement-sub">Un prompt bien escrito sin contexto es media herramienta. Un prompt mediano con contexto correcto gana siempre. Eso es lo de hoy.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 3 — Chat de apertura -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Interacción</div></div>
+      <h2>Antes de empezar</h2>
+      <div class="chat-card">
+        <div class="chat-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Escriban en el chat
+        </div>
+        <p>En una palabra: ¿qué se llevaron de la sesión pasada?</p>
+        <p class="chat-hint">Vamos a leer 3 o 4 respuestas por nombre.</p>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 5 — Hoja de ruta S3 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Hoja de ruta</div></div>
+      <h2>Lo que haremos en las próximas 2 horas</h2>
+      <div class="cards-grid cards-grid-5" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Bloque 1</div>
+          <h3>Recap + RAFAT</h3>
+          <p>Anclamos el framework con un ejemplo real de aseguramiento.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Bloque 2</div>
+          <h3>Privacidad</h3>
+          <p>Qué NO poner, cómo anonimizar, dónde va cada dato.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Bloque 3</div>
+          <h3>NotebookLM</h3>
+          <p>Cinco ejercicios en vivo sobre documentos regulatorios.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Bloque 4</div>
+          <h3>Casos por rol</h3>
+          <p>Analista, comercial, líder — RAFAT aplicado.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Bloque 5</div>
+          <h3>Cierre + Q&amp;A</h3>
+          <p>3 ideas + preview Sesión 4 + preguntas abiertas.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 1 — RECAP + RAFAT (0:05 - 0:20)                      -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 6 — Section divider -->
+    <section class="slide slide-section">
+      <div class="section-tag">Bloque 1</div>
+      <h2>Recap rápido.<br>Y RAFAT en vivo.</h2>
+      <p class="section-desc">Retomamos lo esencial de la Sesión 1 y la primera parte de la Sesión 2 — y anclamos el framework con un solo ejemplo corporativo real.</p>
+    </section>
+
+    <!-- SLIDE 7 — Recap S1 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Recap · Sesión 1</div></div>
+      <h2>Lo que nos dejó la primera sesión</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">01</div>
+          <h3>Predice, no piensa</h3>
+          <p>Los modelos generan la siguiente palabra más probable. No entienden. Por eso alucinan con total confianza.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">02</div>
+          <h3>Verificar siempre</h3>
+          <p>Datos, citas, números, nombres propios. Las alucinaciones suenan perfectas — y son falsas.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">03</div>
+          <h3>LLM ≠ Agente</h3>
+          <p>Un modelo responde. Un agente actúa. Hoy consolidamos el primero — la próxima vemos el segundo.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 8 — Recap S2 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Recap · Sesión 2</div></div>
+      <h2>Lo que practicamos la semana pasada</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card gold">
+          <div class="card-label">01</div>
+          <h3>Instrucciones fijas</h3>
+          <p>System prompts, Custom Instructions, Projects. Configurar el rol una vez, reusarlo siempre.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">02</div>
+          <h3>Aprender con ejemplos</h3>
+          <p>Mostrar dos o tres casos buenos y la IA replica el patrón. Clasificación, formato, tono.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">03</div>
+          <h3>Un prompt es conversación</h3>
+          <p>La primera respuesta casi nunca es la buena. Iterar: acortar, añadir opciones, pedir autocrítica.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 9 — RAFAT chip -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">El framework de S2 que hoy anclamos</div>
+      <h2>Cinco letras.<br>Un <span class="accent">prompt completo.</span></h2>
+      <p class="statement-sub">Si un prompt tuyo falla, 9 de cada 10 veces le falta alguna de estas cinco. Hoy lo vamos a ver en un solo ejemplo de principio a fin.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 10 — RAFAT grid -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Framework</div></div>
+      <h2>RAFAT — las cinco letras</h2>
+      <div class="rafat-grid">
+        <div class="rafat-card">
+          <div class="rafat-letter">R</div>
+          <div class="rafat-name">Rol</div>
+          <div class="rafat-desc">Quién es el modelo en esta conversación.</div>
+        </div>
+        <div class="rafat-card">
+          <div class="rafat-letter">A</div>
+          <div class="rafat-name">Acción</div>
+          <div class="rafat-desc">La tarea concreta que le pides.</div>
+        </div>
+        <div class="rafat-card">
+          <div class="rafat-letter">F</div>
+          <div class="rafat-name">Formato</div>
+          <div class="rafat-desc">Cómo quieres la respuesta — tabla, bullets, email.</div>
+        </div>
+        <div class="rafat-card gold">
+          <div class="rafat-letter">A</div>
+          <div class="rafat-name">Antecedentes</div>
+          <div class="rafat-desc">Contexto, audiencia, restricciones.</div>
+        </div>
+        <div class="rafat-card gold">
+          <div class="rafat-letter">T</div>
+          <div class="rafat-name">Temperatura</div>
+          <div class="rafat-desc">Tono, registro, nivel de creatividad.</div>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1.5rem; font-size: 1.2rem;">Vamos a aplicarlo a un caso real de auditoría — el tipo de tarea que hacen aquí todos los días.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 11 — Demo RAFAT: vago vs completo -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Prompt pobre</div>
+        <h3>"Revisa esta política"</h3>
+        <div class="prompt-box bad">
+          <div class="prompt-label">Lo que escriben</div>
+          <p><em>Revisa esta política y dime qué tiene mal.</em></p>
+        </div>
+        <div class="prompt-box bad">
+          <div class="prompt-label">Qué obtienen</div>
+          <p><em>Observaciones genéricas: "mejorar redacción", "revisar ortografía". Inservible.</em></p>
+        </div>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Mismo modelo · prompt RAFAT</div>
+        <h3>Con las cinco letras</h3>
+        <div class="prompt-box" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Lo que escriben</div>
+          <p style="color: rgba(255,255,255,0.95);"><em><strong>R:</strong> Eres auditor senior de riesgos operacionales. <strong>A:</strong> Revisa la política adjunta y señala inconsistencias. <strong>F:</strong> Tabla con columnas inconsistencia / artículo / severidad. <strong>A:</strong> Aseguradora colombiana regulada por SFC, audiencia comité de riesgos. <strong>T:</strong> Tono formal ejecutivo, sin jerga técnica.</em></p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SLIDE 11A — Técnica: Autocrítica forzada -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Técnica avanzada</div></div>
+      <h2>La IA como su propio editor</h2>
+      <p class="desc">Después de cualquier respuesta, añadan una segunda instrucción: que se critique a sí misma y reescriba. Sale una versión mucho mejor sin que ustedes hagan más trabajo.</p>
+      <div class="exercise-block gold" style="margin-top: 1rem;">
+        <div class="ex-label">Prompt ejemplo · segundo turno</div>
+        <h3>Critica y reescribe</h3>
+        <div class="ex-prompt">"Critica tu respuesta anterior desde la perspectiva de un auditor senior escéptico. ¿Qué tres fallas detectas? Ahora reescríbela corrigiéndolas — sin cambiar el fondo, solo la calidad."</div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 11AB — Técnica: memorias + RAFAT -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Técnica avanzada</div></div>
+      <h2>Usar memorias + RAFAT para vender mejor</h2>
+      <p class="desc">Aquí no arrancamos de cero. Le pedimos a la IA que use <strong>lo que ya recuerda de mí</strong> — mi tono, mi tipo de cliente, mis servicios — y encima le damos un prompt RAFAT para que el correo salga mucho más cerca de algo usable.</p>
+      <div class="exercise-block" style="margin-top: 1rem;">
+        <div class="ex-label">Ejemplo · correo promocional</div>
+        <h3>Servicios de automatización</h3>
+        <div class="ex-prompt">"Usando tus memorias sobre mí, sobre cómo vendo, el tipo de clientes con los que trabajo y los servicios de automatización que ofrezco, crea un correo promocional para ofrecer mis servicios. Formato RAFAT: <strong>R</strong>: actúa como copywriter B2B senior especializado en venta consultiva de automatización. <strong>A</strong>: redacta un email comercial corto para prospectar un cliente potencial. <strong>F</strong>: asunto + preheader + cuerpo del correo + CTA final. <strong>A</strong>: el destinatario es un gerente o dueño de empresa que pierde tiempo en tareas operativas repetitivas y todavía no ha automatizado procesos. El objetivo es despertar interés y agendar una llamada. <strong>T</strong>: tono claro, confiable, cercano, sin hype, sin sonar robótico, con enfoque en impacto de negocio."</div>
+      </div>
+      <p class="desc" style="font-size: 1.08rem; margin-top: 0.8rem;">La idea pedagógica es simple: <strong>memoria = contexto acumulado</strong>. RAFAT = estructura. Juntas, las dos cosas hacen que el output se parezca más a ustedes y menos a un correo genérico de IA.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 11B — Técnica: Reverse prompt -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Técnica avanzada</div></div>
+      <h2>Copiar el estilo de algo que ya funcionó</h2>
+      <p class="desc">No pierdan una hora redactando un prompt nuevo. Cojan un <strong>output bueno</strong> que ya tienen — un correo, un informe, una propuesta — y pidan el prompt que lo produciría.</p>
+      <div class="exercise-block" style="margin-top: 1rem;">
+        <div class="ex-label">Reverse prompt · flujo</div>
+        <h3>De un buen output → a un prompt reutilizable</h3>
+        <div class="ex-prompt">"Este correo funcionó muy bien con el cliente [pegar correo]. Dame el prompt exacto que yo tendría que escribir para generar correos con este mismo tono, estructura y nivel de detalle. Formato: prompt RAFAT completo."</div>
+      </div>
+      <p class="desc" style="font-size: 1.1rem; margin-top: 0.8rem;">El resultado: un prompt que pueden guardar y reusar toda la semana. Copiar y pegar estilo, básicamente.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 11C — Comparativa 3 modelos -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Showcase · 3 modelos lado a lado</div></div>
+      <h2>Mismo prompt, tres respuestas — ¿cuál gana?</h2>
+      <p class="desc">Abrimos tres pestañas en vivo y lanzamos el <strong>mismo prompt RAFAT</strong> en los tres modelos. No es para elegir el mejor — es para entender que cada uno tiene una personalidad distinta.</p>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Modelo orientado a texto</div>
+          <h3>Redacción corporativa</h3>
+          <p>Tono más cuidado, mejor en textos largos, más conservador con afirmaciones no verificables.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Modelo todoterreno</div>
+          <h3>Versátil y multimodal</h3>
+          <p>Mejor ecosistema: Canvas, GPTs, Deep Research, Voice. Imágenes nativas. El todoterreno.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Modelo integrado al workspace</div>
+          <h3>Integrado con Google</h3>
+          <p>Lee Drive, Gmail, Calendar. Ideal si ya trabajan en Workspace. Context window enorme.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 12 — Statement: tu contexto > el modelo -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">La tesis de hoy</div>
+      <h2>Tu <span class="accent">contexto</span> vale más<br>que el modelo de <span class="gold">moda.</span></h2>
+      <p class="statement-sub">No importa si usan GPT, Claude o Gemini. Un prompt con RAFAT + tus documentos bien cargados le gana siempre a un prompt flojo — sin importar la versión.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 2 — PRIVACIDAD (0:20 - 0:35)                          -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 13 — Section divider -->
+    <section class="slide slide-section">
+      <div class="section-tag">Bloque 2</div>
+      <h2>Privacidad<br>y datos sensibles.</h2>
+      <p class="section-desc">La pregunta que siempre viene: "¿qué le puedo poner y qué no?" Hoy salimos con un criterio claro y un árbol de decisión que cabe en la cabeza.</p>
+    </section>
+
+    <!-- SLIDE 14 — Qué NO poner -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Datos sensibles</div></div>
+      <h2>Qué NO poner nunca en un chat público</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">01</div>
+          <h3>PII de clientes</h3>
+          <p>Cédulas, nombres completos, correos, teléfonos, direcciones de asegurados.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">02</div>
+          <h3>Números de póliza</h3>
+          <p>Identificadores que puedan mapear a una persona o empresa real.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">03</div>
+          <h3>Contratos vigentes</h3>
+          <p>Acuerdos activos con montos, cláusulas confidenciales o partes identificables.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">04</div>
+          <h3>Datos financieros</h3>
+          <p>Estados de cuenta, indicadores internos no publicados, siniestralidad por cliente.</p>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1.3rem; font-size: 1.15rem;"><strong>Regla simple:</strong> si lo vieran circular en un correo externo y les incomodara, no va a un chat público.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 15 — Anonimización -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Antes · con datos reales</div>
+        <h3>No subir así</h3>
+        <div class="prompt-box bad">
+          <div class="prompt-label">Prompt con PII</div>
+          <p><em>"Redacta respuesta al asegurado <strong>Pedro Gómez (CC 1020...)</strong>, póliza <strong>SGR-884512</strong>, sobre el siniestro del <strong>12-mar</strong> por <strong>COP 42M</strong>."</em></p>
+        </div>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Después · anonimizado</div>
+        <h3>Mismo resultado, sin exposición</h3>
+        <div class="prompt-box" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Prompt con placeholders</div>
+          <p style="color: rgba(255,255,255,0.95);"><em>"Redacta respuesta al asegurado <strong>[CLIENTE_A]</strong>, póliza <strong>[POLIZA_ID]</strong>, sobre el siniestro del <strong>[FECHA]</strong> por <strong>[MONTO]</strong>."</em></p>
+        </div>
+        <p style="color: rgba(255,255,255,0.85); font-size: 0.95rem; margin-top: 0.5rem;">Después del borrador, ustedes reemplazan los placeholders en local. La IA nunca ve el dato real.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 16 — Árbol de decisión -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Árbol de decisión</div></div>
+      <h2>¿Dónde va cada tipo de dato?</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Verde</div>
+          <h3>Dato público</h3>
+          <p>Circulares de la SFC, noticias, reportes publicados, contenido de su web.<br><strong>→ Cualquier herramienta.</strong></p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Amarillo</div>
+          <h3>Dato interno no sensible</h3>
+          <p>Procedimientos genéricos, plantillas, manuales internos sin PII.<br><strong>→ Cuenta corporativa con entrenamiento desactivado.</strong></p>
+        </div>
+        <div class="card">
+          <div class="card-label">Rojo</div>
+          <h3>Regulado / PII</h3>
+          <p>Datos de cliente, pólizas, contratos vigentes, info financiera identificable.<br><strong>→ No cloud público. Anonimizar o entorno controlado.</strong></p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 17 — Regla de oro -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Regla de oro</div>
+      <h2>Si no lo pondrías<br>en un <span class="accent">correo externo</span>,<br>no lo pongas en <span class="gold">ChatGPT público.</span></h2>
+      <p class="statement-sub">Misma intuición que ya tienen con correo corporativo. Aplíquenla igual — y tienen el 80% del criterio resuelto.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 18 — Reflexion previa a NotebookLM -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Interacción</div></div>
+      <h2>Antes de saltar a NotebookLM</h2>
+      <div class="chat-card">
+        <div class="chat-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Escriban en el chat
+        </div>
+        <p>¿Qué les da más susto de usar IA con información real: fuga de datos, equivocarse, confiar demasiado, o no saber dónde está el límite?</p>
+        <p class="chat-hint">Vamos a leer varias respuestas y conversar antes de abrir la herramienta.</p>
+      </div>
+      <div class="cards-grid cards-grid-3" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Miedo 01</div>
+          <h3>Datos sensibles</h3>
+          <p>¿Qué jamás subirían? ¿Qué sí subirían solo si estuviera anonimizado?</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Miedo 02</div>
+          <h3>Confiar demasiado</h3>
+          <p>¿Les preocupa más que la IA se invente algo o que el equipo deje de verificar?</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Miedo 03</div>
+          <h3>Reglas del juego</h3>
+          <p>Si mañana toda su empresa usara IA, ¿cuál sería la primera regla que ustedes pondrían?</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 3 — NOTEBOOKLM (0:35 - 1:30)                          -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 19 — Section divider -->
+    <section class="slide slide-section">
+      <div class="section-tag">Demo en vivo</div>
+      <h2>NotebookLM.<br>El asistente de investigación<br>que no sabían que necesitaban.</h2>
+      <p class="section-desc">Google, gratis, y es la herramienta más subestimada de 2025. Cinco ejercicios en vivo sobre documentos regulatorios reales del sector.</p>
+    </section>
+
+    <!-- SLIDE 20 — Qué es NotebookLM -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Qué es</div></div>
+      <h2>NotebookLM en una frase</h2>
+      <p class="desc" style="font-size: 1.6rem; margin-top: 0.5rem;">Un "cuaderno" donde ustedes cargan hasta <strong>300 fuentes</strong> (PDFs, webs, videos, notas) y la IA solo responde <strong>a partir de ellas</strong> — con cita directa al párrafo exacto.</p>
+      <ul class="agyl-bullets" style="margin-top: 1.2rem;">
+        <li><strong>Alucina menos</strong> que un chat común: está anclado a sus fuentes — aunque sigue siendo un modelo y hay que verificar.</li>
+        <li><strong>Cita siempre</strong> la parte del documento de donde sacó cada afirmación.</li>
+        <li><strong>Es gratis</strong> — solo necesitan cuenta de Google.</li>
+        <li><strong>No entrena</strong> sus modelos con el contenido que suban (política actual de NotebookLM).</li>
+      </ul>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 21 — Las 10 herramientas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Lo que vamos a usar hoy</div></div>
+      <h2>Las 10 herramientas de NotebookLM</h2>
+      <div class="tools-grid">
+        <div class="tool-card"><div class="tool-num">01</div><h4>Fuentes</h4><p>PDFs, URLs, texto, YouTube, Google Drive.</p></div>
+        <div class="tool-card"><div class="tool-num">02</div><h4>Chat con citas</h4><p>Preguntas y respuestas ancladas al texto.</p></div>
+        <div class="tool-card"><div class="tool-num">03</div><h4>Resumen</h4><p>Resumen automático del notebook completo.</p></div>
+        <div class="tool-card gold"><div class="tool-num">04</div><h4>Audio Overview</h4><p>Podcast conversacional · modo interactivo.</p></div>
+        <div class="tool-card gold"><div class="tool-num">05</div><h4>Video Overview</h4><p>Explicación animada tipo ejecutivo.</p></div>
+        <div class="tool-card"><div class="tool-num">06</div><h4>Briefing · Study · FAQ · Timeline</h4><p>Notas generadas listas para reuniones.</p></div>
+        <div class="tool-card"><div class="tool-num">07</div><h4>Mapa mental</h4><p>Visualización jerárquica del contenido.</p></div>
+        <div class="tool-card gold"><div class="tool-num">08</div><h4>Notas propias</h4><p>Escriben sus notas y las convierten en fuente.</p></div>
+        <div class="tool-card"><div class="tool-num">09</div><h4>Descubrir fuentes</h4><p>Búsqueda web integrada para ampliar.</p></div>
+        <div class="tool-card gold"><div class="tool-num">10</div><h4>Compartir</h4><p>Modo lectura o edición con colegas.</p></div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 22 — Ejercicio 1 · Fuentes + Q&A -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 1</div></div>
+      <h2>Cargar fuentes y preguntar con citas</h2>
+      <div class="cards-grid" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Documento 1</div>
+          <h3>Circular de Incidentes</h3>
+          <p>Trae tiempos de reporte, niveles de severidad, responsables y criterios de escalamiento.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Documento 2</div>
+          <h3>Circular de Datos Digitales</h3>
+          <p>Trae reglas sobre trazabilidad, accesos, terceros, anonimización y uso de datos digitales.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Documento 3</div>
+          <h3>Manual interno de ejemplo</h3>
+          <p>Trae el proceso actual de la empresa, pero con vacíos para que se note dónde hay gaps frente a la norma.</p>
+        </div>
+      </div>
+      <div class="exercise-block" style="margin-top: 1rem;">
+        <div class="ex-label">Qué vamos a hacer</div>
+        <h3>Subimos los tres y cruzamos la información</h3>
+        <p>Los cargamos al mismo notebook y le hacemos una sola pregunta que obligue a leer las tres fuentes a la vez. El objetivo es que NotebookLM no resuma por separado, sino que <strong>compare, cruce y detecte vacíos</strong>.</p>
+        <div class="ex-prompt">¿Qué exige la circular nueva de datos digitales que el manual interno aún NO contempla? Dame la respuesta en forma de tabla con columna exigencia / artículo citado / gap.</div>
+      </div>
+      <div class="demo-buttons">
+        <a href="https://notebooklm.google.com" target="_blank" class="demo-btn primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Abrir NotebookLM
+        </a>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 23 — Ejercicio 2 · Notas generadas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 2</div></div>
+      <h2>Notas generadas — cuatro formatos, cuatro usos</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Briefing Doc</div>
+          <h3>Para comité</h3>
+          <p>Resumen ejecutivo, puntos críticos, decisiones pendientes.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Study Guide</div>
+          <h3>Para onboarding</h3>
+          <p>Preguntas y respuestas tipo examen. Útil para formar nuevo personal.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">FAQ</div>
+          <h3>Para inducción</h3>
+          <p>Las 15 preguntas más probables con respuesta citada.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Timeline</div>
+          <h3>Para entender evolución</h3>
+          <p>Cronología de eventos, fechas regulatorias, cambios normativos.</p>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.1rem;">Vamos a generar los cuatro en vivo sobre las mismas fuentes. Verán cómo el mismo material produce documentos distintos según la audiencia.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 24 — Ejercicio 3 · Audio Overview (WOW) -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Ejercicio 3 · Demo estrella</div></div>
+      <h2>Audio Overview — el podcast de sus documentos</h2>
+      <div class="exercise-block gold">
+        <div class="ex-label">Qué van a escuchar</div>
+        <h3>Dos voces de IA discuten los documentos como si fuera un podcast</h3>
+        <p>Pre-generado antes de la sesión (toma 2-5 min crear). Escuchamos <strong>90 segundos</strong> para ver la calidad. Después activamos el <strong>modo interactivo</strong>: pausamos y hacemos una pregunta en vivo — el podcast responde.</p>
+        <div class="ex-prompt">Caso de uso real: generan el audio el viernes, lo escuchan camino al trabajo el lunes, llegan a la oficina ya con contexto de las tres circulares. 20 páginas de lectura convertidas en 12 minutos de audio.</div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 25 — Chat prompt intermedio -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Interacción</div></div>
+      <h2>Mientras procesan lo del Audio Overview</h2>
+      <div class="chat-card">
+        <div class="chat-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Escriban en el chat
+        </div>
+        <p>¿Con qué documento de su trabajo harían el primer notebook el lunes?</p>
+        <p class="chat-hint">Vamos a leer tres o cuatro por nombre.</p>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 26 — Ejercicio 4 · Video + Mapa mental -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 4</div></div>
+      <h2>Video Overview y Mapa mental</h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Video Overview</div>
+          <h3>Para enviar a un directivo</h3>
+          <p>Explicación animada de 3-5 minutos del notebook. Material ejecutivo listo para Slack o correo. Útil cuando la otra persona no va a leer las 80 páginas.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Mapa mental</div>
+          <h3>Para presentaciones y reuniones</h3>
+          <p>Visualización jerárquica expandible. Lo proyectan en una reunión y navegan por temas mientras discuten — reemplaza el PowerPoint aburrido de resumen.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 27 — Ejercicio 5 · Notas + Descubrir -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Ejercicio 5</div></div>
+      <h2>Sus notas son fuente. Y la web también.</h2>
+      <div class="exercise-block">
+        <div class="ex-label">Flujo en vivo</div>
+        <h3>Notas propias → convertir en fuente → re-preguntar</h3>
+        <p>Tomamos una nota corta ("resumen de la reunión con SFC del 12 de abril"), la convertimos en fuente del notebook, y ahora la IA la cruza con las otras tres. Útil para capturar decisiones internas no documentadas.</p>
+      </div>
+      <div class="exercise-block gold" style="margin-top: 1rem;">
+        <div class="ex-label">Descubrir fuentes</div>
+        <h3>Buscar en la web sin salir del notebook</h3>
+        <p>Usamos "Descubrir fuentes" para traer automáticamente artículos relacionados de la web — NotebookLM propone, ustedes eligen qué se queda. Se integra al mismo notebook.</p>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+
+    <!-- SLIDE 27A — YouTube como fuente -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 6 · YouTube como fuente</div></div>
+      <h2>Un webinar de una hora → cinco preguntas respondidas</h2>
+      <p class="desc">NotebookLM transcribe videos de YouTube automáticamente y los trata como texto. Aquí no vamos a usar un video genérico: vamos a usar la <strong>grabación real de la Sesión 1 de AGYL</strong> como una fuente más del notebook.</p>
+      <div class="exercise-block" style="margin-top: 1rem;">
+        <div class="ex-label">Flujo en vivo</div>
+        <h3>Pegamos el link de la Sesión 1 y lo cruzamos con otras fuentes</h3>
+        <p>Agregamos este video de YouTube como cuarta fuente del notebook: <strong>https://www.youtube.com/watch?v=cm2CAAesq4M</strong>. NotebookLM hace la transcripción y ahora podemos cruzar lo que se explicó en la sesión con el manual interno y las demás fuentes cargadas.</p>
+        <div class="ex-prompt">"Usando la grabación de la Sesión 1 de AGYL y las demás fuentes de este notebook, identifica qué conceptos ya se explicaron allí y cuáles se amplían o aterrizan mejor en los documentos adjuntos. Genera una tabla: concepto / minuto del video / fuente relacionada / aprendizaje clave."</div>
+      </div>
+      <p class="desc" style="font-size: 1.1rem; margin-top: 0.8rem;">El mensaje para el grupo es potente: <strong>sus propias capacitaciones grabadas</strong> también se vuelven consultables. Ya no toca volver a ver una sesión completa para rescatar una idea puntual.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 27B — 3 contratos comparativa -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Ejercicio 7 · El power move</div></div>
+      <h2>Tres contratos. Una tabla. Todos los gaps.</h2>
+      <p class="desc">El caso de uso más pedido por auditores: comparar <strong>tres contratos parecidos</strong> — por ejemplo, el mismo proveedor en años distintos, o tres propuestas comerciales — y sacar una tabla cláusula por cláusula.</p>
+      <div class="exercise-block gold" style="margin-top: 1rem;">
+        <div class="ex-label">Prompt · ejercicio en vivo</div>
+        <h3>Comparativa cláusula por cláusula</h3>
+        <div class="ex-prompt">"Compara los tres contratos adjuntos. Formato: tabla con columnas cláusula / contrato A / contrato B / contrato C / tipo de diferencia. Marca en rojo las cláusulas donde haya diferencia material en obligaciones, plazos o montos."</div>
+      </div>
+      <p class="desc" style="font-size: 1.1rem; margin-top: 0.8rem;">Lo que en Excel les tomaría medio día, aquí sale en <strong>una sola pregunta</strong> — con cita al párrafo exacto de cada contrato.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 28 — Compartir -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Bonus</div></div>
+      <h2>Compartir el notebook con un colega</h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Modo lectura</div>
+          <h3>"Te mando el notebook"</h3>
+          <p>El colega puede preguntar, escuchar el audio, ver el mapa mental — pero no puede modificar fuentes ni notas.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Modo edición</div>
+          <h3>"Trabajemos juntos"</h3>
+          <p>El equipo agrega fuentes, escribe notas y colabora en el mismo notebook. Útil para investigaciones compartidas.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 29 — Recap NotebookLM -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Recap rápido</div>
+      <h2>20 páginas de lectura →<br><span class="accent">podcast, mapa mental,</span><br>FAQ y video en <span class="gold">15 minutos.</span></h2>
+      <p class="statement-sub">Esa es la promesa. Y a diferencia de ChatGPT, solo responde con lo que ustedes subieron — con cita directa. Es el mejor "primer prompt corporativo" que existe hoy.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 3.5 — CANVAS + GPTs DE CHATGPT                        -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 30A — Section divider bonus -->
+    <section class="slide slide-section">
+      <div class="section-tag">Bonus · Más allá de NotebookLM</div>
+      <h2>Canvas y GPTs.<br>El otro lado del ecosistema.</h2>
+      <p class="section-desc">NotebookLM es Google. Ahora vemos dos herramientas de ChatGPT que complementan perfecto: Canvas para escribir con la IA, y GPTs para tener un experto interno siempre disponible.</p>
+    </section>
+
+    <!-- SLIDE 30AA — Deep Research / modo estudio -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Reminder · Investigación profunda</div></div>
+      <h2>Antes de empezar:<br>seleccionen el modo correcto</h2>
+      <p class="desc">Si van a usar ChatGPT para investigar en serio, no entren con el modo normal por costumbre. El recordatorio operativo es simple: <strong>seleccionen el modo de investigación profunda / estudio</strong> antes de lanzar la tarea.</p>
+      <div class="cards-grid cards-grid-3" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Paso 1</div>
+          <h3>Cambiar el modo</h3>
+          <p>Antes de escribir, elijan el modo de investigación o estudio. Si no, el resultado sale más superficial.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Paso 2</div>
+          <h3>Darle tiempo</h3>
+          <p>No es un chat rápido. Déjenlo pensar, buscar, estructurar y volver con una respuesta larga y más trabajada.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Paso 3</div>
+          <h3>Pedir entregable</h3>
+          <p>Pidan formato final: resumen ejecutivo, tabla comparativa, riesgos, recomendaciones y fuentes al final.</p>
+        </div>
+      </div>
+      <div class="exercise-block gold" style="margin-top: 1rem;">
+        <div class="ex-label">Prompt tipo reminder</div>
+        <h3>Investigación profunda bien planteada</h3>
+        <div class="ex-prompt">"Activa modo investigación profunda / estudio. Necesito un informe ejecutivo sobre [tema]. Estructura: resumen ejecutivo, contexto, hallazgos clave, tabla comparativa, riesgos, recomendaciones y fuentes citadas al final. Si te faltan datos, dímelo antes de concluir."</div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30B — Canvas de ChatGPT -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Herramienta · Canvas</div></div>
+      <h2>Correos comerciales en Canvas</h2>
+      <p class="desc">Canvas sirve perfecto para <strong>redacción comercial viva</strong>: crean el correo, ajustan asunto, CTA, tono y objeciones, y luego lo dejan guardado dentro de un proyecto de ChatGPT o Claude. La versión final se puede bajar o copiar como <strong>archivo .md</strong> para reusar.</p>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Proyecto vivo</div>
+          <h3>Guardar el contexto</h3>
+          <p>Un proyecto por oferta o campaña. Ahí quedan ejemplos buenos, objeciones frecuentes, tono de marca y correos ya aprobados.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Salida reutilizable</div>
+          <h3>Guardar en Markdown</h3>
+          <p>La versión final del correo queda lista para copiar en un `.md`: asunto, cuerpo, CTA, variantes A/B y notas para seguimiento.</p>
+        </div>
+      </div>
+      <div class="exercise-block" style="margin-top: 1rem;">
+        <div class="ex-label">Demo en vivo</div>
+        <h3>Correo comercial para vender automatizaciones</h3>
+        <p>Abrimos un borrador en Canvas y trabajamos sobre él en vivo: <em>"hazlo más corto"</em>, <em>"más orientado a ROI"</em>, <em>"menos vendedor y más consultivo"</em>, <em>"crea una segunda versión para CFO"</em>. Luego lo guardamos en el proyecto y dejamos una copia en `.md`.</p>
+      </div>
+      <div class="exercise-block gold" style="margin-top: 1rem;">
+        <div class="ex-label">Prompt base · Canvas</div>
+        <h3>Redacción comercial reusable</h3>
+        <div class="ex-prompt">"Redacta un correo comercial para ofrecer mis servicios de automatización a una empresa mediana. Formato: asunto, preheader, cuerpo del correo y CTA. Tono consultivo, claro, sin hype. Después crea dos versiones más: una para gerente general y otra para líder operativo. Deja el resultado listo para guardarlo como archivo markdown dentro del proyecto."</div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30C — Más ejemplos de Canvas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Canvas · Interfaces en vivo</div></div>
+      <h2>Tres cosas más que hacemos sin salir del editor</h2>
+      <div class="cards-grid" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Ejemplo 1</div>
+          <h3>Cold email</h3>
+          <p>Versión inicial, versión corta, versión agresiva, versión suave. Todo en el mismo canvas para comparar rápido.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Ejemplo 2</div>
+          <h3>Follow-up</h3>
+          <p>Tomamos un correo ya enviado y pedimos una secuencia de seguimiento a 3 y 7 días sin repetir tono ni argumento.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Ejemplo 3</div>
+          <h3>Mini propuesta</h3>
+          <p>Del correo saltamos a una propuesta de una página: problema, oportunidad, solución y CTA. Todo queda editable.</p>
+        </div>
+      </div>
+      <p class="desc" style="font-size: 1.08rem; margin-top: 1rem;">La gracia del demo no es solo mostrar texto. Es mostrar la <strong>interfaz viva</strong>: seleccionar, editar, aceptar cambios, comparar versiones y guardar entregables reutilizables.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30D — Qué son los GPTs -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">GPTs personalizados</div>
+      <h2>Dos GPTs que sí les pueden<br><span class="accent">cambiar la semana.</span></h2>
+      <p class="statement-sub">No un GPT genérico. Dos GPTs concretos: uno para detectar procesos automatizables en su trabajo, y otro para ayudar a bajar el tiempo en redes usando automatizaciones de IA.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30E — GPT 1 y GPT 2 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 8 · Dos GPTs útiles</div></div>
+      <h2>Los dos GPTs que vamos a proponer</h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">GPT 1</div>
+          <h3>Radar de automatización</h3>
+          <p>Ustedes le describen su trabajo diario y el GPT detecta qué procesos se pueden automatizar, qué se puede delegar a IA y por dónde empezar.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">GPT 2</div>
+          <h3>Menos scroll, más sistema</h3>
+          <p>Analiza hábitos de redes, dispara ideas de fricción positiva y diseña automatizaciones para reducir tiempo de pantalla y cortar consumo impulsivo.</p>
+        </div>
+      </div>
+      <p class="desc" style="font-size: 1.05rem; margin-top: 0.8rem;">La lógica es que un GPT bueno no es “impresionante”. Es <strong>útil, repetible y accionable</strong> para un problema que sí duele.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30F — Crear GPT 1 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Ejercicio 9 · GPT 1</div></div>
+      <h2>Creamos "Radar de Automatización"</h2>
+      <p class="desc">Este GPT escucha cómo trabajan hoy, detecta cuellos de botella, clasifica tareas repetitivas y propone qué automatizar primero con impacto real.</p>
+      <div class="steps" style="margin-top: 1rem;">
+        <div class="step turn-1">
+          <div class="step-num">1</div>
+          <div class="step-body"><strong>Nombre + descripción</strong><span>"Radar de Automatización · Detecta procesos repetitivos y propone automatizaciones concretas por impacto y facilidad."</span></div>
+        </div>
+        <div class="step turn-2">
+          <div class="step-num">2</div>
+          <div class="step-body"><strong>Instrucciones</strong><span>Actúa como consultor de automatización. Siempre responde con: proceso actual / dolor / oportunidad / automatización sugerida / dificultad / impacto.</span></div>
+        </div>
+        <div class="step turn-3">
+          <div class="step-num">3</div>
+          <div class="step-body"><strong>Knowledge</strong><span>Mapa de procesos, SOPs, screenshots, ejemplos de tareas semanales, descripciones de cargos, checklists internos.</span></div>
+        </div>
+        <div class="step turn-3">
+          <div class="step-num">4</div>
+          <div class="step-body"><strong>Conversation starters</strong><span>"Estas son mis tareas de los lunes" · "¿Qué de esto automatizarías primero?" · "Diseña un flujo simple para reducir trabajo manual".</span></div>
+        </div>
+        <div class="step turn-4">
+          <div class="step-num">5</div>
+          <div class="step-body"><strong>Salida ideal</strong><span>Tabla priorizada + quick wins + automatización sugerida con herramientas posibles.</span></div>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30G — Crear GPT 2 -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Ejercicio 10 · GPT 2</div></div>
+      <h2>Creamos "Menos Scroll"</h2>
+      <p class="desc">Este GPT no juzga. Diagnostica dónde se les va el tiempo en redes y propone sistemas con IA para reducir consumo, fricción y recaídas.</p>
+      <div class="steps" style="margin-top: 1rem;">
+        <div class="step turn-1">
+          <div class="step-num">1</div>
+          <div class="step-body"><strong>Nombre + descripción</strong><span>"Menos Scroll · Analiza mis hábitos digitales y diseña automatizaciones para bajar tiempo de pantalla."</span></div>
+        </div>
+        <div class="step turn-2">
+          <div class="step-num">2</div>
+          <div class="step-body"><strong>Instrucciones</strong><span>Actúa como coach conductual + diseñador de sistemas. No des consejos genéricos: diseña fricción, recordatorios, bloqueos y automatizaciones concretas.</span></div>
+        </div>
+        <div class="step turn-3">
+          <div class="step-num">3</div>
+          <div class="step-body"><strong>Knowledge</strong><span>Rutina diaria, horas críticas, apps que más consumen tiempo, screenshots de uso semanal, objetivos personales.</span></div>
+        </div>
+        <div class="step turn-3">
+          <div class="step-num">4</div>
+          <div class="step-body"><strong>Conversation starters</strong><span>"Estas son mis horas de más scroll" · "Diseña una automatización para sacarme de Instagram en la noche" · "¿Qué fricciones pondrías?"</span></div>
+        </div>
+        <div class="step turn-4">
+          <div class="step-num">5</div>
+          <div class="step-body"><strong>Salida ideal</strong><span>Diagnóstico + disparadores + automatizaciones sugeridas + plan de 7 días para bajar uso.</span></div>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 30H — Recap bonus -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Lo que se llevan del bloque bonus</div>
+      <h2>Canvas edita <span class="accent">con</span> ustedes.<br>Los GPTs diseñan sistemas <span class="gold">para</span> ustedes.</h2>
+      <p class="statement-sub">La clave no es crear “otro chatbot”. La clave es encapsular un problema real en una herramienta que el lunes ya les ahorre tiempo o les cambie un comportamiento.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+        <!-- ========================================================== -->
+    <!-- BLOQUE 4 — CASOS POR ROL (1:30 - 1:50)                      -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 30 — Section divider -->
+    <section class="slide slide-section">
+      <div class="section-tag">Bloque 4</div>
+      <h2>Tres casos.<br>Tres roles.<br>Mismo método.</h2>
+      <p class="section-desc">Aplicamos RAFAT en vivo a tres tareas corporativas reales. Un analista, un comercial, un líder — y vemos cómo el mismo framework sirve para los tres.</p>
+    </section>
+
+    <!-- SLIDE 31 — Los 3 casos -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Los 3 casos de hoy</div></div>
+      <h2>Tres roles que cubren el 80% de una empresa típica</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Caso 1</div>
+          <h3>Analista / Auditor</h3>
+          <p>Revisar cláusulas de un contrato contra la política interna. Formato tabla de hallazgos.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Caso 2</div>
+          <h3>Comercial</h3>
+          <p>Personalizar una propuesta a partir del brief del cliente. Formato propuesta ejecutiva.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Caso 3</div>
+          <h3>Líder / Gerente</h3>
+          <p>Informe ejecutivo de una página desde datos crudos. Formato bullets accionables.</p>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.1rem;">Cada uno: <strong>prompt pobre → RAFAT → una iteración de refinamiento.</strong> Mismo patrón, tres contextos.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 32 — Caso 1 Analista -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Caso 1 · Analista / Auditor</div>
+        <h3>Revisar contrato contra política</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Prompt RAFAT</div>
+          <p><em><strong>R:</strong> Auditor senior de cumplimiento. <strong>A:</strong> Compara el contrato adjunto con la política interna. Identifica cláusulas que se desvían. <strong>F:</strong> Tabla — cláusula / política aplicable / tipo de desviación / severidad. <strong>A:</strong> Contrato con proveedor tecnológico, política actualizada marzo 2026. <strong>T:</strong> Técnico, conservador, sin recomendaciones — solo hallazgos.</em></p>
+        </div>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Iteración de refinamiento</div>
+        <h3>Segunda pasada</h3>
+        <div class="prompt-box" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Segundo turno</div>
+          <p style="color: rgba(255,255,255,0.95);"><em>"Ahora prioriza los hallazgos por riesgo regulatorio vs reputacional, y marca los tres más urgentes para llevarlos al comité."</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 33 — Caso 2 Comercial -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Caso 2 · Comercial</div>
+        <h3>Propuesta personalizada desde brief</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Prompt RAFAT</div>
+          <p><em><strong>R:</strong> Consultor senior especializado en el sector del cliente. <strong>A:</strong> Redacta propuesta ejecutiva a partir del brief adjunto. <strong>F:</strong> 1 página — problema, propuesta de valor, entregables, inversión, próximos pasos. <strong>A:</strong> Cliente del sector energía, tomador de decisión es CFO escéptico con consultorías. <strong>T:</strong> Concreto, sin buzzwords, orientado a ROI.</em></p>
+        </div>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Iteración de refinamiento</div>
+        <h3>Segunda pasada</h3>
+        <div class="prompt-box" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Segundo turno</div>
+          <p style="color: rgba(255,255,255,0.95);"><em>"Añade una tabla con riesgos potenciales del proyecto y cómo los mitigamos. El CFO va a preguntar por eso — adelantémonos."</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 34 — Caso 3 Líder -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Caso 3 · Líder / Gerente</div>
+        <h3>Informe ejecutivo desde datos crudos</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Prompt RAFAT</div>
+          <p><em><strong>R:</strong> Analista ejecutivo. <strong>A:</strong> A partir del Excel adjunto (cifras trimestrales anonimizadas), redacta informe de 1 página. <strong>F:</strong> Resumen · 3 hallazgos · 3 acciones recomendadas · riesgos. <strong>A:</strong> Comité de gerencia, 10 minutos de lectura, contexto de desaceleración del sector. <strong>T:</strong> Ejecutivo, directo, accionable.</em></p>
+        </div>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Iteración de refinamiento</div>
+        <h3>Segunda pasada</h3>
+        <div class="prompt-box" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Segundo turno</div>
+          <p style="color: rgba(255,255,255,0.95);"><em>"Critica tu propia recomendación. ¿Qué objeciones tendría un miembro del comité escéptico? Respóndelas preventivamente en una nota al pie."</em></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 5 — CIERRE (1:50 - 2:00)                              -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 35 — Section divider -->
+    <section class="slide slide-section">
+      <div class="section-tag">Bloque 5</div>
+      <h2>Las tres ideas<br>que se llevan hoy.</h2>
+      <p class="section-desc">Si se olvidan de todo lo demás, estas tres son suficiente para cambiar cómo trabajan esta semana.</p>
+    </section>
+
+    <!-- SLIDE 36 — 3 ideas clave -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Cierre · 3 ideas</div></div>
+      <h2>Lo que se llevan hoy</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Idea 01</div>
+          <h3>Tu contexto gana siempre</h3>
+          <p>RAFAT + tus documentos + tus instrucciones fijas vale más que el modelo de moda. No cambien de modelo — arreglen el prompt.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Idea 02</div>
+          <h3>Sin datos sensibles vale por dos</h3>
+          <p>Anonimicen antes de subir. Verde, amarillo, rojo — criterio simple que cabe en la cabeza y les cubre en auditoría.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Idea 03</div>
+          <h3>NotebookLM es el puente</h3>
+          <p>Entre "leo un PDF denso" y "lo entiendo en 12 minutos de audio camino al trabajo". El primer notebook corporativo lo hacen el lunes.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 37 — Preview S4 -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Próxima sesión</div>
+      <h2>Hoy le dimos <span class="accent">contexto</span>.<br>La próxima vamos a hacer que <span class="gold">actúe sola.</span></h2>
+      <p class="statement-sub">Sesión 4: agentes, flujos y n8n. De responder bien a ejecutar tareas reales sin intervención. Es el salto grande — y ahora tienen la base para hacerlo bien.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 38 — Q&A -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Preguntas</div></div>
+      <h2>Últimos 4 minutos — ¿qué quedó pendiente?</h2>
+      <div class="chat-card">
+        <div class="chat-label">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Chat abierto
+        </div>
+        <p>Escriban lo que quedó sin responder, dudas sobre NotebookLM o RAFAT, o qué les gustaría ver aplicado a su área en la Sesión 4.</p>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 39 — Contacto -->
+    <section class="slide slide-contact slide-dark-bg">
+      <div class="contact-left">
+        <img src="images/jero-profile.png" alt="Jerónimo Martínez" class="contact-photo">
+        <h2>Gracias.</h2>
+        <div class="contact-info">
+          <a href="https://www.instagram.com/jeromartinezj" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            @jeromartinezj
+          </a>
+          <a href="https://jeroooo.com" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            jeroooo.com
+          </a>
+          <span>Sesión 3 de 4 · Programa IA Básica AGYL</span>
+        </div>
+      </div>
+      <div class="contact-right">
+        <div class="contact-right-content">
+          <h3>Nos vemos<br>la próxima.</h3>
+          <p>El siguiente paso: hagan su primer notebook esta semana con un documento real de su trabajo. Sesión 4 es agentes.</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /deck -->
+
+  <!-- NAV ARROWS -->
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="prev()" aria-label="Anterior">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="nav-btn" onclick="next()" aria-label="Siguiente">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const bar = document.getElementById('progressBar');
+    const counter = document.getElementById('slideCounter');
+    const logoCorner = document.getElementById('logoCorner');
+    let cur = 0;
+
+    function update() {
+      const pct = ((cur + 1) / slides.length) * 100;
+      bar.style.width = pct + '%';
+      counter.textContent = `${cur + 1} / ${slides.length}`;
+      history.replaceState(null, null, `#${cur}`);
+      const s = slides[cur];
+      const isCover = s.classList.contains('slide-cover');
+      const isDarkBg = s.classList.contains('slide-section') || s.classList.contains('slide-contact');
+      logoCorner.style.display = (isCover || isDarkBg) ? 'none' : '';
+    }
+
+    function go(i) {
+      if (i < 0 || i >= slides.length || i === cur) return;
+      slides[cur].classList.remove('active');
+      cur = i;
+      slides[cur].classList.add('active');
+      update();
+    }
+    function next() { go(cur + 1); }
+    function prev() { go(cur - 1); }
+
+    document.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home': e.preventDefault(); go(0); break;
+        case 'End': e.preventDefault(); go(slides.length - 1); break;
+        case 'f':
+          e.preventDefault();
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+          break;
+      }
+    });
+
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      const d = tx - e.changedTouches[0].screenX;
+      if (Math.abs(d) > 50) d > 0 ? next() : prev();
+    });
+
+    const h = parseInt(location.hash.slice(1));
+    if (!isNaN(h) && h >= 0 && h < slides.length) {
+      slides[0].classList.remove('active');
+      cur = h;
+      slides[cur].classList.add('active');
+    }
+    update();
+  </script>
+</body>
+</html>

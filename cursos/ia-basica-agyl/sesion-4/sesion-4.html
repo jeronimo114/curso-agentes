@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentes e Imagen — Sesión 4 AGYL</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --agyl-teal: #048dad;
+      --agyl-teal-dark: #078fa7;
+      --agyl-teal-deep: #036078;
+      --agyl-gold: #ccad00;
+      --agyl-gold-soft: #e6c70d;
+      --agyl-bg: #FFFFFF;
+      --agyl-bg-soft: #F6F5F1;
+      --agyl-ink: #0B0B0F;
+      --agyl-muted: #5B5F6A;
+      --agyl-line: rgba(4,141,173,0.15);
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--agyl-bg);
+      color: var(--agyl-ink);
+      overflow: hidden;
+      height: 100vh; width: 100vw;
+    }
+    h1,h2,h3,h4 {
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      line-height: 0.88;
+    }
+
+    .deck { width: 100vw; height: 100vh; position: relative; }
+    .slide {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 4rem 6rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.45s ease;
+      overflow: hidden;
+    }
+    .slide.active { opacity: 1; pointer-events: auto; }
+
+    .progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--agyl-gold); transition: width 0.4s ease; z-index: 100; }
+    .slide-counter { position: fixed; bottom: 1.2rem; right: 1.5rem; font-size: 0.72rem; font-weight: 600; color: rgba(11,11,15,0.3); z-index: 100; letter-spacing: 1px; }
+
+    .logo-corner {
+      position: fixed; top: 1.8rem; right: 2.5rem; z-index: 99;
+      height: 46px;
+      opacity: 0.95;
+      transition: opacity 0.3s, filter 0.3s;
+    }
+    .slide-dark-bg ~ .logo-corner,
+    .slide-teal-bg ~ .logo-corner { filter: brightness(0) invert(1); opacity: 0.55; }
+
+    .watermark-a {
+      position: absolute;
+      font-family: var(--display-font);
+      font-weight: 800;
+      font-size: 38rem;
+      color: rgba(4,141,173,0.05);
+      line-height: 0.8;
+      bottom: -6rem;
+      left: -3rem;
+      pointer-events: none;
+      user-select: none;
+      font-style: italic;
+    }
+
+    .footer-stripe {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: stretch; height: 22px;
+    }
+    .footer-stripe .teal { flex: 1; background: var(--agyl-teal); }
+    .footer-stripe .gold { width: 80px; background: var(--agyl-gold); }
+
+    /* COVER */
+    .slide-cover { padding: 0; justify-content: center; align-items: center; background: var(--agyl-bg); }
+    .cover-inner { position: relative; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; padding: 6rem 8rem; z-index: 2; }
+    .cover-chip {
+      background: var(--agyl-teal); color: #fff;
+      padding: 1.8rem 3rem; border-radius: 12px;
+      display: inline-block; max-width: 85%;
+    }
+    .cover-chip h1 {
+      font-size: clamp(3.5rem, 7vw, 6rem);
+      color: #fff; letter-spacing: -1.5px; line-height: 0.9;
+    }
+    .cover-subtitle {
+      margin-top: 2rem; font-size: 1.35rem; color: var(--agyl-muted);
+      max-width: 720px; line-height: 1.6;
+    }
+    .cover-meta {
+      position: absolute; bottom: 8rem; left: 8rem;
+      display: flex; gap: 2.5rem; color: var(--agyl-muted); font-size: 0.85rem;
+      text-transform: uppercase; letter-spacing: 2px; font-weight: 600;
+    }
+    .cover-meta span strong { color: var(--agyl-teal); display: block; font-size: 1rem; margin-top: 0.25rem; font-family: var(--display-font); letter-spacing: 1px; }
+
+    .cover-deco-tr, .cover-deco-bl {
+      position: absolute; width: 40vw; height: 30vh;
+      pointer-events: none; z-index: 1;
+    }
+    .cover-deco-tr { top: 0; right: 0; }
+    .cover-deco-bl { bottom: 0; left: 0; }
+    .deco-stripe {
+      position: absolute; transform-origin: center;
+      border-radius: 2px;
+    }
+    .cover-deco-tr .s1 { top: 2rem; right: 6rem; width: 120px; height: 28px; background: var(--agyl-teal); transform: skewX(-25deg); }
+    .cover-deco-tr .s2 { top: 2.5rem; right: 1rem; width: 70px; height: 26px; background: var(--agyl-teal-dark); transform: skewX(-25deg); }
+    .cover-deco-tr .s3 { top: 5rem; right: 3rem; width: 50px; height: 20px; background: var(--agyl-gold); transform: skewX(-25deg); }
+    .cover-deco-bl .s1 { bottom: 3rem; left: 8rem; width: 100px; height: 28px; background: var(--agyl-teal); transform: skewX(-25deg); }
+    .cover-deco-bl .s2 { bottom: 3.5rem; left: 2rem; width: 80px; height: 26px; background: var(--agyl-teal-dark); transform: skewX(-25deg); }
+    .cover-deco-bl .s3 { bottom: 6rem; left: 5rem; width: 45px; height: 20px; background: var(--agyl-gold); transform: skewX(-25deg); }
+
+    .cover-logo {
+      position: absolute; top: 3rem; left: 3rem; height: 70px;
+      z-index: 3;
+    }
+
+    /* SECTION DIVIDER */
+    .slide-section { background: var(--agyl-teal); color: #fff; justify-content: center; align-items: flex-start; padding: 6rem 8rem; }
+    .slide-section::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: url('images/logo-agyl.png');
+      background-repeat: no-repeat;
+      background-position: -3rem center;
+      background-size: 75vh auto;
+      opacity: 0.12; filter: brightness(0) invert(1);
+      pointer-events: none;
+    }
+    .slide-section .section-tag {
+      font-size: 0.85rem; letter-spacing: 4px; font-weight: 700;
+      text-transform: uppercase; color: var(--agyl-gold-soft);
+      margin-bottom: 1.5rem;
+    }
+    .slide-section h2 {
+      font-size: clamp(4rem, 10vw, 8rem); letter-spacing: -2px; line-height: 0.88;
+      color: #fff; max-width: 80%;
+    }
+    .slide-section .section-desc {
+      margin-top: 2rem; font-size: 1.2rem; color: rgba(255,255,255,0.8);
+      max-width: 650px; line-height: 1.7;
+    }
+
+    /* PAGE */
+    .slide-page { padding: 4rem 6rem 3rem; gap: 1.5rem; justify-content: center; }
+    .slide-page .page-head {
+      display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;
+    }
+    .chip-title {
+      background: var(--agyl-teal); color: #fff;
+      padding: 0.9rem 2.2rem; border-radius: 8px;
+      font-family: var(--display-font); font-weight: 800;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      letter-spacing: -0.5px; text-transform: uppercase;
+      display: inline-block;
+    }
+    .chip-title.gold { background: var(--agyl-gold); color: #fff; }
+
+    .slide-page h2 {
+      font-size: clamp(2.8rem, 5.5vw, 4.5rem);
+      letter-spacing: -1px; color: var(--agyl-teal-deep);
+      max-width: 900px;
+    }
+    .slide-page .desc {
+      font-size: 1.5rem; color: var(--agyl-muted);
+      max-width: 850px; line-height: 1.65;
+    }
+    .slide-page .desc strong { color: var(--agyl-teal-deep); font-weight: 600; }
+
+    /* BULLETS */
+    .agyl-bullets { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; margin-top: 0.5rem; max-width: 900px; }
+    .agyl-bullets li {
+      position: relative; padding-left: 2rem;
+      font-size: 1.25rem; color: var(--agyl-ink); line-height: 1.55;
+    }
+    .agyl-bullets li::before {
+      content: ""; position: absolute; left: 0; top: 0.45rem;
+      width: 14px; height: 14px; background: var(--agyl-gold);
+    }
+    .agyl-bullets li strong { color: var(--agyl-teal-deep); }
+
+    /* CARDS */
+    .cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; margin-top: 0.5rem; }
+    .cards-grid-2 { grid-template-columns: repeat(2, 1fr); }
+    .cards-grid-4 { grid-template-columns: repeat(4, 1fr); }
+    .card {
+      background: #fff; border: 1px solid var(--agyl-line);
+      border-top: 4px solid var(--agyl-teal);
+      padding: 1.5rem 1.6rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card.gold { border-top-color: var(--agyl-gold); }
+    .card:hover { transform: translateY(-3px); }
+    .card .card-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--agyl-gold);
+    }
+    .card h3 {
+      font-size: 1.6rem; color: var(--agyl-teal-deep); letter-spacing: -0.5px;
+    }
+    .card p { font-size: 1.05rem; color: var(--agyl-muted); line-height: 1.5; }
+
+    /* PROMPT BOX */
+    .prompt-box {
+      margin-top: 1rem; padding: 1.25rem 1.6rem;
+      background: var(--agyl-bg-soft); border-left: 4px solid var(--agyl-teal);
+      max-width: 1000px;
+    }
+    .prompt-box.bad { border-left-color: #C93A3A; background: rgba(201,58,58,0.05); }
+    .prompt-box.good { border-left-color: var(--agyl-gold); background: rgba(204,173,0,0.07); }
+    .prompt-label {
+      font-size: 0.72rem; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--agyl-teal); margin-bottom: 0.5rem;
+    }
+    .prompt-box.bad .prompt-label { color: #C93A3A; }
+    .prompt-box.good .prompt-label { color: var(--agyl-gold); }
+    .prompt-box p, .prompt-box pre {
+      font-size: 1rem; color: var(--agyl-ink); line-height: 1.6;
+      font-family: 'Courier New', monospace;
+      white-space: pre-wrap;
+    }
+    .prompt-box p em { font-style: italic; color: var(--agyl-muted); }
+
+    /* SPLIT */
+    .slide-split { padding: 0; flex-direction: row; gap: 0; }
+    .split-pane {
+      flex: 1; padding: 4rem 3rem; display: flex; flex-direction: column; justify-content: center; gap: 1rem;
+      position: relative;
+    }
+    .split-pane + .split-pane { border-left: 1px solid var(--agyl-line); }
+    .split-pane.teal-bg { background: var(--agyl-teal); color: #fff; }
+    .split-pane.teal-bg h3, .split-pane.teal-bg p { color: #fff; }
+    .split-pane.gold-bg { background: var(--agyl-gold); color: #fff; }
+    .split-pane.soft-bg { background: var(--agyl-bg-soft); }
+    .split-pane .pane-tag {
+      font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal);
+    }
+    .split-pane.teal-bg .pane-tag { color: var(--agyl-gold-soft); }
+    .split-pane h3 {
+      font-size: clamp(2rem, 3.6vw, 2.8rem);
+      color: var(--agyl-teal-deep); letter-spacing: -0.5px;
+    }
+    .split-pane .prompt-box { max-width: 100%; }
+
+    /* STATEMENT */
+    .slide-statement { justify-content: center; align-items: flex-start; padding: 6rem 8rem; }
+    .slide-statement .statement-tag {
+      font-size: 0.85rem; letter-spacing: 4px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-gold); margin-bottom: 1.5rem;
+    }
+    .slide-statement h2 {
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      letter-spacing: -2px; line-height: 0.92;
+      color: var(--agyl-teal-deep); max-width: 90%;
+    }
+    .slide-statement h2 span.accent { color: var(--agyl-teal); }
+    .slide-statement h2 span.gold { color: var(--agyl-gold); }
+    .slide-statement .statement-sub {
+      margin-top: 2rem; font-size: 1.3rem; color: var(--agyl-muted);
+      max-width: 760px; line-height: 1.65;
+    }
+
+    /* CHAT CARD */
+    .chat-card {
+      margin-top: 1.5rem; padding: 2rem 2.5rem;
+      background: #fff; border: 2px solid var(--agyl-teal);
+      border-radius: 4px; max-width: 720px;
+      box-shadow: 0 6px 20px rgba(4,141,173,0.08);
+    }
+    .chat-card .chat-label {
+      font-size: 0.75rem; letter-spacing: 3px; text-transform: uppercase;
+      font-weight: 700; color: var(--agyl-teal); margin-bottom: 0.75rem;
+      display: flex; align-items: center; gap: 0.5rem;
+    }
+    .chat-card p {
+      font-size: 1.35rem; color: var(--agyl-ink); line-height: 1.55;
+    }
+    .chat-card .chat-hint {
+      margin-top: 0.8rem; font-size: 1rem; color: var(--agyl-muted);
+      font-style: italic;
+    }
+
+    /* STEPS */
+    .steps { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.5rem; max-width: 950px; }
+    .step {
+      display: flex; gap: 1.25rem; padding: 1rem 1.4rem;
+      background: var(--agyl-bg-soft); border-left: 3px solid var(--agyl-teal);
+    }
+    .step.turn-1 { border-left-color: var(--agyl-teal); }
+    .step.turn-2 { border-left-color: var(--agyl-teal-dark); }
+    .step.turn-3 { border-left-color: var(--agyl-gold); }
+    .step.turn-4 { border-left-color: var(--agyl-gold-soft); }
+    .step.turn-5 { border-left-color: var(--agyl-teal); }
+    .step-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 2.4rem; color: var(--agyl-teal);
+      min-width: 2.4rem; line-height: 1;
+    }
+    .step.turn-3 .step-num, .step.turn-4 .step-num { color: var(--agyl-gold); }
+    .step-body { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+    .step-body strong { font-size: 1.1rem; color: var(--agyl-teal-deep); }
+    .step-body span { font-size: 1rem; color: var(--agyl-muted); line-height: 1.5; }
+
+    /* DEMO BUTTONS */
+    .demo-buttons { display: flex; gap: 0.8rem; margin-top: 1rem; flex-wrap: wrap; }
+    .demo-btn {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.6rem 1.2rem; border-radius: 999px;
+      text-decoration: none; font-size: 0.85rem; font-weight: 600;
+      background: #fff; color: var(--agyl-ink);
+      border: 1px solid var(--agyl-line);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .demo-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(4,141,173,0.15); }
+    .demo-btn.primary { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
+    .demo-btn.gold { background: var(--agyl-gold); color: #fff; border-color: var(--agyl-gold); }
+
+    /* CONTACT */
+    .slide-contact { padding: 0; flex-direction: row; gap: 0; background: var(--agyl-teal-deep); color: #fff; }
+    .contact-left { flex: 1; padding: 5rem 5rem; display: flex; flex-direction: column; justify-content: center; gap: 1.5rem; }
+    .contact-left h2 { font-size: clamp(3rem, 6vw, 5rem); color: #fff; letter-spacing: -1.5px; }
+    .contact-photo { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 3px solid var(--agyl-gold); }
+    .contact-info { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.5rem; }
+    .contact-info a, .contact-info span {
+      font-size: 1.05rem; color: rgba(255,255,255,0.75);
+      text-decoration: none; display: flex; align-items: center; gap: 0.55rem;
+    }
+    .contact-info a:hover { color: var(--agyl-gold-soft); }
+    .contact-right {
+      width: 40%; background: var(--agyl-teal);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; overflow: hidden;
+    }
+    .contact-right::before {
+      content: ""; position: absolute; inset: 0;
+      background-image: url('images/logo-agyl.png');
+      background-repeat: no-repeat; background-position: center;
+      background-size: 80% auto;
+      opacity: 0.15; filter: brightness(0) invert(1);
+    }
+    .contact-right-content {
+      position: relative; z-index: 2; text-align: center; color: #fff;
+    }
+    .contact-right-content h3 {
+      font-size: 2.5rem; color: #fff; line-height: 0.9;
+      letter-spacing: -1px;
+    }
+    .contact-right-content p { margin-top: 1rem; font-size: 1.05rem; color: rgba(255,255,255,0.8); max-width: 320px; line-height: 1.6; }
+
+    /* NAV */
+    .nav-arrows { position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%); display: flex; gap: 0.5rem; z-index: 100; }
+    .nav-btn {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--agyl-line); background: #fff;
+      color: var(--agyl-teal-deep); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 2px 8px rgba(4,141,173,0.1); transition: all 0.2s;
+    }
+    .nav-btn:hover { background: var(--agyl-teal); color: #fff; border-color: var(--agyl-teal); }
+
+    .accent-teal { color: var(--agyl-teal); }
+    .accent-gold { color: var(--agyl-gold); }
+    .accent-deep { color: var(--agyl-teal-deep); }
+
+    /* QR placeholder */
+    .qr-placeholder {
+      background: #fff;
+      border: 3px solid var(--agyl-teal);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--display-font);
+      color: var(--agyl-muted);
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+    }
+
+    /* Image placeholder for live demos */
+    .img-placeholder {
+      background: linear-gradient(135deg, var(--agyl-bg-soft) 0%, #ECEAE2 100%);
+      border: 2px dashed var(--agyl-teal);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      color: var(--agyl-teal-deep);
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-align: center;
+      min-height: 220px;
+    }
+    .img-placeholder small {
+      display: block; margin-top: 0.4rem;
+      font-family: var(--body-font); font-weight: 500;
+      font-size: 0.75rem; color: var(--agyl-muted); letter-spacing: 1px;
+    }
+
+    /* Toggle list */
+    .toggle-list { display: flex; flex-direction: column; gap: 0.7rem; margin-top: 0.5rem; max-width: 800px; }
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.4rem; background: var(--agyl-bg-soft);
+      border-left: 3px solid var(--agyl-teal);
+    }
+    .toggle-row .t-label { font-weight: 600; color: var(--agyl-ink); font-size: 1.1rem; }
+    .toggle-row .t-state {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 1rem; letter-spacing: 1px;
+      padding: 0.3rem 0.8rem; border-radius: 999px;
+      text-transform: uppercase;
+    }
+    .toggle-row .t-state.on { background: var(--agyl-teal); color: #fff; }
+    .toggle-row .t-state.off { background: var(--agyl-line); color: var(--agyl-muted); }
+    .toggle-row .t-state.opt { background: var(--agyl-gold); color: #fff; }
+
+    /* Comparison table */
+    .compare-table {
+      width: 100%; max-width: 1000px; border-collapse: collapse;
+      margin-top: 1rem; background: #fff;
+      border: 1px solid var(--agyl-line);
+    }
+    .compare-table th, .compare-table td {
+      padding: 0.9rem 1rem; text-align: left; border-bottom: 1px solid var(--agyl-line);
+      font-size: 0.95rem;
+    }
+    .compare-table th {
+      background: var(--agyl-teal); color: #fff;
+      font-family: var(--display-font); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 1px; font-size: 1rem;
+    }
+    .compare-table td:first-child {
+      font-weight: 600; color: var(--agyl-teal-deep);
+    }
+
+    /* Warning chip */
+    .warn-chip {
+      display: inline-block; padding: 0.5rem 1rem;
+      background: rgba(201,58,58,0.1); color: #C93A3A;
+      border-left: 3px solid #C93A3A;
+      font-size: 0.95rem; font-weight: 600;
+      margin-top: 0.8rem;
+    }
+
+    /* Numbered checklist (big) */
+    .check-list { display: flex; flex-direction: column; gap: 0.9rem; margin-top: 1rem; max-width: 900px; }
+    .check-item {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      padding: 1rem 1.3rem; background: var(--agyl-bg-soft);
+      border-left: 4px solid var(--agyl-gold);
+    }
+    .check-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: 2.2rem; color: var(--agyl-gold); line-height: 1;
+      min-width: 2.4rem;
+    }
+    .check-text {
+      font-size: 1.4rem; color: var(--agyl-teal-deep);
+      font-weight: 600; line-height: 1.4;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .slide { padding: 3rem 4rem; }
+      .cards-grid { grid-template-columns: repeat(2, 1fr); }
+      .cards-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .slide { padding: 2rem 2rem; }
+      .slide-split { flex-direction: column; }
+      .cards-grid, .cards-grid-4 { grid-template-columns: 1fr; }
+      .logo-corner { height: 32px; top: 1rem; right: 1rem; }
+      .slide-contact { flex-direction: column; }
+      .contact-right { width: 100%; height: 30vh; }
+      .watermark-a { font-size: 20rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-bar" id="progressBar"></div>
+  <div class="slide-counter" id="slideCounter"></div>
+  <img src="images/logo-agyl.png" alt="AGYL" class="logo-corner" id="logoCorner">
+
+  <div class="deck">
+
+    <!-- ========================================================== -->
+    <!-- SLIDE 1 — COVER                                             -->
+    <!-- ========================================================== -->
+    <section class="slide slide-cover active">
+      <img src="images/logo-agyl.png" alt="AGYL" class="cover-logo">
+      <div class="cover-deco-tr">
+        <div class="deco-stripe s1"></div>
+        <div class="deco-stripe s2"></div>
+        <div class="deco-stripe s3"></div>
+      </div>
+      <div class="cover-deco-bl">
+        <div class="deco-stripe s1"></div>
+        <div class="deco-stripe s2"></div>
+        <div class="deco-stripe s3"></div>
+      </div>
+      <div class="cover-inner">
+        <div class="cover-chip">
+          <h1>Agentes e<br>imagen con IA</h1>
+        </div>
+        <p class="cover-subtitle">Sesión 4 · IA Básica. Construir su propia IA y hacerla diseñar. Cierre del programa.</p>
+        <div class="cover-meta">
+          <span>Programa IA Básica<strong>AGYL</strong></span>
+          <span>Sesión<strong>04 / 04</strong></span>
+          <span>Duración<strong>120 min</strong></span>
+          <span>Fecha<strong>29 · ABR · 2026</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 0 — APERTURA, RECURSOS Y RECAP PROGRAMA              -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 2 — Hook -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Arranque · 0:01</div>
+      <h2>Hasta hoy le <span class="accent">hablaron</span> a la IA.<br>Hoy van a <span class="gold">construir</span> su propia IA<br>— y van a hacerla <span class="gold">diseñar.</span></h2>
+      <p class="statement-sub">Cuatro sesiones culminan acá. De consumidores pasivos a creadores. Dos horas para cerrar el programa con la parte más práctica de todas.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 3 — Recursos del curso (QR) -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Recursos del curso</div></div>
+      <h2>Todo el material en un solo lugar</h2>
+      <div style="display: grid; grid-template-columns: 320px 1fr; gap: 3rem; align-items: center; margin-top: 1rem;">
+        <img id="qr-recursos" src="images/qr-recursos.svg" alt="QR a recursos del curso" style="width:280px;height:280px;display:block;background:#fff;padding:8px;border-radius:8px;">
+        <div>
+          <p style="font-size: 1.4rem; color: var(--agyl-teal-deep); font-weight: 600; margin-bottom: 0.8rem;">jeroooo.com/cursos/ia-basica-agyl</p>
+          <p style="font-size: 1.1rem; color: var(--agyl-muted); line-height: 1.6; margin-bottom: 1rem;">Escanea para descargar prompts y slides de las 4 sesiones.</p>
+          <ul class="agyl-bullets" style="font-size: 1.05rem;">
+            <li>Slides de las 4 sesiones (HTML descargable)</li>
+            <li>Prompts ready-to-paste por sesión</li>
+            <li>Plantillas de los 3 agentes que construimos hoy</li>
+            <li>Checklist de 5 preguntas y buenas prácticas</li>
+            <li>Enlaces a las grabaciones cuando estén disponibles</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 4 — Desactivar entrenamiento Gemini -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Pendiente · Sesión 3</div></div>
+      <h2>Cómo desactivar el entrenamiento del modelo en Gemini</h2>
+      <p class="desc">Pregunta de la sesión pasada. Respuesta concreta en 5 pasos.</p>
+      <div class="steps" style="margin-top: 1.2rem;">
+        <div class="step turn-1"><div class="step-num">1</div><div class="step-body"><strong>Abrir Gemini → tu avatar (esquina superior)</strong><span>Aparece el menú con tu cuenta de Google.</span></div></div>
+        <div class="step turn-2"><div class="step-num">2</div><div class="step-body"><strong>Entrar a "Activity" / Actividad</strong><span>Te lleva a myactivity.google.com en la sección de Gemini.</span></div></div>
+        <div class="step turn-3"><div class="step-num">3</div><div class="step-body"><strong>"Gemini Apps Activity"</strong><span>Es el control específico de tus conversaciones con Gemini.</span></div></div>
+        <div class="step turn-4"><div class="step-num">4</div><div class="step-body"><strong>"Turn off"</strong><span>Detiene que tus chats se guarden y se usen para entrenar.</span></div></div>
+        <div class="step turn-5"><div class="step-num">5</div><div class="step-body"><strong>Confirmar y borrar el historial existente</strong><span>Recomendado: pedir borrar lo que ya estaba guardado.</span></div></div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 5 — Recap del programa -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Recap del programa</div></div>
+      <h2>Cuatro sesiones, una idea</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">Sesión 01</div>
+          <h3>Entender</h3>
+          <p>Qué es la IA, cómo predice, dónde se equivoca y qué no compartir.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Sesión 02</div>
+          <h3>Hablarle</h3>
+          <p>RAFAT, los 5 frameworks de prompts, multimodal y casos por rol.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Sesión 03</div>
+          <h3>Contextualizar</h3>
+          <p>NotebookLM, Claude Projects, contexto persistente, datos propios.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Sesión 04 · Hoy</div>
+          <h3>Construir + crear</h3>
+          <p>Agentes propios y generación de imagen con razonamiento. Cierre.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 6 — Hoja de ruta -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Hoja de ruta de hoy</div></div>
+      <h2>Tres bloques grandes en 2 horas</h2>
+      <div class="cards-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">Parte 01 · 58 min</div>
+          <h3>Agentes</h3>
+          <p>Qué son, construir uno en vivo, dos más rápido y portabilidad entre plataformas.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Parte 02 · 37 min</div>
+          <h3>Imagen</h3>
+          <p>gpt-image-2 con caso real: del WhatsApp al flyer, banner y slides del evento.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Parte 03 · 25 min</div>
+          <h3>Cierre</h3>
+          <p>Augmentación + 5 preguntas de criterio + cierre del programa + Q&amp;A.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 1 — ¿QUÉ ES UN AGENTE?                               -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 7 — Section divider -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 01 · 8 min · ¿Qué es un agente?</div>
+      <h2>Un agente no es<br>un modelo más<br>inteligente.<br>Es un modelo<br>con identidad.</h2>
+      <p class="section-desc">Sin jerga técnica. Aterricemos qué es un agente en términos prácticos: rol fijo, conocimiento propio e instrucciones permanentes.</p>
+    </section>
+
+    <!-- SLIDE 8 — 3 capas de un agente -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Definición pragmática</div></div>
+      <h2>Las 3 capas de un agente personalizado</h2>
+      <div class="cards-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">Capa 01</div>
+          <h3>Rol permanente</h3>
+          <p>El "quién es". Asistente comercial, redactor de actas, mentor de procesos. No cambia entre conversaciones.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Capa 02</div>
+          <h3>Conocimiento propio</h3>
+          <p>Archivos y referencias que siempre tiene a mano. Plantillas, manuales, ejemplos exitosos, tono de marca.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Capa 03</div>
+          <h3>Instrucciones fijas</h3>
+          <p>Formato y tono que repite siempre. La estructura, las restricciones y el estilo no se vuelven a explicar.</p>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.05rem;"><strong>Idea simple:</strong> agente = asistente con memoria de quién eres, qué haces y cómo hablas.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 9 — Comparación chat vs agente -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Chat normal</div>
+        <h3>Empiezas de cero cada vez</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.5rem;">
+          <li>Tienes que explicar quién eres en cada conversación</li>
+          <li>Pegar de nuevo el contexto, los archivos, las restricciones</li>
+          <li>Recordarle el tono, el formato, el idioma</li>
+          <li>Cada chat es un experimento aislado</li>
+        </ul>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag">Agente</div>
+        <h3 style="color:#fff;">Ya sabe quién eres</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.5rem;">
+          <li style="color:#fff;">Conoce tu rol, tu empresa, tu audiencia</li>
+          <li style="color:#fff;">Tiene tus archivos cargados de forma permanente</li>
+          <li style="color:#fff;">Aplica formato y tono sin que se lo recuerdes</li>
+          <li style="color:#fff;">Cada conversación arranca productiva</li>
+        </ul>
+        <style>.split-pane.teal-bg .agyl-bullets li::before { background: var(--agyl-gold); }</style>
+      </div>
+    </section>
+
+    <!-- SLIDE 10 — 4 lugares donde existen agentes -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Dónde viven hoy</div></div>
+      <h2>4 lugares donde existen los agentes</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">ChatGPT</div>
+          <h3>GPTs</h3>
+          <p>El flujo más maduro. Builder visual, knowledge files, conversation starters.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Gemini</div>
+          <h3>Gemas</h3>
+          <p>Mismo concepto, integrado al ecosistema Google. Útil para usar con Gmail/Drive.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Claude</div>
+          <h3>Projects</h3>
+          <p>Mejor para análisis largo y razonamiento complejo. Knowledge persistente por proyecto.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Lo que viene</div>
+          <h3>Agentes con acciones</h3>
+          <p>Operator, Agent Mode, Computer Use. Ejecutan tareas reales en navegador. Solo mención.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 11 — Casos AGYL relevantes -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Casos AGYL relevantes</div></div>
+      <h2>5 agentes que el lunes pueden estar sirviendo</h2>
+      <ul class="agyl-bullets" style="margin-top: 1.2rem;">
+        <li><strong>Prospección comercial.</strong> Correos en frío con tu tono, basados en tus servicios y tus correos exitosos previos.</li>
+        <li><strong>Redactor de actas.</strong> Pegar transcripción o audio, devolver acta corporativa con la plantilla AGYL aplicada.</li>
+        <li><strong>Mentor de procesos.</strong> Conoce los procesos internos. Responde con citas: "según el manual X, sección Y".</li>
+        <li><strong>Clasificador de tickets.</strong> Lee correos entrantes y los etiqueta por urgencia, área y tipo de respuesta requerida.</li>
+        <li><strong>Pre-revisor de propuestas.</strong> Revisa borradores comerciales contra una checklist fija antes de enviarlas.</li>
+      </ul>
+      <p class="desc" style="margin-top: 1.2rem; font-size: 1.05rem;">En los próximos 50 minutos vamos a construir <strong>tres</strong> de estos. La receta se replica al resto.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 2 — DEMO ESTRELLA: PROSPECCIÓN COMERCIAL             -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 12 — Section divider -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 02 · 30 min · Demo estrella</div>
+      <h2>Construyamos<br>uno juntos.</h2>
+      <p class="section-desc">Agente de prospección comercial AGYL. Desde cero, paso a paso, en ChatGPT. Si ChatGPT cae, replicamos en Gemini con el mismo plan.</p>
+    </section>
+
+    <!-- SLIDE 13 — Presentando el caso -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Caso · 0:15</div></div>
+      <h2>Agente de Prospección Comercial AGYL</h2>
+      <p class="desc">Lo más difícil de un correo en frío no es escribirlo, es que suene a vos. Un agente lo resuelve: conoce tus servicios, tu tono, tus correos exitosos previos.</p>
+      <ul class="agyl-bullets" style="margin-top: 1rem;">
+        <li><strong>Insumo del usuario:</strong> empresa + decisor + pain point en una línea.</li>
+        <li><strong>Salida del agente:</strong> correo en frío con asunto, pre-header, cuerpo y CTA — listo para enviar.</li>
+        <li><strong>Plataforma:</strong> ChatGPT (custom GPT). Backup: Gemini Gem si hay caídas.</li>
+      </ul>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 14 — Las 5 capas del agente -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Las 5 capas</div></div>
+      <h2>La receta — replicable a cualquier agente</h2>
+      <div class="steps" style="margin-top: 1rem;">
+        <div class="step turn-1"><div class="step-num">1</div><div class="step-body"><strong>Nombre + descripción</strong><span>El cartel. Lo que la gente verá antes de usar el agente.</span></div></div>
+        <div class="step turn-2"><div class="step-num">2</div><div class="step-body"><strong>Instrucciones (el rol)</strong><span>El system prompt permanente. Aplicamos RAFAT en versión persistente.</span></div></div>
+        <div class="step turn-3"><div class="step-num">3</div><div class="step-body"><strong>Conocimiento (knowledge)</strong><span>Archivos que el agente siempre puede consultar. Lo que lo separa de un prompt suelto.</span></div></div>
+        <div class="step turn-4"><div class="step-num">4</div><div class="step-body"><strong>Capacidades</strong><span>Web browsing, code interpreter, generación de imagen — qué puede hacer.</span></div></div>
+        <div class="step turn-5"><div class="step-num">5</div><div class="step-body"><strong>Conversation starters</strong><span>Atajos prearmados para los casos de uso más frecuentes.</span></div></div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 15 — Capa 1: Nombre y descripción -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Capa 01 · Nombre y descripción</div></div>
+      <h2>El cartel del agente</h2>
+      <div class="prompt-box good">
+        <div class="prompt-label">Ejemplo</div>
+<pre><strong>Nombre:</strong> Prospección Comercial AGYL
+
+<strong>Descripción:</strong> Redacta correos en frío con el tono de AGYL, usando como referencia los servicios de la firma y correos exitosos previos. Pide la métrica concreta cuando hace falta, nunca inventa cifras.</pre>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.05rem;">El nombre es interno; la descripción aparece cuando alguien lo va a usar. Hagan que sea explícita: <strong>qué hace</strong>, <strong>con qué insumo</strong>, <strong>qué no hace.</strong></p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 16 — Capa 2: Instrucciones -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Capa 02 · Instrucciones (el rol)</div></div>
+      <h2>RAFAT, pero permanente</h2>
+      <p class="desc" style="font-size: 1.05rem;">El system prompt: lo que el agente "es" siempre. Recorremos línea por línea el archivo <code>01-agente-prospeccion-instrucciones.md</code>.</p>
+      <div class="prompt-box good">
+        <div class="prompt-label">Estructura — preview</div>
+<pre><strong>ROL:</strong> Eres un consultor senior de prospección B2B con 15 años en venta consultiva en el mercado colombiano.
+
+<strong>ACCIÓN:</strong> Redactar correos en frío de máximo 130 palabras, con asunto + pre-header + cuerpo + CTA.
+
+<strong>FORMATO:</strong> Estructura fija. Siempre devuelve los 4 bloques etiquetados.
+
+<strong>ANTECEDENTES:</strong> Audiencia: gerentes y directores en empresas medianas y grandes. Restricción: nada de "sinergia", "valor agregado", ni promesas no respaldadas.
+
+<strong>TONO:</strong> Directo, sin hype, español Colombia. Una idea por párrafo.</pre>
+      </div>
+      <p class="desc" style="margin-top: 0.8rem; font-size: 0.95rem;"><strong>Recordatorio:</strong> ROL · ACCIÓN · FORMATO · ANTECEDENTES · TONO. Las cinco letras que ya conocen — ahora fijas para siempre.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 17 — Capa 3: Conocimiento -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Capa 03 · Conocimiento</div></div>
+      <h2>Lo que separa al agente de un prompt suelto</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Archivo 01</div>
+          <h3>Servicios AGYL</h3>
+          <p>Descripción de cada línea de servicio: aseguramiento, ciberseguridad, riesgos. Para que el agente no invente la oferta.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Archivo 02</div>
+          <h3>Correos exitosos previos</h3>
+          <p>2 correos reales, anonimizados, que generaron reunión. El agente aprende el tono de marca de ahí.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Archivo 03</div>
+          <h3>Hoja de tono</h3>
+          <p>Qué decimos, qué nunca decimos. Lista corta de muletillas vetadas y de frases pivote útiles.</p>
+        </div>
+      </div>
+      <div class="warn-chip">Recordatorio · anonimizar siempre antes de subir. No nombres, no cifras de clientes, no datos personales.</div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 18 — Capa 4: Capacidades -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Capa 04 · Capacidades</div></div>
+      <h2>Qué puede hacer el agente</h2>
+      <div class="toggle-list">
+        <div class="toggle-row">
+          <div class="t-label">Web browsing — investigar al prospecto en tiempo real</div>
+          <div class="t-state on">On</div>
+        </div>
+        <div class="toggle-row">
+          <div class="t-label">Code interpreter — analizar archivos o cálculos</div>
+          <div class="t-state off">Off</div>
+        </div>
+        <div class="toggle-row">
+          <div class="t-label">Image generation — crear imágenes en la respuesta</div>
+          <div class="t-state opt">Opcional</div>
+        </div>
+        <div class="toggle-row">
+          <div class="t-label">Acceso a la API personalizada (acciones)</div>
+          <div class="t-state off">Off</div>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1rem;"><strong>Regla:</strong> habilitar solo lo que el caso de uso requiere. Cada capacidad extra es un vector de ruido y de costo.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 19 — Capa 5: Conversation starters -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Capa 05 · Conversation starters</div></div>
+      <h2>4 atajos para los casos más frecuentes</h2>
+      <div class="cards-grid cards-grid-2" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Atajo 01</div>
+          <h3>Correo en frío para gerente de operaciones</h3>
+          <p>Arranca pidiendo empresa + pain. Útil cuando ya conozco el rol que apunto.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Atajo 02</div>
+          <h3>Seguimiento día 7</h3>
+          <p>Para escribir el segundo correo cuando el primero no recibió respuesta.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Atajo 03</div>
+          <h3>Adaptar correo a empresa LinkedIn</h3>
+          <p>Pasa una URL de la empresa y adapta el correo con lo público de la página.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Atajo 04</div>
+          <h3>Reescribir tono más cálido</h3>
+          <p>Misma estructura, voz menos rígida. Útil cuando el destinatario es un contacto previo.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 20 — Probar y mejorar -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Probar con input mínimo</div>
+        <h3>Una línea basta</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Input</div>
+<pre>Empresa: aseguradora mediana en Bogotá.
+Decisor: gerente de operaciones.
+Pain: equipos atascados en clasificación manual.</pre>
+        </div>
+        <p style="font-size: 0.95rem; color: var(--agyl-muted); margin-top: 0.5rem;">El agente ya tiene el rol, los archivos y el formato. Con esa línea arma el correo.</p>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag" style="color: var(--agyl-gold-soft);">Iterar con auto-crítica</div>
+        <h3 style="color:#fff;">Pídele que se revise</h3>
+        <div class="prompt-box good" style="background: rgba(255,255,255,0.12); border-left-color: var(--agyl-gold);">
+          <div class="prompt-label" style="color: var(--agyl-gold-soft);">Turno 2</div>
+<pre style="color: rgba(255,255,255,0.95);">Critica este correo desde la perspectiva de un gerente escéptico que recibe 30 correos así por semana. Reescríbelo.</pre>
+        </div>
+        <p style="font-size: 0.95rem; color: rgba(255,255,255,0.8); margin-top: 0.5rem;">La técnica de S2 sigue aplicando dentro del agente.</p>
+      </div>
+    </section>
+
+    <!-- SLIDE 21 — Compartir el agente -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Compartir el agente</div></div>
+      <h2>Tres niveles de visibilidad</h2>
+      <div class="cards-grid" style="margin-top: 1.2rem;">
+        <div class="card">
+          <div class="card-label">Privado</div>
+          <h3>Solo yo</h3>
+          <p>Lo uso solo desde mi cuenta. Default seguro mientras se prueba.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Equipo</div>
+          <h3>Con link</h3>
+          <p>Comparto el enlace con compañeros. Útil para herramientas internas de un área.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Público</div>
+          <h3>Marketplace abierto</h3>
+          <p>Cualquiera puede usarlo. Solo si no contiene knowledge sensible.</p>
+        </div>
+      </div>
+      <div class="warn-chip">Regla de privacidad — no publicar nunca un agente cuyo knowledge contenga datos internos, financieros o de clientes.</div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 22 — Statement cierre del bloque -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Cierre Bloque 02</div>
+      <h2>Acaban de pasar de <span class="accent">prompt</span><br>a <span class="gold">agente.</span></h2>
+      <p class="statement-sub">La diferencia: este agente sabe quién soy y cómo vendo. No empiezo de cero nunca más. La receta de 5 capas se aplica igual a los siguientes dos.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 3 — DOS AGENTES MÁS + PORTABILIDAD                   -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 23 — Section divider -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 03 · 20 min · Replicar la receta</div>
+      <h2>Mismo método,<br>distinto trabajo.</h2>
+      <p class="section-desc">Dos agentes más, construidos rápido, para que se vea el patrón. Y luego: portabilidad. El mismo agente, distintas plataformas.</p>
+    </section>
+
+    <!-- SLIDE 24 — Agente 2 Redactor de Actas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Agente 02 · Redactor de actas</div></div>
+      <h2>Transcripción adentro, acta corporativa afuera</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+        <div>
+          <ul class="agyl-bullets">
+            <li><strong>Insumo:</strong> texto de la transcripción o nota de voz de la reunión.</li>
+            <li><strong>Salida:</strong> acta con la plantilla AGYL — asistentes, decisiones, acciones, responsables, fechas.</li>
+            <li><strong>Knowledge:</strong> plantilla de acta corporativa AGYL + 1 acta modelo bien hecha.</li>
+            <li><strong>Capacidades:</strong> code interpreter on (para procesar archivos largos), web off.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="prompt-box good">
+            <div class="prompt-label">Test rápido</div>
+<pre>Aquí va la transcripción de la reunión X. Devuélveme el acta con la plantilla.</pre>
+          </div>
+          <div class="demo-buttons">
+            <span class="demo-btn primary">Ver instrucciones</span>
+            <span class="demo-btn gold">Probar en vivo</span>
+          </div>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1rem;">Construcción acelerada — 5 minutos. Mismas 5 capas. La receta funciona.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 25 — Agente 3 Mentor de Procesos -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Agente 03 · Mentor de procesos</div></div>
+      <h2>El que responde con cita al manual</h2>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+        <div>
+          <ul class="agyl-bullets">
+            <li><strong>Insumo:</strong> pregunta sobre un proceso interno.</li>
+            <li><strong>Salida:</strong> respuesta paso a paso citando el documento de origen.</li>
+            <li><strong>Knowledge:</strong> 3 documentos de proceso anonimizados (los mismos de la demo de NotebookLM en S3).</li>
+            <li><strong>Capacidades:</strong> ninguna externa. Solo lectura del knowledge propio.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="prompt-box good">
+            <div class="prompt-label">Pregunta de prueba</div>
+<pre>¿Qué pasos sigo cuando llega un incidente de datos digitales?</pre>
+          </div>
+          <div class="demo-buttons">
+            <span class="demo-btn primary">Ver instrucciones</span>
+            <span class="demo-btn gold">Probar en vivo</span>
+          </div>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1rem;">Este viene preconstruido. Mostramos la respuesta y cómo cita los procesos — refuerza la lección de S3.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 26 — Portabilidad GPT vs Gema -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">ChatGPT</div>
+        <h3>GPT — Prospección Comercial AGYL</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.5rem;">
+          <li>Builder visual con tabs (Configure / Knowledge / Capabilities)</li>
+          <li>Hasta 20 archivos en knowledge</li>
+          <li>Conversation starters visibles al abrir</li>
+          <li>Comparte vía link público o privado del marketplace</li>
+        </ul>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag" style="color: var(--agyl-gold-soft);">Gemini</div>
+        <h3 style="color:#fff;">Gema — mismas instrucciones</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.5rem;">
+          <li style="color:#fff;">Builder más simple, todo en una pantalla</li>
+          <li style="color:#fff;">Knowledge más limitado, pero conecta con Drive</li>
+          <li style="color:#fff;">Integrado con Workspace (Gmail, Docs)</li>
+          <li style="color:#fff;">Compartir restringido por dominio Workspace</li>
+        </ul>
+        <style>.split-pane.teal-bg .agyl-bullets li::before { background: var(--agyl-gold); }</style>
+      </div>
+    </section>
+
+    <!-- SLIDE 27 — Claude Projects (mención) -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Claude Projects · mención</div></div>
+      <h2>El tercer jugador: comparativa rápida</h2>
+      <table class="compare-table">
+        <thead>
+          <tr><th>Dimensión</th><th>GPTs (ChatGPT)</th><th>Gemas (Gemini)</th><th>Projects (Claude)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Mejor para</td><td>Acciones rápidas, marketplace</td><td>Trabajo con Workspace</td><td>Análisis largo, razonamiento</td></tr>
+          <tr><td>Knowledge</td><td>20 archivos · indexado</td><td>Conexión con Drive</td><td>Capacidad amplia · contexto largo</td></tr>
+          <tr><td>Capacidades extra</td><td>Web, code, imagen</td><td>Integración Google nativa</td><td>Sin acciones externas (aún)</td></tr>
+          <tr><td>Compartir</td><td>Link público o privado</td><td>Por dominio Workspace</td><td>Por organización Claude</td></tr>
+          <tr><td>Cuándo elegirlo</td><td>Caso comercial, flujos cortos</td><td>Equipos en Google</td><td>Investigación, redacción larga</td></tr>
+        </tbody>
+      </table>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 28 — Statement -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Cierre Bloque 03</div>
+      <h2>Aprenden uno,<br>los <span class="accent">aprenden todos.</span></h2>
+      <p class="statement-sub">El concepto es portable. Si aprenden a construir un GPT, ya saben construir una Gema y un Project. Cambia la UI, no el método.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 4 — GPT-IMAGE-2                                      -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 29 — Section divider -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 04 · 30 min · gpt-image-2</div>
+      <h2>Lanzado hace<br>7 días: el primer<br>modelo que <em>razona</em><br>antes de dibujar.</h2>
+      <p class="section-desc">21 de abril de 2026. La novedad de la semana, no contenido genérico. Caso real para demostrar: el evento Parches de IA del sábado.</p>
+    </section>
+
+    <!-- SLIDE 30 — Qué cambió -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Qué cambió</div></div>
+      <h2>4 saltos cualitativos en gpt-image-2</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">01</div>
+          <h3>Razona y planea</h3>
+          <p>Antes de dibujar, el modelo construye un plan de la imagen. Menos azar, más intención.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">02</div>
+          <h3>Texto legible</h3>
+          <p>Por primera vez, texto correcto y multilingüe — incluido español. El error ortográfico ya es excepción.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">03</div>
+          <h3>Edita sin regenerar</h3>
+          <p>Cambia el fondo, el texto, un detalle — y mantiene todo lo demás. No volver a empezar.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">04</div>
+          <h3>Hasta 8 imágenes</h3>
+          <p>Mismo personaje y estilo en una serie. Útil para slides, campañas, redes.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 31 — Por qué importa para AGYL -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Por qué importa para AGYL</h3></div>
+      <h2>Visuales corporativos en español, sin diseñador</h2>
+      <ul class="agyl-bullets" style="margin-top: 1.2rem;">
+        <li><strong>Slides corporativas.</strong> Portadas, separadores, slides temáticos. En el tono y la paleta de la firma.</li>
+        <li><strong>Infografías.</strong> Resúmenes visuales de informes, métricas y procesos para el cliente.</li>
+        <li><strong>Banners LinkedIn / redes.</strong> Comunicación de marca en formato horizontal y vertical.</li>
+        <li><strong>Flyers internos.</strong> Eventos, capacitaciones, anuncios. Sin pasar por agencia.</li>
+        <li><strong>Bocetos visuales para propuestas.</strong> Antes valían oro; ahora se generan en 30 segundos.</li>
+      </ul>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.05rem;">Por primera vez podemos generar visuales con <strong>texto correcto, en español.</strong> Es lo que faltaba para uso corporativo.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 32 — Section divider demo -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Demo · Caso real</div>
+      <h2>Parches de IA —<br>del WhatsApp<br>al flyer.</h2>
+      <p class="section-desc">Evento del sábado, comunidad real, conversación real exportada. Vamos a ver el flujo completo: extracción de contexto, flyer, banner, slides.</p>
+    </section>
+
+    <!-- SLIDE 33 — Demo 1 extraer contexto WhatsApp -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Demo 01 · Extraer contexto</div></div>
+      <h2>Del chat de WhatsApp a un brief</h2>
+      <p class="desc" style="font-size: 1.05rem;">Subo el .txt exportado del grupo. El modelo lee la conversación real y devuelve un brief útil.</p>
+      <div class="prompt-box good">
+        <div class="prompt-label">Prompt — Demo 01</div>
+<pre>Lee esta conversación del grupo "Parches de IA".
+
+Devuélveme:
+1. Los 3 temas más recurrentes.
+2. El tono del grupo (formal, cercano, técnico, etc.).
+3. Vocabulario propio que se repite.
+4. Qué emociona a esta comunidad.
+5. Frase corta que capture la identidad del grupo.
+
+No inventes. Si algo no aparece, di "no se observa".</pre>
+      </div>
+      <p class="desc" style="margin-top: 0.8rem; font-size: 1rem;"><strong>Lo importante:</strong> el resultado no se lo inventó el modelo. Salió de la comunidad. Ahora lo usamos como brief para todo lo demás.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 34 — Demo 2 Flyer del evento -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Demo 02 · Flyer del evento</div>
+        <h3>Prompt — formato 9:16 vertical</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Resumen del prompt</div>
+<pre>Genera un flyer vertical 9:16 para el evento "Parches de IA" del sábado.
+
+Incluye texto legible:
+- "Parches de IA"
+- "Sábado · 7:00pm"
+- "Lugar: [confirmar]"
+
+Estilo: comunidad cercana, paleta cálida, sin stock corporativo.
+Tipografía con personalidad. Una sola imagen central, no collage.
+
+Usa el brief del turno anterior como referencia de tono.</pre>
+        </div>
+      </div>
+      <div class="split-pane soft-bg" style="background: linear-gradient(135deg, #F6F5F1 0%, #ECEAE2 100%);">
+        <div class="pane-tag">Resultado · 9:16</div>
+        <div class="img-placeholder" style="aspect-ratio: 9/16; max-height: 60vh; width: auto; align-self: center;">
+          Imagen generada en vivo
+          <small>flyer · 1024 × 1820</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 35 — Iterar edición sin regenerar -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Iterar · edición sin regenerar</div></div>
+      <h2>Cambia un detalle, mantén el resto</h2>
+      <div class="prompt-box good">
+        <div class="prompt-label">Prompt — Edición</div>
+<pre>Sobre la imagen anterior:
+
+- Cambia el fondo a un degradado más oscuro (azul noche a violeta).
+- Mantén exactamente todo lo demás: el personaje, el texto, la composición, la tipografía.
+
+No regeneres desde cero. Edita.</pre>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1.05rem;">Esto es lo nuevo. Antes pedir un cambio era empezar de cero. Hoy el modelo conserva la composición y solo aplica la modificación pedida.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 36 — Demo 3 Banner LinkedIn -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Demo 03 · Banner LinkedIn</div>
+        <h3>1584 × 396 horizontal</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Prompt</div>
+<pre>Mismo estilo del flyer anterior, ahora en formato banner LinkedIn 1584×396 horizontal.
+
+Misma paleta, mismo personaje, mismo "feel".
+Texto principal: "Parches de IA · Sábado".
+Reserva el tercio izquierdo para la foto de perfil.
+
+Mantén consistencia con la imagen previa.</pre>
+        </div>
+      </div>
+      <div class="split-pane soft-bg" style="background: linear-gradient(135deg, #F6F5F1 0%, #ECEAE2 100%);">
+        <div class="pane-tag">Resultado · 1584 × 396</div>
+        <div class="img-placeholder" style="aspect-ratio: 4/1; width: 100%;">
+          Imagen generada en vivo
+          <small>banner LinkedIn · consistencia con demo 02</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 37 — Demo 4 Slides del evento -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Demo 04 · Slides del evento</div></div>
+      <h2>4 imágenes consistentes — una serie</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1rem;">
+        <div class="card">
+          <div class="card-label">Slide 01</div>
+          <div class="img-placeholder" style="min-height: 180px;">Portada<small>imagen en vivo</small></div>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Slide 02</div>
+          <div class="img-placeholder" style="min-height: 180px;">Agenda<small>imagen en vivo</small></div>
+        </div>
+        <div class="card">
+          <div class="card-label">Slide 03</div>
+          <div class="img-placeholder" style="min-height: 180px;">Ponente<small>imagen en vivo</small></div>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Slide 04</div>
+          <div class="img-placeholder" style="min-height: 180px;">Cierre<small>imagen en vivo</small></div>
+        </div>
+      </div>
+      <p class="desc" style="margin-top: 1rem; font-size: 1rem;"><strong>Pedido:</strong> 4 imágenes con el mismo personaje y la misma estética. Se exportan e insertan en Keynote / Slides / Canva — la presentación se arma en minutos.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 38 — Bonus slides académicas -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Bonus · Slides académicas</div>
+        <h3>Cumple promesa de S3</h3>
+        <div class="prompt-box good">
+          <div class="prompt-label">Prompt</div>
+<pre>Genera 4 slides 16:9 para una presentación académica sobre [tema].
+
+Estilo: balance imagen/texto, tipografía legible, no recargado.
+Paleta sobria (2 colores principales).
+Imagen ilustrativa lateral, texto a la izquierda.
+Nada de stock corporativo. Nada de iconitos genéricos.
+
+Mantén la misma estética en las 4.</pre>
+        </div>
+      </div>
+      <div class="split-pane soft-bg" style="background: linear-gradient(135deg, #F6F5F1 0%, #ECEAE2 100%);">
+        <div class="pane-tag">Resultado</div>
+        <div class="img-placeholder" style="aspect-ratio: 16/9; width: 100%;">
+          Slide académica generada en vivo
+          <small>16:9 · serie consistente</small>
+        </div>
+      </div>
+    </section>
+
+    <!-- SLIDE 39 — 5 buenas prácticas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Buenas prácticas · imagen</div></div>
+      <h2>5 reglas para que el resultado sirva de primera</h2>
+      <ul class="agyl-bullets" style="margin-top: 1.2rem;">
+        <li><strong>Descripción visual concreta.</strong> Decir "moderno y profesional" no sirve. Decir "fondo azul oscuro, una persona de medio cuerpo, iluminación cenital, estilo editorial" sí.</li>
+        <li><strong>Especificar el texto entre comillas.</strong> Si el modelo tiene que escribir algo, ponlo literal entre comillas y di el idioma. Mejora drásticamente la legibilidad.</li>
+        <li><strong>Referenciar paleta y tipografía.</strong> "Paleta teal y dorado", "tipografía display condensada con peso fuerte". Limita la lotería estética.</li>
+        <li><strong>Usar imágenes de referencia cuando se pueda.</strong> Subir un mockup, una foto del lugar, una paleta. El modelo lo usa de anclaje.</li>
+        <li><strong>Iterar con edición, no con regeneración.</strong> Cambios pequeños = pídelos como edición. Solo regenera cuando el rumbo está mal.</li>
+      </ul>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 40 — Statement cierre del bloque -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Cierre Bloque 04</div>
+      <h2>La IA ya no solo<br><span class="accent">escribe</span> lo que piensan.<br>Ahora también lo <span class="gold">dibuja.</span></h2>
+      <p class="statement-sub">Y lo dibuja con texto legible, en español, conservando estilo entre imágenes. Ese era el último cuello de botella para uso corporativo.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 5 — AUGMENTACIÓN + PENSAMIENTO CRÍTICO               -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 41 — Section divider -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 05 · 10 min · Criterio</div>
+      <h2>La IA no te<br>reemplaza.<br>Te quita la<br>parte aburrida.</h2>
+      <p class="section-desc">La parte difícil — decidir — sigue siendo de ustedes. La velocidad no sirve sin criterio. Acá está el filtro.</p>
+    </section>
+
+    <!-- SLIDE 42 — 3 capas humanas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">3 capas humanas</div></div>
+      <h2>Sobre cada output de IA, siempre</h2>
+      <div class="cards-grid" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">Capa 01</div>
+          <h3>Verificar</h3>
+          <p>¿De dónde sacó este dato? ¿Existe la fuente? ¿La cifra cuadra con lo que sé del mundo? Diez segundos antes de usarlo.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Capa 02</div>
+          <h3>Ajustar</h3>
+          <p>Tono, contexto, audiencia. El modelo entrega un borrador estadístico. Ustedes lo ajustan a la realidad concreta.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Capa 03</div>
+          <h3>Decidir</h3>
+          <p>¿Qué se publica? ¿Qué se envía? La firma siempre la pone una persona. La responsabilidad es humana.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 43 — Checklist de 5 preguntas -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">El filtro de 5 preguntas</div></div>
+      <h2>Antes de usar cualquier output de IA</h2>
+      <div class="check-list" style="margin-top: 1.2rem;">
+        <div class="check-item"><div class="check-num">1</div><div class="check-text">¿De dónde sacó esto?</div></div>
+        <div class="check-item"><div class="check-num">2</div><div class="check-text">¿Suena demasiado bueno?</div></div>
+        <div class="check-item"><div class="check-num">3</div><div class="check-text">¿Lo firmaría yo con mi nombre?</div></div>
+        <div class="check-item"><div class="check-num">4</div><div class="check-text">¿Hay un dato que pueda verificar en 30 segundos?</div></div>
+        <div class="check-item"><div class="check-num">5</div><div class="check-text">¿Qué decisión tomo con esto?</div></div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 44 — Aplicar checklist al correo y al flyer -->
+    <section class="slide slide-split">
+      <div class="split-pane soft-bg">
+        <div class="pane-tag">Aplicado al correo del Bloque 02</div>
+        <h3>Pasarlo por las 5 preguntas</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.4rem; font-size: 1.05rem;">
+          <li><strong>1.</strong> ¿La métrica salió del knowledge real o la inventó?</li>
+          <li><strong>2.</strong> ¿La promesa es razonable o hype?</li>
+          <li><strong>3.</strong> ¿Lo firmaría yo? ¿Suena a mi voz?</li>
+          <li><strong>4.</strong> ¿Puedo verificar el caso de éxito que cita?</li>
+          <li><strong>5.</strong> ¿Lo envío hoy, lo edito o lo descarto?</li>
+        </ul>
+      </div>
+      <div class="split-pane teal-bg">
+        <div class="pane-tag" style="color: var(--agyl-gold-soft);">Aplicado al flyer del Bloque 04</div>
+        <h3 style="color:#fff;">Mismo filtro, output visual</h3>
+        <ul class="agyl-bullets" style="margin-top: 0.4rem; font-size: 1.05rem;">
+          <li style="color:#fff;"><strong>1.</strong> ¿La fecha y el lugar están correctos?</li>
+          <li style="color:#fff;"><strong>2.</strong> ¿El texto en la imagen está bien escrito?</li>
+          <li style="color:#fff;"><strong>3.</strong> ¿La estética representa al grupo?</li>
+          <li style="color:#fff;"><strong>4.</strong> ¿Algún detalle visual confunde o contradice?</li>
+          <li style="color:#fff;"><strong>5.</strong> ¿Lo publico, lo edito o lo regenero?</li>
+        </ul>
+        <style>.split-pane.teal-bg .agyl-bullets li::before { background: var(--agyl-gold); }</style>
+      </div>
+    </section>
+
+    <!-- SLIDE 45 — Statement -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Cierre Bloque 05</div>
+      <h2>La IA es <span class="accent">velocidad.</span><br>El criterio sigue siendo <span class="gold">suyo.</span></h2>
+      <p class="statement-sub">Las 5 preguntas no son burocracia. Son los 30 segundos que separan un output útil de un error firmado con su nombre.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- ========================================================== -->
+    <!-- BLOQUE 6 — CIERRE DEL PROGRAMA + Q&A                        -->
+    <!-- ========================================================== -->
+
+    <!-- SLIDE 46 — Section divider cierre -->
+    <section class="slide slide-section slide-teal-bg">
+      <div class="section-tag">Bloque 06 · 15 min · Cierre del programa</div>
+      <h2>Cuatro sesiones.<br>Una idea.</h2>
+      <p class="section-desc">Cerramos con una acción concreta para el lunes y un Q&amp;A largo. Lo último del programa.</p>
+    </section>
+
+    <!-- SLIDE 47 — Recap 4 sesiones -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title">Recap del programa</div></div>
+      <h2>Lo que se llevan después de las 4 sesiones</h2>
+      <div class="cards-grid cards-grid-4" style="margin-top: 1.5rem;">
+        <div class="card">
+          <div class="card-label">Sesión 01</div>
+          <h3>Entender qué es la IA</h3>
+          <p>Predice, no piensa. Verificar siempre. Privacidad primero.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Sesión 02</div>
+          <h3>Hablarle bien</h3>
+          <p>RAFAT y los 5 frameworks. Multimodal. La calidad del output es la del input.</p>
+        </div>
+        <div class="card">
+          <div class="card-label">Sesión 03</div>
+          <h3>Darle contexto</h3>
+          <p>NotebookLM, Projects, datos propios. La IA convertida en experta de tu mundo.</p>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Sesión 04</div>
+          <h3>Construir y crear</h3>
+          <p>Agentes propios. Imagen con razonamiento. Pasaron de consumidores a creadores.</p>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 48 — Qué hacer el lunes -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Qué hacer el lunes</div></div>
+      <h2>3 acciones pequeñas, alto impacto</h2>
+      <div class="check-list" style="margin-top: 1.2rem;">
+        <div class="check-item"><div class="check-num">1</div><div class="check-text">Construir tu primer agente personal — 15 minutos. Una sola receta de 5 capas.</div></div>
+        <div class="check-item"><div class="check-num">2</div><div class="check-text">Generar una imagen con texto en español para algo real esta semana — flyer, banner, slide.</div></div>
+        <div class="check-item"><div class="check-num">3</div><div class="check-text">Pasar al menos un output de IA por el checklist de 5 preguntas antes de usarlo.</div></div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 49 — Reto opcional -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Opcional</div>
+      <h2>Construyan su primer agente <span class="gold">esta semana.</span></h2>
+      <p class="statement-sub">No es tarea. Es invitación. Si lo hacen, mándenme captura — me interesa ver qué construyen y compartirlo en sus equipos también ayuda.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 50 — Recursos cierre (QR) -->
+    <section class="slide slide-page">
+      <div class="watermark-a">A</div>
+      <div class="page-head"><div class="chip-title gold">Recursos · cierre</div></div>
+      <h2>Todo lo del programa, en un solo enlace</h2>
+      <div style="display: grid; grid-template-columns: 320px 1fr; gap: 3rem; align-items: center; margin-top: 1rem;">
+        <img id="qr-recursos-cierre" src="images/qr-recursos.svg" alt="QR a recursos del curso" style="width:280px;height:280px;display:block;background:#fff;padding:8px;border-radius:8px;">
+        <div>
+          <p style="font-size: 1.5rem; color: var(--agyl-teal-deep); font-weight: 600; margin-bottom: 0.8rem;">jeroooo.com/cursos/ia-basica-agyl</p>
+          <ul class="agyl-bullets" style="font-size: 1.05rem;">
+            <li>Slides de las 4 sesiones</li>
+            <li><strong>Plantillas de los 3 agentes</strong> que construimos hoy — listas para pegar</li>
+            <li>Prompts ready-to-paste de gpt-image-2 (flyer, banner, slides)</li>
+            <li>Checklist de 5 preguntas en PDF imprimible</li>
+            <li>Enlaces a las grabaciones (los publica AGYL)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 51 — Q&A -->
+    <section class="slide slide-statement">
+      <div class="watermark-a">A</div>
+      <div class="statement-tag">Q&amp;A · 7 minutos</div>
+      <h2>Pregúntenme lo que <span class="accent">quieran.</span></h2>
+      <p class="statement-sub">Es la última oportunidad del programa. Escriban en el chat — voy en orden de llegada y priorizo lo que no se haya respondido en sesiones anteriores.</p>
+      <div class="footer-stripe"><div class="teal"></div><div class="gold"></div></div>
+    </section>
+
+    <!-- SLIDE 53 — Contacto / cierre -->
+    <section class="slide slide-contact slide-dark-bg">
+      <div class="contact-left">
+        <img src="images/jero-profile.png" alt="Jerónimo Martínez" class="contact-photo">
+        <h2>Gracias por las 4 sesiones.</h2>
+        <div class="contact-info">
+          <a href="https://jeroooo.com" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            jeroooo.com
+          </a>
+          <a href="https://www.linkedin.com/in/jeronimo-martinez-j" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+            LinkedIn · Jerónimo Martínez
+          </a>
+          <a href="https://www.instagram.com/jeromartinezj" target="_blank">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            @jeromartinezj
+          </a>
+          <span>Sesión 4 de 4 · Programa IA Básica AGYL · 29 abr 2026</span>
+        </div>
+      </div>
+      <div class="contact-right">
+        <div class="contact-right-content">
+          <h3>Hasta acá<br>llegamos.</h3>
+          <p>Construyan algo esta semana. Y si lo hacen, cuéntenmelo. Nos vemos en LinkedIn.</p>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /deck -->
+
+  <!-- NAV ARROWS -->
+  <div class="nav-arrows">
+    <button class="nav-btn" onclick="prev()" aria-label="Anterior">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <button class="nav-btn" onclick="next()" aria-label="Siguiente">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const bar = document.getElementById('progressBar');
+    const counter = document.getElementById('slideCounter');
+    const logoCorner = document.getElementById('logoCorner');
+    let cur = 0;
+
+    function update() {
+      const pct = ((cur + 1) / slides.length) * 100;
+      bar.style.width = pct + '%';
+      counter.textContent = `${cur + 1} / ${slides.length}`;
+      history.replaceState(null, null, `#${cur}`);
+      const s = slides[cur];
+      const isCover = s.classList.contains('slide-cover');
+      const isDarkBg = s.classList.contains('slide-section') || s.classList.contains('slide-contact');
+      if (isCover || isDarkBg) {
+        logoCorner.style.display = 'none';
+      } else {
+        logoCorner.style.display = '';
+        logoCorner.style.filter = '';
+      }
+    }
+
+    function go(i) {
+      if (i < 0 || i >= slides.length || i === cur) return;
+      slides[cur].classList.remove('active');
+      cur = i;
+      slides[cur].classList.add('active');
+      update();
+    }
+
+    function next() { go(cur + 1); }
+    function prev() { go(cur - 1); }
+
+    document.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowRight': case 'ArrowDown': case ' ': case 'PageDown':
+          e.preventDefault(); next(); break;
+        case 'ArrowLeft': case 'ArrowUp': case 'PageUp':
+          e.preventDefault(); prev(); break;
+        case 'Home': e.preventDefault(); go(0); break;
+        case 'End': e.preventDefault(); go(slides.length - 1); break;
+        case 'f':
+          e.preventDefault();
+          document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+          break;
+      }
+    });
+
+    let tx = 0;
+    document.addEventListener('touchstart', e => { tx = e.changedTouches[0].screenX; });
+    document.addEventListener('touchend', e => {
+      const d = tx - e.changedTouches[0].screenX;
+      if (Math.abs(d) > 50) d > 0 ? next() : prev();
+    });
+
+    const h = parseInt(location.hash.slice(1));
+    if (!isNaN(h) && h >= 0 && h < slides.length) {
+      slides[0].classList.remove('active');
+      cur = h;
+      slides[cur].classList.add('active');
+    }
+    update();
+  </script>
+</body>
+</html>
