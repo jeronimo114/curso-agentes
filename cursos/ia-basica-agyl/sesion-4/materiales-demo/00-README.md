@@ -7,9 +7,9 @@ Abrir esta carpeta en una ventana lateral durante la sesión.
 
 | Min | Bloque / Demo | Archivo |
 |-----|---------------|---------|
-| 0:18 | B2 · Construir agente Prospección — instrucciones | `01-agente-prospeccion-instrucciones.md` |
-| 0:24 | B2 · Knowledge del agente Prospección | `01b-agente-prospeccion-knowledge.md` |
-| 0:32 | B2 · Input de prueba + auto-crítica + mejora | `prompts-demo.md` (sección 1) |
+| 0:18 | B2 · Construir agente Auditor de Automatización Personal — instrucciones | `01-agente-auditor-automatizacion.md` |
+| 0:24 | B2 · Knowledge ligero (solo catálogo de agentes ejemplo) | dentro de `01-agente-auditor-automatizacion.md` |
+| 0:32 | B2 · Arrancar entrevista + saltar a matriz + pedir artefactos + mejora | `prompts-demo.md` (sección 1) |
 | 0:46 | B3 · Agente Redactor de Actas | `02-agente-redactor-actas.md` |
 | 0:51 | B3 · Mentor de Procesos AGYL (pre-construido) | `03-agente-mentor-procesos.md` |
 | 0:55 | B3 · Portar a Gema | `prompts-demo.md` (sección 4) |
@@ -27,7 +27,7 @@ Abrir esta carpeta en una ventana lateral durante la sesión.
 1. Confirmar que **gpt-image-2** está habilitado en la cuenta ChatGPT del instructor (Settings → Beta features). Lanzado el 21-abr-2026.
 2. Exportar la conversación reciente del grupo de WhatsApp "Parches de IA" como `.txt`. **Anonimizar** antes de subir: reemplazar nombres y números de teléfono por etiquetas genéricas (Persona 1, Persona 2…). Guardar como `parches-de-ia.txt` en escritorio.
 3. Confirmar datos del evento del sábado: nombre, fecha, hora, lugar. Reemplazarlos en el prompt del flyer (`04-imagen-flyer-parches.md`) antes de empezar.
-4. **Anonimizar los archivos de knowledge** del agente de Prospección y del Redactor de Actas: sin nombres reales de clientes, sin cifras reales, sin datos personales. Ver `01b-agente-prospeccion-knowledge.md` para los snippets de ejemplo.
+4. **Anonimizar los archivos de knowledge** del agente Redactor de Actas y Mentor de Procesos: sin nombres reales de clientes, sin cifras reales, sin datos personales. El Auditor de Automatización Personal NO requiere knowledge sensible — solo el catálogo de agentes ejemplo.
 5. Tener pestañas abiertas en este orden: ChatGPT (2 tabs: "Crear GPT" + chat normal) · Gemini (Gems) · Claude (Projects, opcional).
 6. Esta carpeta `materiales-demo/` abierta en Finder, ventana lateral visible.
 7. `prompts-demo.md` abierto en otra ventana lateral, sincronizado con la slide actual.

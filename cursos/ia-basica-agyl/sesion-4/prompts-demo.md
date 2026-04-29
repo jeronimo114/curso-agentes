@@ -6,37 +6,42 @@ Convención: cada prompt aparece tal cual se pega en ChatGPT, Gemini o donde cor
 
 ---
 
-## 1. Demo 1 — Construir agente "Prospección Comercial AGYL"
+## 1. Demo 1 — Construir agente "Auditor de Automatización Personal"
 
 ### 1.1 Instrucciones del agente (capa "rol permanente")
 
-Pegar contenido completo desde `materiales-demo/01-agente-prospeccion-instrucciones.md` (entre los marcadores `--- COPIAR DESDE AQUÍ ---` y `--- HASTA AQUÍ ---`). Va en el campo "Instructions" del GPT custom.
+Pegar contenido completo desde `materiales-demo/01-agente-auditor-automatizacion.md` (entre los marcadores `--- COPIAR DESDE AQUÍ ---` y `--- HASTA AQUÍ ---`). Va en el campo "Instructions" del GPT custom.
 
-### 1.2 Input de prueba (primera ejecución del agente)
-
-```
-Empresa: aseguradora mediana en Bogotá, ~600 empleados.
-Decisor: gerente de operaciones.
-Pain conocido: equipos atascados clasificando manualmente tickets de incidentes y reclamos.
-Canal: correo en frío. Es el primer contacto.
-Mi nombre y cargo van firmados al final, no los inventes.
-```
-
-### 1.3 Auto-crítica del output (técnica recuperada de S3)
+### 1.2 Primer mensaje al agente (arranca la entrevista)
 
 ```
-Critica este correo desde la perspectiva del gerente de operaciones que lo recibe un lunes a las 8 a.m. con la bandeja llena. ¿Lo abre? ¿Lo borra en 5 segundos? ¿Por qué? Sé directo.
-
-Después reescríbelo aplicando esa crítica. No inventes métricas; si hace falta una, déjala como [pedir métrica al usuario antes de enviar].
+Empieza la entrevista. Soy consultor de aseguramiento en una firma colombiana, llevo 5 años en la consultora, atiendo en paralelo 4 clientes corporativos del sector financiero. Adelante con la primera pregunta.
 ```
 
-### 1.4 Mejora permanente del agente (volver a "Editar GPT" → Instructions)
+### 1.3 Empujarlo a la fase de análisis (cuando ya hay material)
 
-Agregar al final del bloque de instrucciones, sin borrar lo anterior:
+Cuando el agente haya hecho 6 a 8 preguntas y tengas tareas concretas en la mesa:
 
 ```
-REGLA ADICIONAL — MÉTRICAS:
-Por defecto, todo correo debe incluir una métrica concreta o un caso de éxito anonimizado tomado del knowledge. Si no encuentras una métrica relevante en el knowledge, NO la inventes: detén la redacción y pídele al usuario una métrica o resultado verificable antes de continuar.
+Suficiente material. Pasa a Fase 02. Devuélveme la matriz 2×2 de frecuencia × tedio con todas las tareas que mencioné en celdas, y los 3 candidatos con justificación.
+```
+
+### 1.4 Pedir el artefacto del candidato 1 (Fase 03)
+
+```
+El candidato 1 es el ganador. Pasa a Fase 03 y entrégame los tres artefactos:
+1. Prompt RAFAT listo para copiar y usar mañana.
+2. Instrucciones completas del nuevo GPT/Gema que automatiza esta tarea.
+3. Lista de archivos que tendría que subir como knowledge, con una línea de qué debería contener cada uno.
+```
+
+### 1.5 Mejora permanente del agente (técnica de S3 — auto-crítica + ajuste)
+
+Después de probarlo una vez, volver a "Editar GPT" → Instructions y agregar al final, sin borrar lo anterior:
+
+```
+REGLA ADICIONAL — UNA PREGUNTA POR TURNO:
+Nunca hagas más de una pregunta a la vez. Si te dan respuestas vagas, repregunta con un ejemplo concreto antes de avanzar. No pasas a Fase 02 hasta tener al menos 5 tareas distintas mencionadas con frecuencia explícita (diaria, semanal, mensual).
 ```
 
 ---
@@ -97,13 +102,13 @@ Pegar contenido completo desde `materiales-demo/03-agente-mentor-procesos.md`. E
 
 ### 4.1 Instrucciones (idénticas, mínima adaptación)
 
-En Gemini → Gems → Crear nueva. Pegar las MISMAS instrucciones de `materiales-demo/01-agente-prospeccion-instrucciones.md`. Solo ajustar la primera línea si es necesario:
+En Gemini → Gems → Crear nueva. Pegar las MISMAS instrucciones de `materiales-demo/01-agente-auditor-automatizacion.md`. Solo ajustar la primera línea si es necesario:
 
 ```
-Eres un asistente de prospección comercial para AGYL. Tu rol y reglas se mantienen igual entre conversaciones.
+Eres el Auditor de Automatización Personal. Tu rol y reglas se mantienen igual entre conversaciones.
 ```
 
-El resto del prompt se pega tal cual. Subir los mismos archivos de knowledge.
+El resto del prompt se pega tal cual. Subir el mismo catálogo de agentes ejemplo como knowledge.
 
 ---
 
