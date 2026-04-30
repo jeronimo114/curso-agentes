@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jerónimo Martínez — Links">
+  <title>Links · Jerónimo Martínez</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--black:#111;--white:#fafafa;--gray-100:#f4f4f5;--gray-200:#e4e4e7;--gray-400:#a1a1aa;--gray-600:#52525b}
+    body{font-family:system-ui,-apple-system,sans-serif;background:var(--white);color:var(--black);line-height:1.6;min-height:100vh;display:flex;flex-direction:column}
+    ::selection{background:var(--black);color:var(--white)}
+    a{color:inherit;text-decoration:none}
+
+    header{padding:1.25rem 2rem;display:flex;justify-content:center;align-items:center}
+    .logo{font-weight:600;font-size:1.125rem}
+    .logo a{color:var(--black)}
+
+    main{flex:1;display:flex;justify-content:center;align-items:flex-start;padding:2rem 1.5rem 4rem}
+    .card{width:100%;max-width:480px;display:flex;flex-direction:column;align-items:center;text-align:center}
+
+    .avatar{width:96px;height:96px;border-radius:50%;overflow:hidden;background:var(--gray-100);margin-bottom:1.25rem}
+    .avatar img{width:100%;height:100%;object-fit:cover}
+
+    .name{font-size:1.5rem;font-weight:600;letter-spacing:-0.02em;margin-bottom:.25rem}
+    .tagline{color:var(--gray-600);font-size:.95rem;margin-bottom:2rem}
+
+    .links{width:100%;display:flex;flex-direction:column;gap:.75rem}
+    .link-btn{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;padding:1rem 1.25rem;border-radius:14px;font-size:1rem;font-weight:500;font-family:inherit;cursor:pointer;border:1px solid var(--gray-200);background:var(--white);color:var(--black);transition:transform .15s ease,border-color .15s ease,background .15s ease}
+    .link-btn:hover{transform:translateY(-2px);border-color:var(--black)}
+    .link-btn.primary{background:var(--black);color:var(--white);border-color:var(--black)}
+    .link-btn.primary:hover{background:#000}
+    .link-btn .arrow{width:18px;height:18px;flex-shrink:0;opacity:.7}
+    .link-btn:hover .arrow{opacity:1}
+    .link-btn .label{display:flex;flex-direction:column;align-items:flex-start;gap:.15rem}
+    .link-btn .label small{font-size:.7rem;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+    .link-btn.primary .label small{color:rgba(250,250,250,.65)}
+
+    .copied-toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--black);color:var(--white);padding:.65rem 1.1rem;border-radius:10px;font-size:.85rem;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+    .copied-toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+    footer{padding:1.5rem 2rem;text-align:center;font-size:.75rem;color:var(--gray-400)}
+
+    @media(max-width:480px){
+      header{padding:1rem 1.5rem}
+      main{padding:1rem 1.25rem 3rem}
+      .name{font-size:1.35rem}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo"><a href="index.html">JM</a></div>
+  </header>
+
+  <main>
+    <div class="card">
+      <div class="avatar"><img src="foto.png" alt="Jerónimo Martínez"></div>
+      <h1 class="name">Jerónimo Martínez</h1>
+      <p class="tagline">Diseño sistemas que piensan</p>
+
+      <div class="links">
+        <a class="link-btn primary" href="https://calendly.com/jerojerojerojero/demo-tu-propio-agente-ia" target="_blank" rel="noopener">
+          <span class="label"><small>Agenda</small>Demo · Tu propio agente IA</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+
+        <a class="link-btn" href="https://chat.whatsapp.com/BinTB2qRSCb2aas9fjLHvw?mode=gi_t" target="_blank" rel="noopener">
+          <span class="label"><small>Comunidad</small>Únete a Parches IA</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+
+        <a class="link-btn" href="materiales.html">
+          <span class="label"><small>Recursos</small>Cursos y materiales</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+
+        <a class="link-btn" href="https://www.linkedin.com/in/jerónimo-martínez-jaramillo-91702b1b8" target="_blank" rel="noopener">
+          <span class="label"><small>Conecta</small>LinkedIn</span>
+          <svg class="arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg>
+        </a>
+
+        <button class="link-btn" onclick="copyEmail()">
+          <span class="label"><small>Email</small>jeronimomartinezjaramillo@gmail.com</span>
+          <svg class="arrow" id="email-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <div class="copied-toast" id="toast">Email copiado</div>
+
+  <footer>
+    <span>© 2026 Jerónimo Martínez · Medellín, Colombia</span>
+  </footer>
+
+  <script>
+    function copyEmail(){
+      navigator.clipboard.writeText('jeronimomartinezjaramillo@gmail.com');
+      const icon=document.getElementById('email-icon');
+      const original=icon.innerHTML;
+      icon.innerHTML='<path d="M20 6L9 17l-5-5"/>';
+      const toast=document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(()=>{
+        icon.innerHTML=original;
+        toast.classList.remove('show');
+      },1800);
+    }
+  </script>
+</body>
+</html>
