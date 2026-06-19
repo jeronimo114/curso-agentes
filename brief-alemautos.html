@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brief — Sesión de IA · Smart #5 | Jerónimo Martínez</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --black:#0B0B0F;--white:#FAFAFA;--accent:#1E5BE6;--accent-light:#E8EEFB;
+      --gray-100:#f4f4f5;--gray-400:#a1a1aa;--gray-600:#52525b;
+      --success:#10B981;--error:#EF4444;
+    }
+    html{scroll-behavior:smooth}
+    body{font-family:system-ui,-apple-system,sans-serif;background:var(--black);color:var(--white);overflow-x:hidden;min-height:100vh}
+
+    /* Progress bar */
+    .progress-track{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.08);z-index:200}
+    .progress-fill{height:100%;background:var(--accent);transition:width 0.6s cubic-bezier(0.4,0,0.2,1);width:0%}
+
+    /* Question container */
+    .question-container{
+      position:relative;min-height:100vh;display:flex;flex-direction:column;
+      justify-content:center;padding:6rem 2rem 4rem;max-width:800px;margin:0 auto;
+    }
+
+    /* Each question */
+    .question{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      justify-content:center;padding:6rem 2rem 4rem;max-width:800px;margin:0 auto;
+      opacity:0;transform:translateY(40px);transition:all 0.6s cubic-bezier(0.4,0,0.2,1);
+      pointer-events:none;overflow-y:auto;
+    }
+    .question.active{opacity:1;transform:translateY(0);pointer-events:auto}
+    .question.exit-up{opacity:0;transform:translateY(-40px)}
+
+    /* Step counter */
+    .step-count{
+      position:fixed;top:2rem;left:2rem;font-size:0.8rem;color:var(--gray-400);
+      font-weight:500;letter-spacing:0.05em;z-index:100;
+    }
+
+    /* Question number badge */
+    .q-number{
+      display:inline-flex;align-items:center;justify-content:center;
+      width:32px;height:32px;border-radius:50%;background:var(--accent);
+      font-size:0.85rem;font-weight:600;margin-bottom:1.5rem;
+    }
+
+    /* Question label */
+    .q-label{
+      font-size:0.75rem;color:var(--gray-400);text-transform:uppercase;
+      letter-spacing:0.1em;margin-bottom:0.75rem;font-weight:500;
+    }
+
+    /* Question text */
+    .q-text{
+      font-size:clamp(1.75rem,4vw,2.75rem);font-weight:600;line-height:1.2;
+      letter-spacing:-0.02em;margin-bottom:2.5rem;max-width:650px;
+    }
+
+    /* Question hint (subtítulo bajo la pregunta) */
+    .q-hint{
+      font-size:0.95rem;color:var(--gray-400);line-height:1.45;
+      margin-top:-1.75rem;margin-bottom:1.75rem;max-width:600px;
+    }
+
+    /* Input styles */
+    .input-group{display:flex;flex-direction:column;gap:1rem;max-width:560px}
+
+    .text-input{
+      width:100%;padding:1rem 1.25rem;background:rgba(255,255,255,0.06);
+      border:2px solid rgba(255,255,255,0.1);border-radius:12px;
+      color:var(--white);font-size:1.125rem;font-family:inherit;
+      transition:all 0.3s ease;outline:none;
+    }
+    .text-input:focus{border-color:var(--accent);background:rgba(30,91,230,0.08)}
+    .text-input::placeholder{color:var(--gray-600)}
+
+    textarea.text-input{min-height:120px;resize:vertical;line-height:1.5}
+
+    /* Texto adicional bajo opciones (más discreto) */
+    .extra-input{margin-top:1.25rem;max-width:560px}
+    .extra-input label{display:block;font-size:0.8rem;color:var(--gray-400);margin-bottom:0.5rem}
+    .extra-input textarea.text-input{font-size:1rem;min-height:84px}
+
+    /* Option buttons */
+    .options{display:flex;flex-direction:column;gap:0.75rem;max-width:560px}
+    .option-btn{
+      padding:1.125rem 1.5rem;background:rgba(255,255,255,0.04);
+      border:2px solid rgba(255,255,255,0.08);border-radius:12px;
+      color:var(--white);font-size:1rem;text-align:left;cursor:pointer;
+      transition:all 0.25s ease;font-family:inherit;
+    }
+    .option-btn:hover{background:rgba(30,91,230,0.12);border-color:var(--accent)}
+    .option-btn.selected{background:var(--accent);border-color:var(--accent)}
+    .option-btn .opt-label{font-weight:500}
+    .option-btn .opt-desc{font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem}
+    .option-btn.selected .opt-desc{color:rgba(255,255,255,0.7)}
+
+    /* Multi-select */
+    .multi-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:0.75rem;max-width:600px}
+    .multi-opt{
+      padding:1rem 1.25rem;background:rgba(255,255,255,0.04);
+      border:2px solid rgba(255,255,255,0.08);border-radius:12px;
+      color:var(--white);font-size:0.95rem;cursor:pointer;transition:all 0.25s;
+      text-align:center;font-family:inherit;
+    }
+    .multi-opt:hover{border-color:var(--accent)}
+    .multi-opt.selected{background:var(--accent);border-color:var(--accent)}
+
+    /* Scale slider */
+    .scale-container{max-width:500px}
+    .scale-slider{
+      width:100%;-webkit-appearance:none;appearance:none;height:8px;
+      background:rgba(255,255,255,0.1);border-radius:4px;outline:none;
+      margin:1.5rem 0;
+    }
+    .scale-slider::-webkit-slider-thumb{
+      -webkit-appearance:none;appearance:none;width:28px;height:28px;
+      border-radius:50%;background:var(--accent);cursor:pointer;
+      box-shadow:0 2px 8px rgba(30,91,230,0.4);
+    }
+    .scale-labels{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--gray-400)}
+    .scale-value{
+      text-align:center;font-size:2.5rem;font-weight:700;color:var(--accent);
+      margin-bottom:0.5rem;
+    }
+
+    /* Navigation */
+    .nav-actions{
+      position:fixed;bottom:3rem;left:2rem;display:flex;gap:1rem;z-index:100;
+    }
+    .nav-btn{
+      padding:0.875rem 2rem;border-radius:12px;font-size:0.95rem;
+      font-weight:600;cursor:pointer;transition:all 0.25s;font-family:inherit;
+      border:none;
+    }
+    .nav-btn-prev{background:rgba(255,255,255,0.08);color:var(--white)}
+    .nav-btn-prev:hover{background:rgba(255,255,255,0.12)}
+    .nav-btn-next{background:var(--accent);color:#fff;transition:all 0.25s}
+    .nav-btn-next:hover{background:#1648C4}
+    .nav-btn-submit{background:var(--success);color:#fff}
+    .nav-btn-submit:hover{background:#059669}
+
+    /* Keyboard hint */
+    .key-hint{
+      position:fixed;bottom:3.25rem;right:2rem;font-size:0.75rem;
+      color:var(--gray-400);z-index:100;
+    }
+    .key-hint kbd{
+      display:inline-block;padding:0.2rem 0.5rem;background:rgba(255,255,255,0.08);
+      border-radius:4px;font-family:inherit;margin:0 0.25rem;
+    }
+
+    /* Thank you screen */
+    .thank-you{
+      text-align:center;display:flex;flex-direction:column;
+      align-items:center;justify-content:center;gap:1.5rem;
+    }
+    .thank-you h2{font-size:clamp(2.5rem,6vw,4rem);font-weight:600;letter-spacing:-0.02em}
+    .thank-you p{font-size:1.125rem;color:var(--gray-400);max-width:450px;line-height:1.6}
+    .check-circle{
+      width:80px;height:80px;border-radius:50%;background:var(--success);
+      display:flex;align-items:center;justify-content:center;margin-bottom:1rem;
+    }
+    .check-circle svg{width:40px;height:40px;stroke:#fff;stroke-width:3;fill:none}
+
+    /* Logo */
+    .logo-mark{
+      position:fixed;top:2rem;right:2rem;font-weight:600;font-size:1.125rem;
+      color:var(--gray-400);z-index:100;
+    }
+    .logo-mark a{color:var(--gray-400);text-decoration:none}
+    .logo-mark a:hover{color:var(--white)}
+
+    /* Animations */
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    .animate-in{animation:fadeIn 0.6s ease forwards}
+
+    /* Responsive */
+    @media(max-width:768px){
+      .question,.question-container{padding:5rem 1.5rem 6rem}
+      .q-text{font-size:1.5rem}
+      .q-hint{margin-top:-1.25rem}
+      .multi-options{grid-template-columns:1fr}
+      .nav-actions{bottom:2rem;left:1.5rem}
+      .key-hint{display:none}
+      .step-count{top:1.5rem;left:1.5rem}
+      .logo-mark{top:1.5rem;right:1.5rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="step-count" id="stepCount"></div>
+  <div class="logo-mark"><a href="index.html">JM</a></div>
+
+  <div id="formContainer">
+
+    <!-- Q1: Nombre -->
+    <div class="question active" data-q="1" data-field="nombre">
+      <div class="q-number">1</div>
+      <div class="q-label">Para empezar</div>
+      <div class="q-text">¿Cuál es tu nombre?</div>
+      <div class="input-group">
+        <input type="text" class="text-input" id="q-nombre" placeholder="Tu nombre completo" autocomplete="name">
+      </div>
+    </div>
+
+    <!-- Q2: Descripción del evento -->
+    <div class="question" data-q="2" data-field="descripcion_evento">
+      <div class="q-number">2</div>
+      <div class="q-label">Contexto</div>
+      <div class="q-text">En una frase, ¿cómo describirían el evento y el ambiente que buscan?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-descripcion_evento" placeholder="Ej: lanzamiento del Smart #5 ante clientes y prospectos; tono premium pero cercano..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q3: Tipo de audiencia -->
+    <div class="question" data-q="3" data-field="audiencia_tipo">
+      <div class="q-number">3</div>
+      <div class="q-label">Audiencia</div>
+      <div class="q-text">¿Quiénes son principalmente los ~40 asistentes?</div>
+      <div class="options">
+        <button class="option-btn" data-value="Clientes actuales">
+          <div class="opt-label">Clientes actuales</div>
+          <div class="opt-desc">Ya tienen relación con Alemautos</div>
+        </button>
+        <button class="option-btn" data-value="Prospectos">
+          <div class="opt-label">Prospectos</div>
+          <div class="opt-desc">Interesados que aún no compran</div>
+        </button>
+        <button class="option-btn" data-value="Aliados y prensa">
+          <div class="opt-label">Aliados y prensa</div>
+          <div class="opt-desc">Socios, medios, invitados especiales</div>
+        </button>
+        <button class="option-btn" data-value="Mezcla de todos">
+          <div class="opt-label">Mezcla de todos</div>
+          <div class="opt-desc">Un público variado</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q4: Nivel de familiaridad con IA (escala) -->
+    <div class="question" data-q="4" data-field="audiencia_nivel_ia">
+      <div class="q-number">4</div>
+      <div class="q-label">Audiencia</div>
+      <div class="q-text">¿Qué tan familiarizada está la audiencia con la inteligencia artificial?</div>
+      <div class="scale-container">
+        <div class="scale-value">3</div>
+        <input type="range" class="scale-slider" id="q-audiencia_nivel_ia" min="1" max="5" value="3">
+        <div class="scale-labels">
+          <span>1 — Nada</span>
+          <span>5 — Muy familiarizada</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5: Perfil de la audiencia -->
+    <div class="question" data-q="5" data-field="audiencia_perfil">
+      <div class="q-number">5</div>
+      <div class="q-label">Audiencia</div>
+      <div class="q-text">¿Qué describe mejor a los asistentes?</div>
+      <div class="q-hint">Selecciona una o varias.</div>
+      <div class="multi-options">
+        <button class="multi-opt" data-value="Alto poder adquisitivo">Alto poder adquisitivo</button>
+        <button class="multi-opt" data-value="Decisores de compra">Decisores de compra</button>
+        <button class="multi-opt" data-value="Entusiastas de tecnología">Entusiastas de tecnología</button>
+        <button class="multi-opt" data-value="Empresarios / directivos">Empresarios / directivos</button>
+        <button class="multi-opt" data-value="Público general">Público general</button>
+      </div>
+      <div class="extra-input">
+        <label for="q-audiencia_perfil_extra">¿Algún detalle adicional del perfil?</label>
+        <textarea class="text-input" id="q-audiencia_perfil_extra" placeholder="Ej: mayoría empresarios 40–60 de la región; algunos ya tienen carro eléctrico; vienen en pareja..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q6: Objetivo -->
+    <div class="question" data-q="6" data-field="objetivo">
+      <div class="q-number">6</div>
+      <div class="q-label">Objetivo</div>
+      <div class="q-text">¿Qué quieren lograr principalmente con la charla?</div>
+      <div class="options">
+        <button class="option-btn" data-value="Inspirar y asombrar">
+          <div class="opt-label">Inspirar y asombrar</div>
+          <div class="opt-desc">Que la audiencia se vaya con sensación de futuro</div>
+        </button>
+        <button class="option-btn" data-value="Educar sobre IA">
+          <div class="opt-label">Educar sobre IA</div>
+          <div class="opt-desc">Que entiendan qué es y cómo se usa</div>
+        </button>
+        <button class="option-btn" data-value="Posicionar la marca como innovadora">
+          <div class="opt-label">Posicionar la marca como innovadora</div>
+          <div class="opt-desc">Asociar a Alemautos / Smart con vanguardia</div>
+        </button>
+        <button class="option-btn" data-value="Conectar la IA con el Smart #5">
+          <div class="opt-label">Conectar la IA con el Smart #5</div>
+          <div class="opt-desc">Resaltar la inteligencia del vehículo</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Q7: Mensaje clave -->
+    <div class="question" data-q="7" data-field="mensaje_clave">
+      <div class="q-number">7</div>
+      <div class="q-label">Mensaje</div>
+      <div class="q-text">Si la gente se llevara una sola idea de la charla, ¿cuál debería ser?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-mensaje_clave" placeholder="La idea central que quieren que recuerden..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q8: Temas -->
+    <div class="question" data-q="8" data-field="temas">
+      <div class="q-number">8</div>
+      <div class="q-label">Contenido</div>
+      <div class="q-text">¿Qué temas les gustaría que se toquen?</div>
+      <div class="q-hint">Selecciona una o varias.</div>
+      <div class="multi-options">
+        <button class="multi-opt" data-value="IA en la vida cotidiana">IA en la vida cotidiana</button>
+        <button class="multi-opt" data-value="Futuro de la movilidad">Futuro de la movilidad</button>
+        <button class="multi-opt" data-value="La IA del Smart #5">La IA del Smart #5</button>
+        <button class="multi-opt" data-value="Herramientas de IA útiles">Herramientas de IA útiles</button>
+        <button class="multi-opt" data-value="Ética y seguridad de la IA">Ética y seguridad de la IA</button>
+        <button class="multi-opt" data-value="Casos reales / ejemplos">Casos reales / ejemplos</button>
+      </div>
+      <div class="extra-input">
+        <label for="q-temas_extra">¿Otro tema o enfoque que quieran incluir?</label>
+        <textarea class="text-input" id="q-temas_extra" placeholder="Ej: cómo la IA puede ayudar a su propio negocio; casos de Mercedes-Benz; IA y seguridad en la conducción..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q9: Tono -->
+    <div class="question" data-q="9" data-field="tono" data-noadvance>
+      <div class="q-number">9</div>
+      <div class="q-label">Tono y estilo</div>
+      <div class="q-text">¿Qué tono y estilo encajan mejor con su audiencia?</div>
+      <div class="q-hint">Elige un punto de partida y, sobre todo, descríbelo a detalle abajo: eso es lo que más ayuda a afinar la sesión.</div>
+      <div class="options">
+        <button class="option-btn" data-value="Inspirador y emotivo">
+          <div class="opt-label">Inspirador y emotivo</div>
+          <div class="opt-desc">Apela a la emoción y la visión de futuro</div>
+        </button>
+        <button class="option-btn" data-value="Cercano y divulgativo">
+          <div class="opt-label">Cercano y divulgativo</div>
+          <div class="opt-desc">Sencillo, claro, sin tecnicismos</div>
+        </button>
+        <button class="option-btn" data-value="Ejecutivo y sobrio">
+          <div class="opt-label">Ejecutivo y sobrio</div>
+          <div class="opt-desc">Directo, profesional, al grano</div>
+        </button>
+        <button class="option-btn" data-value="Dinámico, con toques de humor">
+          <div class="opt-label">Dinámico, con toques de humor</div>
+          <div class="opt-desc">Ágil y entretenido</div>
+        </button>
+      </div>
+      <div class="extra-input">
+        <label for="q-tono_detalle">Descríbelo en tus palabras (lo más importante):</label>
+        <textarea class="text-input" id="q-tono_detalle" placeholder="Ej: cercano pero premium; que inspire y emocione sin tecnicismos; nada de jerga ni de tono de 'vendedor'. Que arranque con una historia real y que la gente salga sintiendo que el futuro ya llegó. Una charla o persona cuyo estilo nos encanta: ___. Algo que NO queremos: que se sienta una clase técnica."></textarea>
+      </div>
+    </div>
+
+    <!-- Q10: Qué evitar -->
+    <div class="question" data-q="10" data-field="evitar">
+      <div class="q-number">10</div>
+      <div class="q-label">Límites</div>
+      <div class="q-text">¿Hay algo que NO debamos decir o algún tema sensible a evitar?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-evitar" placeholder="Ej: comparaciones con competidores, política, claims técnicos no confirmados del vehículo..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q11: Marca / Smart #5 -->
+    <div class="question" data-q="11" data-field="marca_smart">
+      <div class="q-number">11</div>
+      <div class="q-label">Marca</div>
+      <div class="q-text">¿Lineamientos de marca a respetar? ¿Qué sí y qué no se puede afirmar del Smart #5?</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-marca_smart" placeholder="Mensajes oficiales, datos aprobados del vehículo, logos o guías a seguir..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q12: Qué resaltar del Smart #5 -->
+    <div class="question" data-q="12" data-field="smart_resaltar">
+      <div class="q-number">12</div>
+      <div class="q-label">Smart #5</div>
+      <div class="q-text">¿Qué del Smart #5 les gustaría resaltar?</div>
+      <div class="q-hint">Selecciona una o varias.</div>
+      <div class="multi-options">
+        <button class="multi-opt" data-value="Su IA y conectividad">Su IA y conectividad</button>
+        <button class="multi-opt" data-value="Autonomía eléctrica">Autonomía eléctrica</button>
+        <button class="multi-opt" data-value="Diseño">Diseño</button>
+        <button class="multi-opt" data-value="Experiencia de conducción">Experiencia de conducción</button>
+        <button class="multi-opt" data-value="Sostenibilidad">Sostenibilidad</button>
+      </div>
+      <div class="extra-input">
+        <label for="q-smart_resaltar_extra">¿Algo más del vehículo a destacar?</label>
+        <textarea class="text-input" id="q-smart_resaltar_extra" placeholder="Ej: su asistente de voz; la integración con el celular; alguna función estrella del lanzamiento..."></textarea>
+      </div>
+    </div>
+
+    <!-- Q13: Logística -->
+    <div class="question" data-q="13" data-field="logistica">
+      <div class="q-number">13</div>
+      <div class="q-label">Logística</div>
+      <div class="q-text">Por último: hora y duración exactas, recursos AV y si el carro estará presente para demo.</div>
+      <div class="input-group">
+        <textarea class="text-input" id="q-logistica" placeholder="Ej: 10:15–11:00 a.m., proyector + micrófono, el Smart #5 estará en el salón..."></textarea>
+      </div>
+    </div>
+
+    <!-- Thank you screen -->
+    <div class="question" data-q="done">
+      <div class="thank-you">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h2>¡Gracias!</h2>
+        <p>Con esta información, Jerónimo Martínez preparará una propuesta de contenido a la medida de su audiencia. Pronto estaremos en contacto.</p>
+        <a href="index.html" class="nav-btn nav-btn-next" style="text-decoration:none;margin-top:1rem">Volver al sitio</a>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-prev" id="btnPrev" style="display:none">← Atrás</button>
+    <button class="nav-btn nav-btn-next" id="btnNext">Continuar →</button>
+  </div>
+
+  <div class="key-hint">Presiona <kbd>Enter</kbd> para continuar</div>
+
+  <script>
+    // ============================================
+    // CONFIG: webhook dedicado del brief de Alemautos.
+    // El campo `source` distingue de qué formulario vino el lead.
+    // ============================================
+    const N8N_WEBHOOK_URL = 'https://n8n.jeroooo.com/webhook/brief-alemautos';
+    const FORM_SOURCE = 'alemautos';
+
+    // State
+    const questions = document.querySelectorAll('.question');
+    const totalQuestions = questions.length - 1;
+    let currentQ = 0;
+    const answers = {};
+
+    // Elements
+    const btnPrev = document.getElementById('btnPrev');
+    const btnNext = document.getElementById('btnNext');
+    const progressFill = document.getElementById('progressFill');
+    const stepCount = document.getElementById('stepCount');
+
+    // Check if current question has an answer
+    function hasAnswer() {
+      const q = questions[currentQ];
+      const input = q.querySelector('.text-input');
+      if (input && input.value.trim()) return true;
+      if (q.querySelector('.option-btn.selected')) return true;
+      if (q.querySelector('.multi-opt.selected')) return true;
+      if (q.querySelector('.scale-slider')) return true;
+      return false;
+    }
+
+    // Update UI
+    function updateUI() {
+      questions.forEach((q, i) => {
+        q.classList.remove('active', 'exit-up');
+        if (i === currentQ) q.classList.add('active');
+        else if (i < currentQ) q.classList.add('exit-up');
+      });
+
+      const isDone = questions[currentQ].dataset.q === 'done';
+
+      btnPrev.style.display = currentQ > 0 ? 'inline-flex' : 'none';
+
+      if (isDone) {
+        btnPrev.style.display = 'none';
+        btnNext.style.display = 'none';
+        progressFill.style.width = '100%';
+        stepCount.textContent = 'Completo';
+        return;
+      }
+
+      const qNum = parseInt(questions[currentQ].dataset.q);
+      btnNext.textContent = qNum === totalQuestions ? 'Enviar ✓' : 'Continuar →';
+      progressFill.style.width = `${(qNum / totalQuestions) * 100}%`;
+      stepCount.textContent = `${qNum} / ${totalQuestions}`;
+
+      refreshButton();
+    }
+
+    function refreshButton() {
+      const valid = hasAnswer();
+      const isLast = currentQ === questions.length - 2;
+      if (isLast) {
+        btnNext.classList.add('nav-btn-submit');
+      } else {
+        btnNext.classList.remove('nav-btn-submit');
+      }
+      btnNext.style.opacity = valid ? '1' : '0.3';
+      btnNext.style.pointerEvents = valid ? 'auto' : 'none';
+    }
+
+    // Collect answer from current question (combina opciones + multi + escala + texto libre)
+    function collectAnswer() {
+      const q = questions[currentQ];
+      const field = q.dataset.field;
+      if (!field) return;
+
+      const parts = [];
+
+      const single = q.querySelectorAll('.option-btn.selected');
+      if (single.length) parts.push(Array.from(single).map(b => b.dataset.value).join(', '));
+
+      const multi = q.querySelectorAll('.multi-opt.selected');
+      if (multi.length) parts.push(Array.from(multi).map(b => b.dataset.value).join(', '));
+
+      const slider = q.querySelector('.scale-slider');
+      if (slider) parts.push(slider.value);
+
+      const input = q.querySelector('.text-input');
+      if (input && input.value.trim()) parts.push(input.value.trim());
+
+      answers[field] = parts.join(' — ');
+    }
+
+    // Navigate
+    function goNext() {
+      if (!hasAnswer()) return;
+      collectAnswer();
+
+      const isLast = currentQ === questions.length - 2;
+      if (isLast) {
+        submitForm();
+        return;
+      }
+
+      currentQ = Math.min(currentQ + 1, questions.length - 1);
+      updateUI();
+    }
+
+    function goPrev() {
+      if (currentQ > 0) {
+        currentQ--;
+        updateUI();
+      }
+    }
+
+    // Submit to n8n webhook
+    async function submitForm() {
+      btnNext.textContent = 'Enviando...';
+      btnNext.style.pointerEvents = 'none';
+
+      try {
+        const payload = {
+          ...answers,
+          timestamp: new Date().toISOString(),
+          source: FORM_SOURCE,
+          url: window.location.href
+        };
+
+        await fetch(N8N_WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        console.log('Form submitted:', payload);
+        currentQ = questions.length - 1;
+        updateUI();
+      } catch (err) {
+        console.error('Error submitting form:', err);
+        btnNext.textContent = 'Reintentar';
+        btnNext.style.pointerEvents = 'auto';
+        currentQ = questions.length - 1;
+        updateUI();
+      }
+    }
+
+    // Event listeners
+    btnNext.addEventListener('click', goNext);
+    btnPrev.addEventListener('click', goPrev);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        const active = document.activeElement;
+        if (active.tagName === 'TEXTAREA') return;
+        e.preventDefault();
+        goNext();
+      }
+    });
+
+    document.querySelectorAll('.text-input').forEach(input => {
+      input.addEventListener('input', () => refreshButton());
+      input.addEventListener('keydown', (e) => {
+        // En inputs de una línea, Enter avanza. En textarea, Enter hace salto de línea.
+        if (e.key === 'Enter' && !e.shiftKey && e.target.tagName !== 'TEXTAREA') {
+          e.preventDefault();
+          goNext();
+        }
+      });
+    });
+
+    document.querySelectorAll('.options .option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const parent = btn.closest('.options');
+        parent.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        refreshButton();
+        // No auto-avanzar si la pregunta pide también texto (data-noadvance)
+        if (!btn.closest('.question').hasAttribute('data-noadvance')) {
+          setTimeout(goNext, 400);
+        }
+      });
+    });
+
+    document.querySelectorAll('.multi-opt').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.classList.toggle('selected');
+        refreshButton();
+      });
+    });
+
+    // Scale handler — genérico, soporta cualquier número de sliders
+    document.querySelectorAll('.scale-slider').forEach(sl => {
+      const valEl = sl.closest('.scale-container').querySelector('.scale-value');
+      sl.addEventListener('input', () => {
+        if (valEl) valEl.textContent = sl.value;
+        refreshButton();
+      });
+    });
+
+    updateUI();
+  </script>
+</body>
+</html>
