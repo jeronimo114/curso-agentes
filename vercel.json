@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/alemautos", "destination": "/brief-alemautos.html" }
+  ]
+}
