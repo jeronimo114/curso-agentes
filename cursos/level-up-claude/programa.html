@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up con Claude — Plan del curso (Día 1, 2 y 3)</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      font-family: var(--display-font);
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 0.85;
+    }
+    .wrap {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem) 6rem;
+    }
+    .home-link {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--display-font); font-weight: 800;
+      text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem;
+      color: rgba(0, 19, 63, 0.4); text-decoration: none;
+      margin-bottom: 2.5rem; transition: color 0.2s;
+    }
+    .home-link:hover { color: var(--brand-blue); }
+    .kicker {
+      display: inline-block; font-family: var(--display-font); font-weight: 700;
+      text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem;
+      color: var(--brand-blue); margin-bottom: 0.8rem;
+    }
+    h1.title { font-size: clamp(2.4rem, 7vw, 4.5rem); letter-spacing: -1.5px; margin-bottom: 1rem; }
+    .intro { font-size: 1.05rem; color: rgba(0, 19, 63, 0.6); max-width: 620px; margin-bottom: 3rem; }
+
+    /* Day block */
+    .day {
+      position: relative;
+      background: #fff;
+      border: 1px solid rgba(0, 19, 63, 0.08);
+      border-radius: 20px;
+      padding: clamp(1.5rem, 4vw, 2.5rem);
+      margin-bottom: 1.5rem;
+      box-shadow: 0 12px 36px rgba(0, 19, 63, 0.06);
+      overflow: hidden;
+    }
+    .day::before {
+      content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 6px;
+      background: var(--brand-blue);
+    }
+    .day-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
+    .day-num {
+      font-family: var(--display-font); font-weight: 800;
+      font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--brand-blue);
+      line-height: 0.8; letter-spacing: -1px;
+    }
+    .day-tool {
+      font-family: var(--display-font); font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; font-size: 0.75rem; color: #fff;
+      background: var(--brand-blue-dark); padding: 0.3rem 0.7rem; border-radius: 20px;
+    }
+    .day h2 { font-size: clamp(1.5rem, 4vw, 2.1rem); letter-spacing: -0.5px; margin: 0.6rem 0 0.3rem; }
+    .day .sub { font-size: 0.98rem; color: rgba(0, 19, 63, 0.55); margin-bottom: 1.4rem; }
+
+    .blocks { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.5rem; }
+    .blocks li { display: flex; gap: 0.9rem; align-items: flex-start; }
+    .blocks .t {
+      flex: 0 0 auto; min-width: 64px;
+      font-family: var(--display-font); font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.5px; color: var(--brand-blue);
+      background: rgba(0, 71, 233, 0.08); border-radius: 8px;
+      padding: 0.25rem 0.55rem; text-align: center; margin-top: 0.1rem;
+    }
+    .blocks .d { flex: 1 1 auto; }
+    .blocks .d strong { display: block; font-weight: 700; font-size: 1rem; color: var(--brand-blue-dark); margin-bottom: 0.1rem; }
+    .blocks .d span { font-size: 0.93rem; color: rgba(0, 19, 63, 0.6); }
+
+    .deliverable {
+      display: flex; gap: 0.8rem; align-items: flex-start;
+      background: rgba(10, 228, 195, 0.12);
+      border: 1px solid rgba(10, 228, 195, 0.4);
+      border-radius: 14px; padding: 1rem 1.2rem;
+    }
+    .deliverable svg { flex: 0 0 auto; width: 22px; height: 22px; stroke: #06b59b; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
+    .deliverable .dl-txt strong {
+      display: block; font-family: var(--display-font); text-transform: uppercase;
+      letter-spacing: 1px; font-size: 0.75rem; color: #06937f; margin-bottom: 0.2rem;
+    }
+    .deliverable .dl-txt span { font-size: 0.95rem; color: var(--brand-blue-dark); }
+
+    footer {
+      margin-top: 3rem; padding-top: 2rem;
+      border-top: 1px solid rgba(0, 19, 63, 0.1);
+      font-size: 0.8rem; color: rgba(0, 19, 63, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="index.html" class="home-link">← Level Up con Claude</a>
+
+    <span class="kicker">Plan del curso</span>
+    <h1 class="title">Qué hacemos<br>cada día</h1>
+    <p class="intro">El curso es un solo proyecto que avanza sesión a sesión: lanzar una marca de café desde cero. Cada día construye sobre los entregables del anterior. Los tiempos son aproximados.</p>
+
+    <!-- DÍA 1 -->
+    <div class="day">
+      <div class="day-head">
+        <span class="day-num">Día 1</span>
+        <span class="day-tool">Claude Web · Chat</span>
+      </div>
+      <h2>Contexto, prompting y primer research</h2>
+      <p class="sub">Entender la herramienta, aprender a hablarle bien al modelo y hacer la primera investigación en el chat.</p>
+
+      <ul class="blocks">
+        <li><span class="t">~1 h</span><span class="d"><strong>Contexto y modelos</strong><span>De dónde viene la IA generativa, su historia hasta 2022 y sus usos (asistentes especializados / GPTs / proyectos, agentes, programación, automatizaciones). Diferencias entre ChatGPT, Claude y Gemini, y dónde estamos parados.</span></span></li>
+        <li><span class="t">~1 h</span><span class="d"><strong>Prompting + Markdown</strong><span>Cómo construir buenos prompts, distintos modelos de prompting, y por qué Markdown es clave para darle contexto al modelo.</span></span></li>
+        <li><span class="t">break</span><span class="d"><strong>Descanso</strong><span>Cierre de la parte conceptual (las primeras dos horas).</span></span></li>
+        <li><span class="t">~1 h</span><span class="d"><strong>Explicación del proyecto</strong><span>Presentamos a fondo el caso: la marca de café. Es lo que motiva todo el curso, así que se explica muy bien.</span></span></li>
+        <li><span class="t">~30 min</span><span class="d"><strong>Reto en chat</strong><span>Investigación profunda del mercado del café usando los prompts aprendidos, y un Artifact para visualizar los resultados.</span></span></li>
+      </ul>
+
+      <div class="deliverable">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="dl-txt">
+          <strong>Entregable</strong>
+          <span>Documentos en Word con el análisis de contexto y de mercado, más un Artifact de visualización. Esta base alimenta todo lo que sigue.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DÍA 2 -->
+    <div class="day">
+      <div class="day-head">
+        <span class="day-num">Día 2</span>
+        <span class="day-tool">Claude Cowork · Design</span>
+      </div>
+      <h2>Investiga a la competencia y diseña tu marca</h2>
+      <p class="sub">Pasar del chat a Cowork para investigar a fondo, construir herramientas propias y diseñar la marca.</p>
+
+      <ul class="blocks">
+        <li><span class="t">~1 h</span><span class="d"><strong>Qué es Cowork (y Cowork vs Code)</strong><span>Contextualización y alcance. Cowork es más seguro para perfiles no técnicos y tareas que no son de programación (investigación, recopilación y análisis de datos); Code se usa para tirar código y correr comandos en terminal.</span></span></li>
+        <li><span class="t">~1 h</span><span class="d"><strong>Análisis web de competidores</strong><span>Con Cowork: entrar a los sitios de los referentes, tomar screenshots y usar computer use y el conector web para recopilar todo.</span></span></li>
+        <li><span class="t">~30 min</span><span class="d"><strong>Herramientas internas en HTML</strong><span>Construir herramientas propias para darle mejor contexto al modelo (por ejemplo, puntuar una UI sección por sección, o un guion con inputs por línea para dar feedback estructurado).</span></span></li>
+        <li><span class="t">diseño</span><span class="d"><strong>Diseño de la base de datos</strong><span>Pedirle a Claude el diseño y el diagrama entidad-relación de la base de datos (tablas y cómo se conectan), que se construirá en el Día 3.</span></span></li>
+        <li><span class="t">diseño</span><span class="d"><strong>Claude Design + manual de marca</strong><span>Prototipar el sitio y crear el manual de marca, que sirve tanto para la web como para redes sociales.</span></span></li>
+      </ul>
+
+      <div class="deliverable">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="dl-txt">
+          <strong>Entregable</strong>
+          <span>Análisis de competidores, herramientas internas, manual de marca y el prompt listo para pasárselo a Design y prototipar el sitio.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- DÍA 3 -->
+    <div class="day">
+      <div class="day-head">
+        <span class="day-num">Día 3</span>
+        <span class="day-tool">Claude Code</span>
+      </div>
+      <h2>Construye, despliega y conecta tu tienda</h2>
+      <p class="sub">Llevar todo lo anterior a un sitio real, con base de datos, publicado en internet.</p>
+
+      <ul class="blocks">
+        <li><span class="t">~30 min</span><span class="d"><strong>Qué es Claude Code</strong><span>Contextualización rápida, orientada a construir el sitio.</span></span></li>
+        <li><span class="t">build</span><span class="d"><strong>Construir el sitio</strong><span>Levantar la tienda de café desde cero en Claude Code y desplegar una primera versión para verla en vivo.</span></span></li>
+        <li><span class="t">datos</span><span class="d"><strong>Base de datos en Supabase</strong><span>Crear la base de datos: Claude entrega los pasos para ir a Supabase y el script SQL; los estudiantes la crean ellos mismos (no se le deja todo al modelo).</span></span></li>
+        <li><span class="t">deploy</span><span class="d"><strong>Integrar y desplegar en Vercel</strong><span>Conectar el sitio con la base de datos y publicar en Vercel, integrando todo mediante MCP.</span></span></li>
+      </ul>
+
+      <div class="deliverable">
+        <svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg>
+        <div class="dl-txt">
+          <strong>Entregable</strong>
+          <span>La tienda de café funcional, desplegada con una URL real y conectada a su base de datos.</span>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Plan del curso · Level Up con Claude · 2026
+    </footer>
+  </div>
+</body>
+</html>

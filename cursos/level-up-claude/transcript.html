@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up con Claude — Transcripción de la reunión</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      -webkit-font-smoothing: antialiased;
+      line-height: 1.7;
+    }
+    h1, h2 {
+      font-family: var(--display-font);
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 0.85;
+    }
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 3rem) 6rem;
+    }
+    .home-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.9rem;
+      color: rgba(0, 19, 63, 0.4);
+      text-decoration: none;
+      margin-bottom: 2.5rem;
+      transition: color 0.2s;
+    }
+    .home-link:hover { color: var(--brand-blue); }
+    .kicker {
+      display: inline-block;
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.8rem;
+      color: var(--brand-blue);
+      margin-bottom: 0.8rem;
+    }
+    h1.title {
+      font-size: clamp(2.4rem, 7vw, 4.5rem);
+      letter-spacing: -1.5px;
+      margin-bottom: 1.2rem;
+    }
+    .note {
+      font-size: 0.92rem;
+      color: rgba(0, 19, 63, 0.55);
+      background: rgba(0, 71, 233, 0.06);
+      border-left: 3px solid var(--brand-blue);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      margin-bottom: 2.5rem;
+      line-height: 1.55;
+    }
+    .transcript p {
+      font-size: 1.05rem;
+      color: rgba(0, 19, 63, 0.85);
+      margin-bottom: 1.4rem;
+    }
+    .transcript p::first-letter { }
+    footer {
+      margin-top: 3.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0, 19, 63, 0.1);
+      font-size: 0.8rem;
+      color: rgba(0, 19, 63, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a href="index.html" class="home-link">← Level Up con Claude</a>
+
+    <span class="kicker">Reunión de planeación</span>
+    <h1 class="title">Transcripción<br>de la reunión</h1>
+
+    <div class="transcript">
+      <p>Es como nos inventamos más cosas para darle mejor contexto a los modelos de inteligencia artificial. Entonces, ¿qué te imaginas vos? Ya lo pusiste ahí. Hay que hacer como un macroproyecto, porque las sesiones no tienen ningún problema. En la primera hablamos de Claude Web, hablamos de cómo promptear y las vueltas. Hablamos de Claude Artifacts. ¿Lo has probado? Que ya también ChatGPT lo va a sacar, para desplegar directamente como sitios web, pero desde dominios en Claude. O sea, Claude te aloja el proyecto. Un proyecto, simplemente un frontend. Pero entonces buscas, por ejemplo, un dashboard para visualizar temas que se alimenta a través de un Excel. Entonces le puedes compartir ese link a tu equipo y tu equipo le sube el Excel.</p>
+
+      <p>Yo eso lo hago con otra herramienta. Mira cómo le doy la vuelta yo a eso. Mira, entonces esto me lo haría. La pregunta es la siguiente. Yo eso lo hago con una aplicación que se llama esta, Netlify. Sí. Entonces yo ahí tengo todos los proyectos, entonces él me da un dominio. Claro, vos puedes hacerlo de esa manera, así. Pero este ejercicio yo no lo haría directamente con Netlify, sino que lo haría con Vercel. Me gustaría que lo montáramos acá directamente con Artifacts en este ejercicio. Con Vercel o con Netlify podemos hacer el ejercicio de Claude Code, que ya sea algo un poquito más sólido. Pero Artifacts me hace esto que está acá. ¿Qué hace Artifacts? Artifacts construye dentro de Claude Web y te saca un link que tú puedes compartir a todo el mundo. ¿Mejor? De una. Obviamente no tienes la personalización de esto, pero para la primera sesión... No, pues yo no necesito la personalización. Es que esto ya pensando es en mí, acá no estoy pensando todavía en el curso. Sí, ¡hijuepucha! Yo hago esto constantemente, entonces no lo hago por ahí, sino por Artifacts.</p>
+
+      <p>¿De dónde estás consumiendo este logo? No, todo lo tengo en base64. Eso es un archivo HTML, index.html. Sí, pero ese logo, ¿dónde está? En el HTML. El tema es que aquí en Artifacts no creo que te deje subir ese logo. Pero es que yo hago el HTML, y después... Tengo el HTML, no se lo subo a Artifacts; no es así el procedimiento, no es así el flujo. Esto dentro de la web es como ChatGPT Canvas. Pero el Canvas te da un link que tú puedes compartirle a todo el mundo, y tú haces lo mismo. Yo estoy presentando el proyecto, necesito cualquier juego o cualquier cosa que la IA cree muy rápido. Mira, todavía volteando con una web... Nada, es así de fácil. Está trabajando por nosotros.</p>
+
+      <p>«La primera generación se quedó bloqueada al preparar la vista previa antes de guardar el Excel. Voy a guardar el libro primero y luego haré una comprobación separada.» Los datos ya están cargando, guardando con... Ahí está, ahí está trabajando. Mira todo lo que está haciendo. Agentes, Codex, más pesados. Pero bueno, sigamos. Listo. Entonces mira, vos le das aquí... pues te hace la web normal, y vos le puedes dar acá donde dice «publish», y este link se lo puedes pasar a cualquier persona que esté en la web. Y ya, entonces cualquier persona lo puede abrir. Muy bacano. Y desde acá queda publicado. Muy bacano. Espérate. Ya, te entendí, listo.</p>
+
+      <p>Entonces volvamos al curso. Vamos a irnos al macro, o sea, a los diferentes módulos que nosotros entregaríamos. El primer módulo sería un módulo donde hablaríamos de prompting, ¿cierto? Antes de prompting hablaríamos como de... y esto es para discutirlo, ¿cierto? El primero, desde mi punto de vista, podría ser explicarles cuál es la diferencia entre ChatGPT, Claude, Gemini, esos modelos. Yo daría doble clic más atrás, incluso: el tema de la contextualización, de la historia, dónde estamos parados en la herramienta. Válido, pero rápidamente. ¿Qué es lo que yo hago? Que es IA generativa. Generativa, que es un tema.</p>
+
+      <p>Listo. Entonces, para que nos vaya quedando en la grabación: en esa primera sesión trabajaríamos sobre lo que es la IA generativa, el contexto, toda esa historia de la IA generativa hasta llegar al 2022, y hablar después de eso como de los usos de la IA generativa. O sea, no sé si vos estás de acuerdo conmigo, yo siempre los usos más comunes de la IA generativa los resumo en... Agentes. Lo pregunto y él me responde. Asistente especializado, que es como un GPT, o un proyecto, o una gema; eso de las gemas y los GPTs y los proyectos. Luego un agente, que ya es como Claude Cowork o Codex. Luego programación, y luego automatizaciones. ¿Vos ves otro uso?</p>
+
+      <p>Pues orientado a esto. Es que, Juan, nosotros estamos muy sesgados, pero es que hay mucha gente que todavía no ha experimentado subir documentos y hacer procesamiento de datos. Por ejemplo, mira lo que nos compartía Checho ayer: «ah, no me funcionó procesar esos datos», entonces se quedan con que el modelo todavía no es lo suficientemente bueno para eso. Y el arrancar con ese tipo de ejercicios, desde el solo Canvas o desde cualquiera de las herramientas web como Artifacts, ya les empieza a generar mucho valor a los usuarios. ¿Descargar el Excel consolidado? Pero él no renombró los archivos. ¿No están renombrados? No. Eso le faltó todavía; no le puso los nombres de las facturas. Ah, mira: outputs, facturas, PDFs renombrados. ¿No leíste en qué carpeta? No me lo renombró en el original, sino que me creó otro. Sí, seguro que la vez pasada pasaba algo similar. Es que, Juan, ahí es donde uno empieza a decir: yo estoy asumiendo muchas cosas al momento de hablar con el modelo, y el modelo empieza a decir «renombro», pero no renombra el original. Yo no se lo pedí. ¿Qué cosa tan bacana esto, no? Mira que está quedando ahí, todo está perfecto. Ok, listo, ya le cogí confianza. Oiga, hermano.</p>
+
+      <p>Entonces, ¿vos tenés en la cabeza otro uso de la IA generativa que no encaje en esos que te he descrito? No, pues que sea relevante para el espacio. No, porque no vamos a generar videos, no vamos a entrar a hacer generación de imágenes profundas. Sí es interesante; sí podemos ver temas, por ejemplo, de prompting de imágenes a través de Claude. Pero, en fin, volviendo acá. ¿Qué me imagino yo, Juan? Que tengamos un proyecto muy claro, que el proyecto sea como la línea de todo el curso. Porque si empezamos a hacer un montón de demos chiquitos, puede que se vea... Me gusta esa idea: que haya un proyecto para todo el curso. ¿Y cómo lo va llevando uno? Yo me había imaginado una marca de café, y vamos desde cero. Les mostramos cómo hacer generación de archivos básicos como Excel, y eso, en la primera sesión, cómo analizarlo con visualizaciones en la web.</p>
+
+      <p>Después nos vamos a Claude Cowork. Ahí empezamos a escrapear las páginas de los referentes. Me gusta, para tener el artefacto, el conector de web, de Cowork. Mostrarles cómo funciona el computer use. Mostrarles que pueden desarrollar herramientas internas en HTML. Tenemos que sacar un espacio muy claro para que a todo el mundo le quede bien resuelto qué es Markdown, porque para mí es una de las cosas que más valor me ha generado al momento de interactuar con estos agentes. No sé si has escuchado a Lady B. Jones, que habla de Codex. No sé de dónde sale la cifra, pero dijo que cada vez que uno arranca una conversación nueva se demora 23 minutos en volver a darle contexto al modelo. No sé de dónde salió eso, pero sí, eso pasa. Entonces, que quede muy claro qué es Markdown.</p>
+
+      <p>No, venga, me gustó mucho tu idea. La idea es fenomenal: tener un proyecto total, macro, un proyecto grande. A mí lo que me preocupa es... nosotros, digamos que tenemos que hablar de varias cosas. Espérate. Primero hablamos de contexto, ¿cierto? Luego hablamos de los modelos, de toda esa vaina, ChatGPT, Gemini. Luego entramos a prompting, ¿sí o no?, donde les hablamos de Markdown. A mí me parece importantísimo hablarles de Markdown, porque, de hecho, los prompts que yo tengo son vía Markdown. Y luego tenemos que tocar varios temas. Uno es enfocar todo este curso a Claude, ¿cierto? 100%. Y uno lo que tendríamos que explicar ahí es lo que es el chat, básicamente. O sea, es web, Cowork, Design, Code. Chat, exacto. Luego Cowork, luego Design, ¿sí o no?, y luego Code. Eso es lo que tenemos que tocar.</p>
+
+      <p>Entonces vos me decís... usted me dice que tiene reparos. Es, ¡juepucha!, ¿cómo que tenemos que armar un proyecto? Muy bueno, que ellos puedan interactuar inicialmente con chat, luego con Cowork, luego con Design, y luego con Code. En algunos puntos me queda difícil diferenciar entre Code y Cowork, ¿cierto? Porque lo que yo hago con Code lo puedo hacer con Cowork. Cowork se puede quedar un poquito corto en temas de uso de terminal y temas técnicos; acá te limitan mucho más en términos de correr comandos y correr cosas como lo hacen en Code. Entonces, para el tipo de actividades, hay actividades que es más seguro hacer en Cowork, porque te genera menos riesgos si no sos un perfil técnico, para cuando vas a hacer cosas que no son de programación: por ejemplo, investigaciones, recopilación de datos, análisis de documentos. Cuando vas a entrar a tirar código, lo haces desde Code; cuando no, lo puedes hacer desde Cowork, y la interfaz está optimizada para esto.</p>
+
+      <p>Base de datos, Supabase, y desplegamos en Vercel. ¿Vercel qué es lo que es? Es una plataforma de hosting que se integra directamente con Supabase, y ambas las podemos conectar a través de MCP. Vercel es como decir... hosting, o como la que yo utilizo, Railway. Me parece espectacular. ¡Hijuepucha!, imagínate uno salir de este curso y ser capaz de hacer una tienda de venta de café. Y no solo la tienda, ser capaz de iterar el diseño de esta misma herramienta, utilizarla para la investigación, para comunicaciones internas. Pero ¿vos crees? Ahí vuelvo al cuento, y acá no es por meter, si hacemos todo esto en tres fines de semana, o sea, en tres sábados por la mañana, ¡bacanísimo! Yo no estoy diciendo que nos tengamos que gastar cuatro o cinco fines de semana.</p>
+
+      <p>A ver, uno arranca la primera sesión, vamos a hacer un ejercicio sencillo. Yo arranco la primera sesión y hablo de todo este tema: del contexto, los modelos, el prompting. ¿Cuántas horas le ponemos a eso, con prompting y todo? Listo: contexto para una media hora, lo mismo que modelos; vamos una hora con contextualización, todo. Prompting una hora, para explicar bien el tema y ver diferentes modelos de prompting, el mío y otros que haya en el mundo, y explicarlo de verdad; me parece demasiado potente. Listo, entonces ahí van dos horas. Entonces uno saca un break: son dos horas y media. Luego le quedan a uno hora y media. Una hora y media con... chat. Sí, listo. No, no, ¿sabe qué? Vamos en esto: llevamos dos horas, ¿cierto?, dos horas en la sesión uno, dos horas de la primera parte básica. Luego el break, y nos quedan una hora y treinta. En esa hora y treinta hay que sacar mucho tiempo para explicar muy bien el proyecto. El proyecto que vamos a trabajar hay que explicarlo muy bien; eso nos puede demorar media hora, hasta más. Para mí eso es lo fundamental para que la gente se motive y al final vea el valor; eso es lo más importante. Yo creo que podríamos destinar una hora a la explicación del proyecto, muy bien explicado, y luego dejarles treinta minutos para que trabajen en chat.</p>
+
+      <p>¿Listo? Sí, después del primer reto de chat les damos las herramientas. Un reto de chat que podría ser una investigación profunda o algo de ese estilo, ¿cierto? Sí, creamos un Artifact para la visualización de los resultados de la investigación. O sea, que ellos hagan una investigación del mercado del café y que utilicen los prompts que nosotros les enseñamos, o la construcción del prompt. Entonces van a ir a conocer cuál es el mercado y van a tener que generar varios documentos en Word, que van a ser la base de lo que sigue. Me parece excelente. Listo, entonces terminamos la primera sesión. Mira, en la primera sesión necesitamos que ellos generen unos Word con unos elementos que nosotros les vamos a decir: el análisis del contexto, el análisis de mercado. Bueno, eso nos lo ideamos ahí y lo trabajamos. Y terminamos la primera sesión.</p>
+
+      <p>Luego llegamos a la siguiente sesión y les decimos: bueno, ¿ahora qué sigue? La construcción de... Yo creo que ahí empezamos con Cowork, ya a estructurar herramientas internas para análisis de competidores, análisis de UI. Eso me interesa, porque hay una metodología que yo tengo para construir sitios: le pido a Cowork que vaya, se meta a los sitios de los competidores, les tome todos los screenshots, y me saque una herramienta. Entonces, ojo, para la grabación: sesión 2, arrancamos explicando qué es Cowork, y luego la tarea relacionada con el proyecto es el análisis de sitios web, utilizando Cowork. Ponme media horita, porfa, para contextualizar Cowork y explicar bien el alcance. ¡Juepucha!, esto ya me quedó cortico. Sesión 2, pero acá hay cosas muy importantes. Pongámosle una hora a lo que es Cowork. Luego, investigación de sitios web; ¿cuánto se demora haciendo eso? Por ahí una hora.</p>
+
+      <p>A mí me gustaría, Juan, un espacio para hablar de cómo encontrar qué herramientas internas puedo desarrollar, porque ahí es donde está el valor para mí. Herramientas como estas que a vos se te ocurran para darle mejor contexto de diferentes maneras al modelo. Entonces, desarrollo de herramientas internas, todo orientado al reto. Explícame, ¿cómo serían las herramientas internas? Herramientas internas, por ejemplo, estos sitios en HTML, para uno darle mejor feedback al modelo. Porque vos le puedes pasar una chorrera de screenshots y decirle «¿me gustan?, ¿no me gustan?»; en cambio acá le decís que te cree una herramienta para puntuar, pero te puntúa sección por sección, entonces tiene todo el contexto de cada uno de los screenshots de las secciones. ¿Cómo desglosar eso? Por ejemplo, cuando yo voy a grabar algún video o alguna cosa, creo el guion en una herramienta de HTML, pero cada una de las líneas tiene un input para yo hacer los cambios ahí al lado, y todo eso se lo exporto al modelo. De esa manera le das mejor contexto al modelo. Tres herramientas, media horita. Eso está muy bacano. Juan, es que necesitamos más tiempo para conversar; eso está demasiado bacano. De una.</p>
+
+      <p>Y luego... espérate, que es lo que estaba pensando yo. Hay un punto importantísimo, te voy a decir cuál es, que me lo pidieron en estos días, y es muy fácil hacerlo, porque ellos tienen que diseñar la base de datos, ¿sí o no? Una herramienta que nos mostró Creary, ¿te acuerdas? ¿Has oído hablar de Creary? Bueno, Creary es una compañía que está trabajando con Prestigio; están haciendo un chat. Y ese man... pues esto no es ciencia para leer cohetes, pero es muy bacano. Vos le mandas el archivo de entidad-relación; vos, por ejemplo, le decís a Cowork: «voy a diseñar la base de datos», y le cuentas qué debe tener la base de datos, pim, pim, pim, toda la cosa, y él diseña una base de datos y te entrega un diagrama de entidad-relación, o sea, cada una de las tablas y cómo están conectadas. Y eso es el input de un Artifact o de una aplicación que nosotros hacemos, que es facilísimo: hace que él tenga como conocimiento esta gráfica, esta información de entidad-relación, y yo le empiezo a hacer preguntas.</p>
+
+      <p>Por ejemplo, ¿qué quisiera yo que respondiera la base de datos? «Yo quiero que me diga los clientes que están en la región tal, qué vendedor los atendió», supongamos, y él te dice: «esa base de datos te puede entregar esa información». Pero hay una pregunta donde dice: «no, es imposible, la entidad, el diagrama que usted me pasó no puede hacer eso». Muy bacano, no te vale una nota. ¿Y cómo lo organizamos acá para que quede muy claro? Es muy bueno. Eso es complejo, ¿cierto?, es otro nivel de entidad-relación. Pero ellos tienen que diseñar una base de datos. Entonces se las ponemos más fácil: que ChatGPT les cree la... perdón, que Claude les cree el diseño de la base de datos. Y luego hay que enseñarles cómo crear esa base de datos en Supabase. Que tampoco se lo dejemos todo al modelo para que él vaya, porque ahí se pierde la gracia. Que ellos vayan a Supabase, y que Claude les entregue qué es lo que tienen, los pasos para ir a Supabase y dónde tienen que colocar todo el script de SQL para que cree la base de datos, y la puedan crear.</p>
+
+      <p>Pero bueno, me estoy yendo. O sea, es que estamos en un punto... Mira, nosotros acá hicimos el contexto, ¿cierto?, y utilizamos esas herramientas internas. Acá llegamos nosotros a Claude Cowork, para hacer las herramientas, dijiste, ¿cierto? Y ahí, entonces, el entregable de esa segunda sesión es todo el análisis de competidores, de sitios web, las herramientas internas, para tener listo el prompt y pasárselo a Claude Design, y empezar a prototipar su sitio web y su manual de marca del café. Eso es análisis web. ¿Será que nos vamos a acordar de todo esto? Ya todo esto está acá. Eso me interesa: hicieron el análisis web, que fue el análisis de la competencia. ¿Qué más dijiste? Adicional a eso, lo de Design: el prompt para pasárselo a Design y crear el manual de marca.</p>
+
+      <p>¡Ay, juepucha!, no, ese curso, huevón... podemos cobrar lo que nos dé la gana. Va a estar bueno, huevón. Es que esto es muy teso. Imagínate crear el manual de marca. ¿Para qué te va a servir el manual de marca? No solamente para la web, sino para las redes sociales. Y Design también te va a poder hacer redes sociales. Claro. Bueno, listo. Y ya explicamos Markdown. Entonces, ya quedó, espectacular. Y ahí llegamos hasta Claude Design. A ver, todavía no hemos generado el sitio. No, nada. Ah, el sitio lo dejamos para la tercera sesión, que ahí es donde se conecta lo de la base de datos.</p>
+
+      <p>Yo creo que más que acá, en esa tercera sesión, hay que explicar la creación de la base de datos. O sea, arrancamos construyendo el sitio, lo desplegamos a ver, de ahí lo integramos a la base de datos, diseñamos la base de datos. Entonces, la tercera sesión es la creación del sitio desde Claude Code. Entonces necesitamos media horita para contextualizar qué es Claude Code, rápidamente. Ellos harían el sitio en Claude Code. Listo, perfecto, porque va más orientado para eso. Y acá, obviamente, está el tema de base de datos.</p>
+
+      <p>No, hermano, yo creo... tres sesiones. Tres sesiones me parece excelente. Pero te voy a decir: cuando nosotros hagamos más este curso, hermano, esto queda... Hagamos una cosa, hagamos lo siguiente. Voy a borrar esto. Vamos a hacer lo siguiente: usted... yo, llavecita, tenemos mucho para hacer. Usted toma, en la grabación, y me manda el resumen de cómo quedó, o sea, que esta vaina nos entregue día uno, día dos, día tres. Lo revisamos, me lo manda, lo vamos ampliando y vamos colaborando sobre eso. De una, muy bacano. Venga.</p>
+    </div>
+
+    <footer>
+      Reunión de planeación · Level Up con Claude · 2026
+    </footer>
+  </div>
+</body>
+</html>

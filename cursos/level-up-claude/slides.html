@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up con Claude — Diapositivas</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ── HORIZONTAL TRACK ── */
+    .deck {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .track {
+      display: flex;
+      height: 100%;
+      width: 100%;
+      transition: transform 0.55s cubic-bezier(0.7, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    .slide {
+      flex: 0 0 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(1rem, 4vw, 4rem);
+    }
+
+    .slide img {
+      max-width: 100%;
+      max-height: 100%;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 24px 70px rgba(0, 19, 63, 0.16);
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    /* ── PROGRESS BAR ── */
+    .progress-bar {
+      position: fixed; top: 0; left: 0;
+      height: 5px; width: 0;
+      background: var(--brand-blue);
+      transition: width 0.4s ease;
+      z-index: 100;
+    }
+
+    /* ── COUNTER ── */
+    .slide-counter {
+      position: fixed; bottom: 1.6rem; right: 2rem;
+      font-size: 0.8rem; font-weight: 600;
+      color: rgba(0, 19, 63, 0.35);
+      z-index: 100;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── NAV ARROWS ── */
+    .nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(0, 19, 63, 0.08);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      z-index: 100;
+      transition: background 0.2s, opacity 0.2s, transform 0.2s;
+    }
+    .nav:hover { background: #fff; }
+    .nav.prev { left: 1.5rem; }
+    .nav.next { right: 1.5rem; }
+    .nav svg { width: 20px; height: 20px; stroke: var(--brand-blue-dark); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .nav.hidden { opacity: 0; pointer-events: none; transform: translateY(-50%) scale(0.9); }
+
+    /* ── HOME LINK ── */
+    .home-link {
+      position: fixed; top: 1.4rem; left: 1.8rem;
+      font-family: var(--display-font);
+      font-weight: 800; font-size: 0.95rem;
+      text-transform: uppercase; letter-spacing: 2px;
+      color: rgba(0, 19, 63, 0.4);
+      text-decoration: none;
+      z-index: 100;
+      transition: color 0.2s;
+    }
+    .home-link:hover { color: var(--brand-blue); }
+
+    /* ── HINT ── */
+    .hint {
+      position: fixed; bottom: 1.6rem; left: 50%;
+      transform: translateX(-50%);
+      font-size: 0.75rem; letter-spacing: 0.05em;
+      color: rgba(0, 19, 63, 0.3);
+      z-index: 100;
+      transition: opacity 0.5s;
+    }
+    .hint.gone { opacity: 0; }
+
+    @media (max-width: 768px) {
+      .nav { width: 40px; height: 40px; }
+      .nav.prev { left: 0.6rem; }
+      .nav.next { right: 0.6rem; }
+      .home-link { font-size: 0.8rem; left: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="progress-bar" id="progress"></div>
+  <a href="index.html" class="home-link">← Level Up</a>
+
+  <div class="deck">
+    <div class="track" id="track">
+      <div class="slide"><img src="slides/01-portada.png" alt="Portada — Level Up con Claude"></div>
+      <div class="slide"><img src="slides/02-sesion-1-claude-web.png" alt="Sesión 1 — Claude Web"></div>
+      <div class="slide"><img src="slides/03-sesion-2-cowork-design.png" alt="Sesión 2 — Claude Cowork & Design"></div>
+      <div class="slide"><img src="slides/04-sesion-3-claude-code.png" alt="Sesión 3 — Claude Code"></div>
+    </div>
+  </div>
+
+  <div class="nav prev hidden" id="prev" aria-label="Anterior">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  </div>
+  <div class="nav next" id="next" aria-label="Siguiente">
+    <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+  </div>
+
+  <div class="slide-counter" id="counter">01 / 04</div>
+  <div class="hint" id="hint">Usa ← → o desliza · F pantalla completa</div>
+
+  <script>
+    const track = document.getElementById('track');
+    const slides = Array.from(track.children);
+    const total = slides.length;
+    const progress = document.getElementById('progress');
+    const counter = document.getElementById('counter');
+    const prevBtn = document.getElementById('prev');
+    const nextBtn = document.getElementById('next');
+    const hint = document.getElementById('hint');
+    let index = 0;
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function render() {
+      track.style.transform = `translateX(-${index * 100}vw)`;
+      progress.style.width = `${((index + 1) / total) * 100}%`;
+      counter.textContent = `${pad(index + 1)} / ${pad(total)}`;
+      prevBtn.classList.toggle('hidden', index === 0);
+      nextBtn.classList.toggle('hidden', index === total - 1);
+      if (location.hash !== `#${index + 1}`) {
+        history.replaceState(null, '', `#${index + 1}`);
+      }
+    }
+
+    function go(to) {
+      index = Math.max(0, Math.min(total - 1, to));
+      render();
+      hint.classList.add('gone');
+    }
+
+    // From URL hash
+    function fromHash() {
+      const n = parseInt(location.hash.replace('#', ''), 10);
+      if (!isNaN(n) && n >= 1 && n <= total) index = n - 1;
+    }
+    fromHash();
+    render();
+
+    // Buttons
+    prevBtn.addEventListener('click', () => go(index - 1));
+    nextBtn.addEventListener('click', () => go(index + 1));
+
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowRight':
+        case ' ':
+        case 'PageDown':
+          e.preventDefault(); go(index + 1); break;
+        case 'ArrowLeft':
+        case 'PageUp':
+          e.preventDefault(); go(index - 1); break;
+        case 'Home': e.preventDefault(); go(0); break;
+        case 'End': e.preventDefault(); go(total - 1); break;
+        case 'f':
+        case 'F':
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+          else document.exitFullscreen();
+          break;
+      }
+    });
+
+    // Touch / swipe
+    let startX = 0, startY = 0, touching = false;
+    track.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      touching = true;
+    }, { passive: true });
+    track.addEventListener('touchend', (e) => {
+      if (!touching) return;
+      touching = false;
+      const dx = e.changedTouches[0].clientX - startX;
+      const dy = e.changedTouches[0].clientY - startY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) {
+        go(dx < 0 ? index + 1 : index - 1);
+      }
+    }, { passive: true });
+
+    window.addEventListener('hashchange', () => { fromHash(); render(); });
+  </script>
+</body>
+</html>

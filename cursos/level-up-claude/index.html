@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Level Up con Claude — Materiales</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --display-font: "Sofia Sans Extra Condensed", sans-serif;
+      --body-font: "DM Sans", sans-serif;
+      --brand-blue: #0047E9;
+      --brand-blue-dark: #00133F;
+      --brand-teal: #0AE4C3;
+      --bg: #F8F6F2;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--body-font);
+      background: var(--bg);
+      color: var(--brand-blue-dark);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--display-font);
+      text-transform: uppercase;
+      font-weight: 800;
+      line-height: 0.85;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: clamp(2.5rem, 6vw, 5rem) clamp(1.25rem, 5vw, 4rem) 5rem;
+    }
+
+    /* ── HEADER ── */
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--display-font);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.95rem;
+      color: rgba(0, 19, 63, 0.4);
+      margin-bottom: clamp(2rem, 5vw, 3.5rem);
+    }
+    .topbar .claude { color: var(--brand-blue); }
+
+    .kicker {
+      display: inline-block;
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.85rem;
+      color: var(--brand-blue);
+      margin-bottom: 0.9rem;
+    }
+
+    h1.title {
+      font-size: clamp(3rem, 9vw, 6.5rem);
+      letter-spacing: -2px;
+      margin-bottom: 1.1rem;
+    }
+    h1.title .accent { color: var(--brand-blue); }
+
+    .lead {
+      font-size: clamp(1rem, 2vw, 1.25rem);
+      color: rgba(0, 19, 63, 0.55);
+      max-width: 540px;
+      line-height: 1.55;
+      margin-bottom: clamp(2.5rem, 6vw, 4rem);
+    }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      font-size: 0.8rem;
+      color: rgba(0, 19, 63, 0.4);
+      margin-bottom: 1.1rem;
+    }
+
+    /* ── FEATURED ITEM (full row, ~20vh) ── */
+    .featured {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 20vh;
+      min-height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+      text-decoration: none;
+      color: #fff;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, var(--brand-blue-dark), var(--brand-blue));
+      box-shadow: 0 18px 50px rgba(0, 19, 63, 0.14);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .featured:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 26px 70px rgba(0, 19, 63, 0.22);
+    }
+    .featured img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .featured .veil {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(0, 19, 63, 0.78) 0%, rgba(0, 19, 63, 0.35) 45%, rgba(0, 19, 63, 0) 75%);
+    }
+    .featured .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: clamp(1.5rem, 4vw, 3rem);
+      gap: 0.5rem;
+    }
+    .featured .tag {
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      font-size: 0.75rem;
+      color: var(--brand-teal);
+    }
+    .featured h2 {
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      letter-spacing: -1px;
+      color: #fff;
+    }
+    .featured .meta {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      margin-top: 0.3rem;
+    }
+    .featured .meta svg {
+      width: 16px; height: 16px;
+      stroke: var(--brand-teal); fill: none; stroke-width: 2.2;
+      stroke-linecap: round; stroke-linejoin: round;
+    }
+
+    @media (max-width: 640px) {
+      .featured { height: auto; min-height: 0; aspect-ratio: 16 / 9; }
+      .featured .veil {
+        background: linear-gradient(0deg, rgba(0,19,63,0.85) 0%, rgba(0,19,63,0.25) 60%, rgba(0,19,63,0) 100%);
+      }
+      .featured .content { justify-content: flex-end; }
+    }
+
+    /* ── SECONDARY CARD (transcript) ── */
+    .res-card {
+      display: flex;
+      align-items: center;
+      gap: 1.1rem;
+      width: 100%;
+      background: #fff;
+      border: 1px solid rgba(0, 19, 63, 0.08);
+      border-radius: 18px;
+      padding: 1.4rem 1.6rem;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 10px 30px rgba(0, 19, 63, 0.06);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .res-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 50px rgba(0, 19, 63, 0.12);
+      border-color: rgba(0, 71, 233, 0.25);
+    }
+    .res-card .ic {
+      flex: 0 0 auto;
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: rgba(0, 71, 233, 0.08);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .res-card .ic svg { width: 24px; height: 24px; stroke: var(--brand-blue); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    .res-card .txt { flex: 1 1 auto; }
+    .res-card .tag {
+      font-family: var(--display-font);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.7rem;
+      color: var(--brand-blue);
+    }
+    .res-card h2 {
+      font-size: clamp(1.3rem, 3vw, 1.7rem);
+      letter-spacing: -0.5px;
+      margin: 0.15rem 0 0.25rem;
+    }
+    .res-card p { font-size: 0.9rem; color: rgba(0, 19, 63, 0.55); line-height: 1.45; }
+    .res-card .go {
+      flex: 0 0 auto;
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: rgba(0, 19, 63, 0.05);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, transform 0.2s;
+    }
+    .res-card:hover .go { background: var(--brand-blue); transform: translateX(3px); }
+    .res-card .go svg { width: 15px; height: 15px; stroke: rgba(0,19,63,0.45); fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+    .res-card:hover .go svg { stroke: #fff; }
+    @media (max-width: 540px) {
+      .res-card { padding: 1.1rem 1.2rem; gap: 0.9rem; }
+      .res-card .go { display: none; }
+    }
+
+    /* ── CHAT WIDGET (popup, bottom-right) ── */
+    #luc-fab {
+      position: fixed;
+      bottom: 24px; right: 24px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: var(--brand-blue);
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 12px 30px rgba(0, 71, 233, 0.35);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9000;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    #luc-fab:hover { transform: scale(1.06); box-shadow: 0 16px 38px rgba(0, 71, 233, 0.45); }
+    #luc-fab svg { width: 28px; height: 28px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #luc-fab .ic-close { display: none; }
+    #luc-fab.open .ic-chat { display: none; }
+    #luc-fab.open .ic-close { display: block; }
+
+    #luc-panel {
+      position: fixed;
+      bottom: 98px; right: 24px;
+      width: min(380px, calc(100vw - 32px));
+      height: min(560px, calc(100vh - 130px));
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 24px 70px rgba(0, 19, 63, 0.28);
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      z-index: 9000;
+      opacity: 0; transform: translateY(16px) scale(0.98);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    #luc-panel.open { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+
+    .luc-head {
+      background: var(--brand-blue-dark);
+      color: #fff;
+      padding: 1rem 1.2rem;
+      display: flex; align-items: center; gap: 0.7rem;
+    }
+    .luc-head .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--brand-teal); box-shadow: 0 0 0 4px rgba(10, 228, 195, 0.2); }
+    .luc-head .h-txt strong { font-family: var(--display-font); text-transform: uppercase; letter-spacing: 1px; font-size: 1.05rem; display: block; line-height: 1; }
+    .luc-head .h-txt span { font-size: 0.72rem; color: rgba(255,255,255,0.6); }
+
+    .luc-body {
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding: 1.1rem;
+      display: flex; flex-direction: column; gap: 0.7rem;
+      background: var(--bg);
+    }
+    .luc-msg { max-width: 85%; padding: 0.7rem 0.95rem; border-radius: 14px; font-size: 0.92rem; line-height: 1.5; white-space: pre-wrap; word-wrap: break-word; }
+    .luc-msg.bot { align-self: flex-start; background: #fff; border: 1px solid rgba(0,19,63,0.08); color: var(--brand-blue-dark); border-bottom-left-radius: 4px; }
+    .luc-msg.user { align-self: flex-end; background: var(--brand-blue); color: #fff; border-bottom-right-radius: 4px; }
+    .luc-typing { align-self: flex-start; display: flex; gap: 4px; padding: 0.8rem 1rem; background: #fff; border: 1px solid rgba(0,19,63,0.08); border-radius: 14px; border-bottom-left-radius: 4px; }
+    .luc-typing span { width: 7px; height: 7px; border-radius: 50%; background: rgba(0,19,63,0.3); animation: luc-bounce 1.2s infinite ease-in-out; }
+    .luc-typing span:nth-child(2) { animation-delay: 0.15s; }
+    .luc-typing span:nth-child(3) { animation-delay: 0.3s; }
+    @keyframes luc-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-5px); opacity: 1; } }
+
+    .luc-foot { padding: 0.8rem; border-top: 1px solid rgba(0,19,63,0.08); display: flex; gap: 0.5rem; background: #fff; }
+    .luc-foot input {
+      flex: 1 1 auto;
+      border: 1px solid rgba(0,19,63,0.15);
+      border-radius: 12px;
+      padding: 0.7rem 0.9rem;
+      font-family: var(--body-font); font-size: 0.92rem;
+      color: var(--brand-blue-dark);
+      outline: none;
+    }
+    .luc-foot input:focus { border-color: var(--brand-blue); }
+    .luc-foot button {
+      flex: 0 0 auto;
+      width: 44px; height: 44px;
+      border-radius: 12px;
+      background: var(--brand-blue); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, opacity 0.2s;
+    }
+    .luc-foot button:disabled { opacity: 0.45; cursor: default; }
+    .luc-foot button svg { width: 20px; height: 20px; stroke: #fff; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+    footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0, 19, 63, 0.1);
+      font-size: 0.8rem;
+      color: rgba(0, 19, 63, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="topbar">
+      <span>ESIC · Business &amp; Marketing School</span>
+      <span class="claude">✳ Claude</span>
+    </div>
+
+    <span class="kicker">Materiales del curso</span>
+    <h1 class="title">Level Up<br><span class="accent">con Claude</span></h1>
+    <p class="lead">Caso del curso: lanzar un modelo de negocio digital desde cero. Aquí encuentras las diapositivas y todos los recursos de las sesiones.</p>
+
+    <div class="section-label">Presentación</div>
+
+    <!-- Featured: portada → slideshow -->
+    <a href="slides.html" class="featured">
+      <img src="slides/01-portada.png" alt="Level Up con Claude — Portada">
+      <div class="veil"></div>
+      <div class="content">
+        <span class="tag">Diapositivas</span>
+        <h2>Ver la presentación</h2>
+        <span class="meta">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          4 diapositivas
+        </span>
+      </div>
+    </a>
+
+    <div class="section-label" style="margin-top:2.5rem;">Programa</div>
+
+    <!-- Card 2: plan del curso (día 1, 2 y 3) -->
+    <a href="programa.html" class="featured">
+      <img src="programa-cover.png" alt="Plan del curso — Día 1, 2 y 3" onerror="this.style.display='none'">
+      <div class="veil"></div>
+      <div class="content">
+        <span class="tag">Plan del curso</span>
+        <h2>Cronograma de sesiones</h2>
+        <span class="meta">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          Día 1, Día 2 y Día 3
+        </span>
+      </div>
+    </a>
+
+    <div class="section-label" style="margin-top:2.5rem;">Recursos</div>
+
+    <!-- Card 3: transcript (mismo estilo que la presentación) -->
+    <a href="transcript.html" class="featured">
+      <img src="transcript-cover.png" alt="Transcripción de la reunión" onerror="this.style.display='none'">
+      <div class="veil"></div>
+      <div class="content">
+        <span class="tag">Transcripción</span>
+        <h2>Transcripción de la reunión</h2>
+        <span class="meta">
+          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          Reunión de planeación · corregida
+        </span>
+      </div>
+    </a>
+
+    <footer>
+      Curso diseñado y dictado en vivo · 2026
+    </footer>
+
+  </div>
+
+  <!-- ── Asistente del curso (chat popup) ── -->
+  <button id="luc-fab" aria-label="Abrir asistente del curso">
+    <svg class="ic-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+    <svg class="ic-close" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <div id="luc-panel" role="dialog" aria-label="Asistente del curso">
+    <div class="luc-head">
+      <span class="dot"></span>
+      <span class="h-txt">
+        <strong>Asistente del curso</strong>
+        <span>Resuelve tus dudas sobre Level Up con Claude</span>
+      </span>
+    </div>
+    <div class="luc-body" id="luc-body"></div>
+    <div class="luc-foot">
+      <input id="luc-input" type="text" placeholder="Escribe tu pregunta..." autocomplete="off">
+      <button id="luc-send" aria-label="Enviar">
+        <svg viewBox="0 0 24 24"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const WEBHOOK = "https://n8n.jeroooo.com/webhook/level-up-claude-chat";
+      const fab = document.getElementById('luc-fab');
+      const panel = document.getElementById('luc-panel');
+      const body = document.getElementById('luc-body');
+      const input = document.getElementById('luc-input');
+      const send = document.getElementById('luc-send');
+
+      // sessionId persistente para mantener el hilo de conversación
+      let sessionId = localStorage.getItem('luc-session');
+      if (!sessionId) {
+        sessionId = 'web-' + Math.random().toString(36).slice(2) + Date.now().toString(36);
+        localStorage.setItem('luc-session', sessionId);
+      }
+
+      let greeted = false;
+      function addMsg(text, who) {
+        const el = document.createElement('div');
+        el.className = 'luc-msg ' + who;
+        el.textContent = text;
+        body.appendChild(el);
+        body.scrollTop = body.scrollHeight;
+        return el;
+      }
+      function showTyping() {
+        const t = document.createElement('div');
+        t.className = 'luc-typing';
+        t.innerHTML = '<span></span><span></span><span></span>';
+        body.appendChild(t);
+        body.scrollTop = body.scrollHeight;
+        return t;
+      }
+
+      function toggle() {
+        const open = panel.classList.toggle('open');
+        fab.classList.toggle('open', open);
+        if (open) {
+          if (!greeted) {
+            greeted = true;
+            addMsg('Hola. Soy el asistente de Level Up con Claude. Pregúntame lo que quieras sobre el curso: sesiones, herramientas, el proyecto de la marca de café o los entregables.', 'bot');
+          }
+          setTimeout(() => input.focus(), 250);
+        }
+      }
+      fab.addEventListener('click', toggle);
+
+      async function ask() {
+        const text = input.value.trim();
+        if (!text) return;
+        addMsg(text, 'user');
+        input.value = '';
+        send.disabled = true;
+        const typing = showTyping();
+        try {
+          const res = await fetch(WEBHOOK, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: text, sessionId: sessionId })
+          });
+          const data = await res.json();
+          typing.remove();
+          const reply = (data && (data.reply || data.output || data.text)) || 'Ups, no recibí respuesta. Inténtalo de nuevo.';
+          addMsg(reply, 'bot');
+        } catch (e) {
+          typing.remove();
+          addMsg('No me pude conectar en este momento. Revisa tu conexión e inténtalo de nuevo.', 'bot');
+        } finally {
+          send.disabled = false;
+          input.focus();
+        }
+      }
+      send.addEventListener('click', ask);
+      input.addEventListener('keydown', (e) => { if (e.key === 'Enter') ask(); });
+    })();
+  </script>
+</body>
+</html>
