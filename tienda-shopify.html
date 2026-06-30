@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arma tu tienda de Shopify con IA | Jerónimo Martínez</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--bg-soft:#141414;--white:#FAFAFA;
+      --accent:#fbbf24;--accent-dark:#d99e0b;--claude:#D97757;
+      --gray-300:#d4d4d8;--gray-400:#a1a1aa;--gray-600:#52525b;
+      --success:#10B981;--line:rgba(255,255,255,0.1);
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Space Grotesk',system-ui,-apple-system,sans-serif;
+      background:var(--bg);color:var(--white);overflow-x:hidden;min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* Progress bar */
+    .progress-track{position:fixed;top:0;left:0;right:0;height:4px;background:rgba(255,255,255,0.08);z-index:200}
+    .progress-fill{height:100%;background:var(--accent);transition:width 0.5s cubic-bezier(0.4,0,0.2,1);width:0%}
+
+    /* Header fijos */
+    .step-count{
+      position:fixed;top:1.75rem;left:2rem;font-size:0.8rem;color:var(--gray-400);
+      font-weight:500;letter-spacing:0.05em;z-index:100;font-family:'JetBrains Mono',monospace;
+    }
+    .brand-mark{
+      position:fixed;top:1.6rem;right:2rem;font-weight:600;font-size:0.95rem;
+      color:var(--gray-400);z-index:100;letter-spacing:0.02em;
+    }
+    .brand-mark b{color:var(--accent)}
+    .brand-mark a{color:var(--gray-400);text-decoration:none}
+    .brand-mark a:hover{color:var(--white)}
+
+    /* Wizard container */
+    #wizard{position:relative;width:100%;min-height:100vh}
+
+    .step{
+      position:absolute;inset:0;display:flex;flex-direction:column;
+      justify-content:center;padding:6rem 2rem 7rem;max-width:760px;margin:0 auto;
+      opacity:0;transform:translateY(32px);transition:all 0.5s cubic-bezier(0.4,0,0.2,1);
+      pointer-events:none;overflow-y:auto;
+    }
+    .step.active{opacity:1;transform:translateY(0);pointer-events:auto}
+
+    /* Etiquetas */
+    .s-kicker{
+      font-size:0.72rem;color:var(--accent);text-transform:uppercase;
+      letter-spacing:0.14em;margin-bottom:0.85rem;font-weight:600;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .s-title{
+      font-size:clamp(1.7rem,4vw,2.6rem);font-weight:600;line-height:1.15;
+      letter-spacing:-0.02em;margin-bottom:0.9rem;max-width:640px;
+    }
+    .s-hint{
+      font-size:0.98rem;color:var(--gray-400);line-height:1.5;
+      margin-bottom:2rem;max-width:580px;
+    }
+
+    /* Campos */
+    .field{margin-bottom:1.4rem;max-width:580px}
+    .field > label{
+      display:block;font-size:0.85rem;color:var(--gray-300);
+      margin-bottom:0.55rem;font-weight:500;
+    }
+    .field .opt{color:var(--gray-600);font-weight:400}
+
+    .text-input{
+      width:100%;padding:0.95rem 1.15rem;background:rgba(255,255,255,0.04);
+      border:2px solid var(--line);border-radius:12px;
+      color:var(--white);font-size:1.05rem;font-family:inherit;
+      transition:all 0.25s ease;outline:none;
+    }
+    .text-input:focus{border-color:var(--accent);background:rgba(251,191,36,0.06)}
+    .text-input::placeholder{color:var(--gray-600)}
+    textarea.text-input{min-height:96px;resize:vertical;line-height:1.5}
+
+    /* Opciones single */
+    .options{display:flex;flex-direction:column;gap:0.7rem;max-width:580px}
+    .option-btn{
+      padding:1rem 1.35rem;background:rgba(255,255,255,0.03);
+      border:2px solid var(--line);border-radius:12px;
+      color:var(--white);font-size:1rem;text-align:left;cursor:pointer;
+      transition:all 0.2s ease;font-family:inherit;width:100%;
+    }
+    .option-btn:hover{background:rgba(251,191,36,0.08);border-color:var(--accent)}
+    .option-btn.selected{background:rgba(251,191,36,0.14);border-color:var(--accent)}
+    .option-btn .opt-label{font-weight:600}
+    .option-btn .opt-desc{font-size:0.82rem;color:var(--gray-400);margin-top:0.2rem}
+
+    /* Multi-select grid */
+    .multi-options{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:0.7rem;max-width:600px}
+    .multi-opt{
+      padding:0.9rem 1.1rem;background:rgba(255,255,255,0.03);
+      border:2px solid var(--line);border-radius:12px;
+      color:var(--white);font-size:0.92rem;cursor:pointer;transition:all 0.2s;
+      text-align:center;font-family:inherit;
+    }
+    .multi-opt:hover{border-color:var(--accent)}
+    .multi-opt.selected{background:rgba(251,191,36,0.14);border-color:var(--accent)}
+
+    /* Color pickers */
+    .color-row{display:flex;gap:1.5rem;flex-wrap:wrap}
+    .color-pick{display:flex;flex-direction:column;gap:0.5rem;align-items:flex-start}
+    .color-pick label{font-size:0.8rem;color:var(--gray-400)}
+    .color-pick input[type=color]{
+      width:64px;height:64px;border:2px solid var(--line);border-radius:12px;
+      background:none;cursor:pointer;padding:4px;
+    }
+
+    /* Productos repeater */
+    #productos-list{display:flex;flex-direction:column;gap:1rem;max-width:600px;margin-bottom:1rem}
+    .producto-card{
+      background:var(--bg-soft);border:1.5px solid var(--line);border-radius:14px;
+      padding:1.1rem 1.2rem 1.2rem;
+    }
+    .producto-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.8rem}
+    .producto-num{font-size:0.78rem;color:var(--accent);font-weight:600;font-family:'JetBrains Mono',monospace;letter-spacing:0.05em}
+    .producto-remove{
+      background:none;border:none;color:var(--gray-400);font-size:0.82rem;
+      cursor:pointer;font-family:inherit;padding:0.2rem 0.4rem;border-radius:6px;
+    }
+    .producto-remove:hover{color:#EF4444;background:rgba(239,68,68,0.1)}
+    .producto-card .text-input{margin-bottom:0.6rem;font-size:0.95rem;padding:0.75rem 1rem}
+    .prod-row{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem}
+    .prod-row .text-input{margin-bottom:0.6rem}
+    .add-producto{
+      padding:0.85rem 1.4rem;background:rgba(251,191,36,0.1);border:2px dashed var(--accent);
+      border-radius:12px;color:var(--accent);font-size:0.95rem;font-weight:600;
+      cursor:pointer;font-family:inherit;transition:all 0.2s;max-width:600px;width:100%;
+    }
+    .add-producto:hover{background:rgba(251,191,36,0.18)}
+
+    /* Intro */
+    .intro-icon{
+      width:60px;height:60px;border-radius:16px;background:rgba(251,191,36,0.12);
+      display:flex;align-items:center;justify-content:center;margin-bottom:1.5rem;
+      border:1.5px solid rgba(251,191,36,0.3);
+    }
+    .intro-icon svg{width:30px;height:30px;stroke:var(--accent);fill:none;stroke-width:2}
+    .intro-steps{display:flex;flex-direction:column;gap:0.6rem;margin:1.6rem 0 2rem;max-width:520px}
+    .intro-steps div{
+      display:flex;gap:0.75rem;align-items:center;font-size:0.95rem;color:var(--gray-300);
+    }
+    .intro-steps b{
+      display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;
+      border-radius:50%;background:rgba(255,255,255,0.06);color:var(--accent);
+      font-size:0.8rem;font-family:'JetBrains Mono',monospace;
+    }
+
+    /* Botón grande */
+    .btn-primary{
+      padding:0.95rem 2.2rem;border-radius:12px;font-size:1rem;font-weight:600;
+      cursor:pointer;transition:all 0.2s;font-family:inherit;border:none;
+      background:var(--accent);color:#1a1300;
+    }
+    .btn-primary:hover{background:var(--accent-dark)}
+
+    /* Navegación */
+    .nav-actions{position:fixed;bottom:2.25rem;left:2rem;display:flex;gap:0.9rem;z-index:100}
+    .nav-btn{
+      padding:0.8rem 1.9rem;border-radius:12px;font-size:0.95rem;font-weight:600;
+      cursor:pointer;transition:all 0.2s;font-family:inherit;border:none;
+    }
+    .nav-btn-prev{background:rgba(255,255,255,0.07);color:var(--white)}
+    .nav-btn-prev:hover{background:rgba(255,255,255,0.12)}
+    .nav-btn-next{background:var(--accent);color:#1a1300}
+    .nav-btn-next:hover{background:var(--accent-dark)}
+    .key-hint{
+      position:fixed;bottom:2.6rem;right:2rem;font-size:0.74rem;color:var(--gray-600);z-index:100;
+    }
+    .key-hint kbd{
+      display:inline-block;padding:0.15rem 0.45rem;background:rgba(255,255,255,0.06);
+      border-radius:4px;font-family:'JetBrains Mono',monospace;margin:0 0.2rem;color:var(--gray-400);
+    }
+    .reset-link{
+      position:fixed;bottom:2.7rem;left:50%;transform:translateX(-50%);
+      font-size:0.76rem;color:var(--gray-600);z-index:99;cursor:pointer;
+      background:none;border:none;font-family:inherit;
+    }
+    .reset-link:hover{color:var(--gray-400)}
+
+    /* Output / JSON */
+    .output-head{display:flex;align-items:center;gap:0.85rem;margin-bottom:1.4rem}
+    .check-circle{
+      width:52px;height:52px;border-radius:50%;background:var(--success);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+    }
+    .check-circle svg{width:26px;height:26px;stroke:#fff;stroke-width:3;fill:none}
+    .json-box{
+      background:#0d0d0d;border:1.5px solid var(--line);border-radius:14px;
+      padding:1.2rem 1.3rem;max-width:640px;max-height:42vh;overflow:auto;margin-bottom:1.1rem;
+    }
+    .json-box pre{
+      font-family:'JetBrains Mono',monospace;font-size:0.82rem;line-height:1.55;
+      color:var(--gray-300);white-space:pre-wrap;word-break:break-word;
+    }
+    .json-box .jk{color:var(--accent)}
+    .json-box .js{color:#9ece6a}
+    .out-actions{display:flex;gap:0.8rem;flex-wrap:wrap;max-width:640px;margin-bottom:1.4rem}
+    .btn-copy{
+      padding:0.9rem 1.6rem;border-radius:12px;font-size:0.95rem;font-weight:600;cursor:pointer;
+      font-family:inherit;border:none;background:var(--claude);color:#fff;
+      display:inline-flex;align-items:center;gap:0.5rem;transition:all 0.2s;
+    }
+    .btn-copy:hover{filter:brightness(1.08)}
+    .btn-copy svg{width:18px;height:18px;stroke:#fff;fill:none;stroke-width:2}
+    .btn-ghost{
+      padding:0.9rem 1.6rem;border-radius:12px;font-size:0.95rem;font-weight:600;cursor:pointer;
+      font-family:inherit;border:2px solid var(--line);background:none;color:var(--white);transition:all 0.2s;
+    }
+    .btn-ghost:hover{border-color:var(--gray-400)}
+    .instruccion{
+      max-width:640px;background:rgba(217,119,87,0.08);border:1.5px solid rgba(217,119,87,0.3);
+      border-radius:14px;padding:1.1rem 1.3rem;font-size:0.92rem;line-height:1.55;color:var(--gray-300);
+    }
+    .instruccion b{color:var(--white)}
+    .instruccion code{
+      font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--claude);
+      background:rgba(255,255,255,0.05);padding:0.1rem 0.35rem;border-radius:5px;
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+      .step{padding:5rem 1.4rem 7.5rem}
+      .s-title{font-size:1.5rem}
+      .multi-options{grid-template-columns:1fr 1fr}
+      .prod-row{grid-template-columns:1fr}
+      .nav-actions{bottom:1.5rem;left:1.4rem}
+      .key-hint{display:none}
+      .reset-link{display:none}
+      .step-count{top:1.4rem;left:1.4rem}
+      .brand-mark{top:1.3rem;right:1.4rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="step-count" id="stepCount"></div>
+  <div class="brand-mark"><a href="index.html"><b>Club IA</b> · Jero</a></div>
+
+  <div id="wizard">
+
+    <!-- INTRO -->
+    <section class="step active" data-step="intro" data-skip-validate>
+      <div class="intro-icon">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18M9 21V9"/><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+      </div>
+      <div class="s-kicker">Brief de tienda Shopify</div>
+      <h1 class="s-title">Arma tu tienda de Shopify con inteligencia artificial</h1>
+      <p class="s-hint">Responde unas preguntas sobre tu marca, tu estilo y tus productos. Al final te entregamos un brief en formato JSON que le pegas a Claude para que te monte la tienda completa, sin que tú llenes un solo formulario.</p>
+      <div class="intro-steps">
+        <div><b>1</b> Cuéntanos de tu marca y tu estilo</div>
+        <div><b>2</b> Elige el diseño y agrega tus productos</div>
+        <div><b>3</b> Copia el brief y dáselo a Claude</div>
+      </div>
+      <button class="btn-primary" id="btnStart">Empezar</button>
+    </section>
+
+    <!-- 1. MARCA -->
+    <section class="step" data-step="1">
+      <div class="s-kicker">Paso 1 · Tu marca</div>
+      <h2 class="s-title">Cuéntanos qué vendes</h2>
+      <p class="s-hint">Lo básico de tu negocio. Entre más claro, mejor te queda la tienda.</p>
+      <div class="field">
+        <label for="f-marca-nombre">Nombre de la marca</label>
+        <input type="text" class="text-input" id="f-marca-nombre" placeholder="Ej: Vértice">
+      </div>
+      <div class="field">
+        <label for="f-marca-vende">¿Qué vendes?</label>
+        <input type="text" class="text-input" id="f-marca-vende" placeholder="Ej: gafas de sol premium y minimalistas">
+      </div>
+      <div class="field">
+        <label for="f-marca-cliente">¿Para quién es? <span class="opt">(tu cliente ideal)</span></label>
+        <textarea class="text-input" id="f-marca-cliente" placeholder="Ej: gente que quiere verse premium sin gastar una fortuna, le importa el estilo y compra por internet"></textarea>
+      </div>
+    </section>
+
+    <!-- 2. ESTILO -->
+    <section class="step" data-step="2">
+      <div class="s-kicker">Paso 2 · Estilo</div>
+      <h2 class="s-title">¿Qué personalidad tiene tu tienda?</h2>
+      <p class="s-hint">Esto define el tono visual y de los textos.</p>
+      <div class="field">
+        <label>Tono de la marca</label>
+        <div class="options" data-single="estilo_tono">
+          <button type="button" class="option-btn" data-value="Lujo y minimalista"><span class="opt-label">Lujo y minimalista</span><span class="opt-desc">Limpio, elegante, mucho espacio en blanco</span></button>
+          <button type="button" class="option-btn" data-value="Casual y cercano"><span class="opt-label">Casual y cercano</span><span class="opt-desc">Amigable, relajado, sin tanta formalidad</span></button>
+          <button type="button" class="option-btn" data-value="Profesional y serio"><span class="opt-label">Profesional y serio</span><span class="opt-desc">Confiable, sobrio, al grano</span></button>
+          <button type="button" class="option-btn" data-value="Juvenil y divertido"><span class="opt-label">Juvenil y divertido</span><span class="opt-desc">Colorido, energético, con actitud</span></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Tipografía</label>
+        <div class="options" data-single="estilo_tipografia">
+          <button type="button" class="option-btn" data-value="Moderna (sans-serif)"><span class="opt-label">Moderna</span><span class="opt-desc">Sans-serif limpia, tipo tech</span></button>
+          <button type="button" class="option-btn" data-value="Elegante (serif)"><span class="opt-label">Elegante</span><span class="opt-desc">Con serifas, editorial, premium</span></button>
+          <button type="button" class="option-btn" data-value="Llamativa (display)"><span class="opt-label">Llamativa</span><span class="opt-desc">Display fuerte, para destacar</span></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Colores de la marca</label>
+        <div class="color-row">
+          <div class="color-pick"><label>Principal</label><input type="color" id="f-color-1" value="#0a0a0a"></div>
+          <div class="color-pick"><label>Acento</label><input type="color" id="f-color-2" value="#fbbf24"></div>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-color-notas">Notas de color <span class="opt">(opcional)</span></label>
+        <input type="text" class="text-input" id="f-color-notas" placeholder="Ej: fondo oscuro con acentos cálidos, sensación premium">
+      </div>
+    </section>
+
+    <!-- 3. REFERENCIAS -->
+    <section class="step" data-step="3">
+      <div class="s-kicker">Paso 3 · Referencias</div>
+      <h2 class="s-title">¿Qué tiendas te gustan?</h2>
+      <p class="s-hint">Dale a Claude ejemplos de a dónde apuntar. Esto es lo que más afina el resultado.</p>
+      <div class="field">
+        <label for="f-ref-tiendas">Tiendas o webs que admiras <span class="opt">(links, una por línea)</span></label>
+        <textarea class="text-input" id="f-ref-tiendas" placeholder="Ej: https://www.gentlemonster.com, https://ray-ban.com, una marca local que me encanta..."></textarea>
+      </div>
+      <div class="field">
+        <label for="f-ref-vibe">En una frase, el vibe que buscas <span class="opt">(opcional)</span></label>
+        <input type="text" class="text-input" id="f-ref-vibe" placeholder="Ej: que se sienta una boutique de lujo, no una tienda genérica">
+      </div>
+    </section>
+
+    <!-- 4. LAYOUT -->
+    <section class="step" data-step="4">
+      <div class="s-kicker">Paso 4 · Diseño</div>
+      <h2 class="s-title">¿Qué secciones quieres en la página principal?</h2>
+      <p class="s-hint">Marca las que quieras. Las ordenamos como tienen sentido para vender.</p>
+      <div class="field">
+        <div class="multi-options" data-multi="layout_secciones">
+          <button type="button" class="multi-opt" data-value="Hero / portada con imagen grande">Hero de portada</button>
+          <button type="button" class="multi-opt" data-value="Grid de productos">Grid de productos</button>
+          <button type="button" class="multi-opt" data-value="Colecciones destacadas">Colecciones destacadas</button>
+          <button type="button" class="multi-opt" data-value="Sobre la marca">Sobre la marca</button>
+          <button type="button" class="multi-opt" data-value="Testimonios / reseñas">Testimonios</button>
+          <button type="button" class="multi-opt" data-value="Newsletter / suscripción">Newsletter</button>
+          <button type="button" class="multi-opt" data-value="Preguntas frecuentes">Preguntas frecuentes</button>
+          <button type="button" class="multi-opt" data-value="Banner de envíos / garantía">Banner de envíos</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. PRODUCTOS -->
+    <section class="step" data-step="5">
+      <div class="s-kicker">Paso 5 · Productos</div>
+      <h2 class="s-title">Agrega tus productos</h2>
+      <p class="s-hint">Mínimo uno. Pon lo que sepas; Claude redacta y pule las descripciones.</p>
+      <div id="productos-list"></div>
+      <button type="button" class="add-producto" id="addProducto">+ Agregar otro producto</button>
+    </section>
+
+    <!-- 6. CONTENIDO -->
+    <section class="step" data-step="6">
+      <div class="s-kicker">Paso 6 · Contenido</div>
+      <h2 class="s-title">Los textos que venden</h2>
+      <p class="s-hint">Lo esencial para que la tienda hable como tu marca. Todo opcional, pero ayuda.</p>
+      <div class="field">
+        <label for="f-cont-propuesta">Propuesta de valor <span class="opt">(¿por qué comprarte a ti?)</span></label>
+        <textarea class="text-input" id="f-cont-propuesta" placeholder="Ej: diseño premium a precio justo, hecho para durar"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-cont-sobre">Sobre la marca <span class="opt">(opcional)</span></label>
+        <textarea class="text-input" id="f-cont-sobre" placeholder="Ej: nacimos en Medellín con la idea de que el buen diseño no tiene que ser caro"></textarea>
+      </div>
+      <div class="field">
+        <label for="f-cont-envios">Envíos y devoluciones <span class="opt">(opcional)</span></label>
+        <input type="text" class="text-input" id="f-cont-envios" placeholder="Ej: envío gratis sobre 200.000, devoluciones en 30 días">
+      </div>
+    </section>
+
+    <!-- 7. EXTRAS -->
+    <section class="step" data-step="7">
+      <div class="s-kicker">Paso 7 · Detalles finales</div>
+      <h2 class="s-title">Idioma, pagos y promos</h2>
+      <div class="field">
+        <label>Idioma de la tienda</label>
+        <div class="options" data-single="extra_idioma">
+          <button type="button" class="option-btn" data-value="Español"><span class="opt-label">Español</span></button>
+          <button type="button" class="option-btn" data-value="Inglés"><span class="opt-label">Inglés</span></button>
+          <button type="button" class="option-btn" data-value="Español e inglés"><span class="opt-label">Español e inglés</span></button>
+        </div>
+      </div>
+      <div class="field">
+        <label>Medios de pago <span class="opt">(marca los que uses)</span></label>
+        <div class="multi-options" data-multi="extra_pagos">
+          <button type="button" class="multi-opt" data-value="Wompi">Wompi</button>
+          <button type="button" class="multi-opt" data-value="Mercado Pago">Mercado Pago</button>
+          <button type="button" class="multi-opt" data-value="PayU">PayU</button>
+          <button type="button" class="multi-opt" data-value="Tarjeta de crédito">Tarjeta</button>
+          <button type="button" class="multi-opt" data-value="PayPal">PayPal</button>
+          <button type="button" class="multi-opt" data-value="Pago contra entrega">Contra entrega</button>
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-extra-descuentos">Promociones o descuentos <span class="opt">(opcional)</span></label>
+        <input type="text" class="text-input" id="f-extra-descuentos" placeholder="Ej: 10% en la primera compra con el código BIENVENIDA">
+      </div>
+    </section>
+
+    <!-- OUTPUT -->
+    <section class="step" data-step="output" data-skip-validate>
+      <div class="output-head">
+        <div class="check-circle">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <div>
+          <div class="s-kicker" style="margin-bottom:0.3rem">Listo</div>
+          <h2 class="s-title" style="margin-bottom:0;font-size:clamp(1.5rem,3.5vw,2.1rem)">Tu brief está listo</h2>
+        </div>
+      </div>
+      <div class="json-box"><pre id="jsonOutput"></pre></div>
+      <div class="out-actions">
+        <button class="btn-copy" id="btnCopy">
+          <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+          <span id="copyLabel">Copiar brief para Claude</span>
+        </button>
+        <button class="btn-ghost" id="btnEdit">Volver a editar</button>
+      </div>
+      <div class="instruccion">
+        <b>Cómo usarlo:</b> abre Claude con tu tienda de Shopify conectada por <code>Shopify CLI</code>, pega este brief y dile:
+        <b>"Móntame esta tienda en Shopify siguiendo este brief: crea los productos, las colecciones, las descripciones y deja la página principal con estas secciones."</b> Claude hace el resto.
+      </div>
+    </section>
+
+  </div>
+
+  <div class="nav-actions">
+    <button class="nav-btn nav-btn-prev" id="btnPrev" style="display:none">Atrás</button>
+    <button class="nav-btn nav-btn-next" id="btnNext" style="display:none">Continuar</button>
+  </div>
+  <button class="reset-link" id="btnReset">Empezar de nuevo</button>
+  <div class="key-hint">Presiona <kbd>Enter</kbd> para continuar</div>
+
+  <script>
+    const STORE_KEY = 'brief-tienda-shopify-v1';
+    const steps = Array.from(document.querySelectorAll('.step'));
+    let current = 0;
+
+    const elPrev = document.getElementById('btnPrev');
+    const elNext = document.getElementById('btnNext');
+    const elProgress = document.getElementById('progressFill');
+    const elCount = document.getElementById('stepCount');
+    // pasos "de contenido" = todos menos intro y output
+    const contentTotal = steps.filter(s => !s.dataset.skipValidate).length;
+
+    // ---------- Single-select ----------
+    document.querySelectorAll('[data-single]').forEach(group => {
+      group.querySelectorAll('.option-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected');
+          saveState();
+        });
+      });
+    });
+    // ---------- Multi-select ----------
+    document.querySelectorAll('[data-multi]').forEach(group => {
+      group.querySelectorAll('.multi-opt').forEach(btn => {
+        btn.addEventListener('click', () => { btn.classList.toggle('selected'); saveState(); });
+      });
+    });
+
+    // ---------- Productos repeater ----------
+    const prodList = document.getElementById('productos-list');
+    function addProducto(data){
+      data = data || {};
+      const card = document.createElement('div');
+      card.className = 'producto-card';
+      card.innerHTML =
+        '<div class="producto-head"><span class="producto-num"></span>'+
+        '<button type="button" class="producto-remove">Quitar</button></div>'+
+        '<input class="text-input prod-nombre" placeholder="Nombre del producto">'+
+        '<div class="prod-row">'+
+          '<input class="text-input prod-precio" placeholder="Precio (ej: 320.000)">'+
+          '<input class="text-input prod-coleccion" placeholder="Colección (ej: Gafas de sol)">'+
+        '</div>'+
+        '<textarea class="text-input prod-desc" placeholder="Descripción corta (qué es, para quién)"></textarea>';
+      card.querySelector('.prod-nombre').value = data.nombre || '';
+      card.querySelector('.prod-precio').value = data.precio || '';
+      card.querySelector('.prod-coleccion').value = data.coleccion || '';
+      card.querySelector('.prod-desc').value = data.descripcion || '';
+      card.querySelector('.producto-remove').addEventListener('click', () => {
+        card.remove(); renumberProductos(); saveState();
+      });
+      card.querySelectorAll('input,textarea').forEach(el => el.addEventListener('input', saveState));
+      prodList.appendChild(card);
+      renumberProductos();
+    }
+    function renumberProductos(){
+      prodList.querySelectorAll('.producto-num').forEach((el,i) => el.textContent = 'Producto ' + (i+1));
+    }
+    function collectProductos(){
+      const arr = [];
+      prodList.querySelectorAll('.producto-card').forEach(card => {
+        const nombre = card.querySelector('.prod-nombre').value.trim();
+        const precio = card.querySelector('.prod-precio').value.trim();
+        const coleccion = card.querySelector('.prod-coleccion').value.trim();
+        const descripcion = card.querySelector('.prod-desc').value.trim();
+        if (nombre || precio || descripcion || coleccion) arr.push({ nombre, precio, descripcion, coleccion });
+      });
+      return arr;
+    }
+    document.getElementById('addProducto').addEventListener('click', () => addProducto());
+
+    // ---------- Navegación ----------
+    function show(i){
+      steps.forEach((s,idx) => s.classList.toggle('active', idx === i));
+      current = i;
+      const step = steps[current];
+      const isIntro = step.dataset.step === 'intro';
+      const isOutput = step.dataset.step === 'output';
+
+      elPrev.style.display = (current > 0 && !isOutput) ? 'inline-flex' : 'none';
+      elNext.style.display = (!isIntro && !isOutput) ? 'inline-flex' : 'none';
+
+      // contador y barra solo sobre pasos de contenido
+      if (isIntro){ elProgress.style.width = '0%'; elCount.textContent = ''; }
+      else if (isOutput){ elProgress.style.width = '100%'; elCount.textContent = 'Completo'; }
+      else {
+        const n = parseInt(step.dataset.step);
+        elProgress.style.width = (n / contentTotal * 100) + '%';
+        elCount.textContent = n + ' / ' + contentTotal;
+        elNext.textContent = (n === contentTotal) ? 'Generar brief' : 'Continuar';
+      }
+      step.scrollTop = 0;
+      window.scrollTo(0,0);
+      saveState();
+    }
+    function validate(i){
+      const step = steps[i];
+      if (step.dataset.skipValidate) return true;
+      const n = step.dataset.step;
+      // requeridos mínimos
+      if (n === '1'){
+        if (!val('f-marca-nombre')){ flash('f-marca-nombre'); return false; }
+        if (!val('f-marca-vende')){ flash('f-marca-vende'); return false; }
+      }
+      if (n === '5'){
+        if (collectProductos().length === 0){
+          // si no agregó nada, exige al menos un producto con nombre
+          const first = prodList.querySelector('.prod-nombre');
+          if (first) flashEl(first);
+          return false;
+        }
+      }
+      return true;
+    }
+    function next(){
+      if (!validate(current)) return;
+      const goingToOutput = steps[current+1] && steps[current+1].dataset.step === 'output';
+      if (goingToOutput) buildBrief();
+      if (current+1 < steps.length) show(current+1);
+    }
+    function prev(){ if (current > 0) show(current-1); }
+
+    elNext.addEventListener('click', next);
+    elPrev.addEventListener('click', prev);
+    document.getElementById('btnStart').addEventListener('click', () => show(1));
+    document.getElementById('btnEdit').addEventListener('click', () => show(contentTotal)); // vuelve al último paso de contenido
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey){
+        const tag = document.activeElement.tagName;
+        if (tag === 'TEXTAREA') return;
+        const step = steps[current];
+        if (step.dataset.step === 'intro'){ e.preventDefault(); show(1); return; }
+        if (step.dataset.step === 'output') return;
+        e.preventDefault(); next();
+      }
+    });
+
+    // ---------- Helpers de lectura ----------
+    function val(id){ const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+    function single(name){
+      const g = document.querySelector('[data-single="'+name+'"]');
+      if (!g) return '';
+      const sel = g.querySelector('.option-btn.selected');
+      return sel ? sel.dataset.value : '';
+    }
+    function multi(name){
+      const g = document.querySelector('[data-multi="'+name+'"]');
+      if (!g) return [];
+      return Array.from(g.querySelectorAll('.multi-opt.selected')).map(b => b.dataset.value);
+    }
+    function flash(id){ flashEl(document.getElementById(id)); }
+    function flashEl(el){
+      if (!el) return;
+      el.focus();
+      el.style.borderColor = '#EF4444';
+      setTimeout(() => { el.style.borderColor = ''; }, 1200);
+    }
+
+    // ---------- Construir el brief JSON ----------
+    function buildBriefObject(){
+      const obj = {
+        marca: {
+          nombre: val('f-marca-nombre'),
+          vende: val('f-marca-vende'),
+          cliente_ideal: val('f-marca-cliente')
+        },
+        estilo: {
+          tono: single('estilo_tono'),
+          tipografia: single('estilo_tipografia'),
+          color_principal: document.getElementById('f-color-1').value,
+          color_acento: document.getElementById('f-color-2').value,
+          notas_color: val('f-color-notas')
+        },
+        referencias: {
+          tiendas: val('f-ref-tiendas'),
+          vibe: val('f-ref-vibe')
+        },
+        layout: {
+          secciones: multi('layout_secciones')
+        },
+        productos: collectProductos(),
+        contenido: {
+          propuesta_valor: val('f-cont-propuesta'),
+          sobre_la_marca: val('f-cont-sobre'),
+          envios_devoluciones: val('f-cont-envios')
+        },
+        extras: {
+          idioma: single('extra_idioma'),
+          medios_pago: multi('extra_pagos'),
+          promociones: val('f-extra-descuentos')
+        }
+      };
+      return obj;
+    }
+    let lastJSON = '';
+    function buildBrief(){
+      const obj = buildBriefObject();
+      lastJSON = JSON.stringify(obj, null, 2);
+      document.getElementById('jsonOutput').innerHTML = highlight(lastJSON);
+    }
+    function highlight(json){
+      return json
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+        .replace(/"([^"]+)":/g, '<span class="jk">"$1"</span>:')
+        .replace(/: "([^"]*)"/g, ': <span class="js">"$1"</span>');
+    }
+
+    // ---------- Copiar ----------
+    document.getElementById('btnCopy').addEventListener('click', async () => {
+      try{
+        await navigator.clipboard.writeText(lastJSON);
+        const lbl = document.getElementById('copyLabel');
+        lbl.textContent = 'Copiado';
+        setTimeout(() => { lbl.textContent = 'Copiar brief para Claude'; }, 1800);
+      }catch(e){
+        // fallback
+        const ta = document.createElement('textarea');
+        ta.value = lastJSON; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        document.getElementById('copyLabel').textContent = 'Copiado';
+      }
+    });
+
+    // ---------- Persistencia ----------
+    function saveState(){
+      const state = {
+        current,
+        fields: {
+          'f-marca-nombre': val('f-marca-nombre'),
+          'f-marca-vende': val('f-marca-vende'),
+          'f-marca-cliente': val('f-marca-cliente'),
+          'f-color-1': document.getElementById('f-color-1').value,
+          'f-color-2': document.getElementById('f-color-2').value,
+          'f-color-notas': val('f-color-notas'),
+          'f-ref-tiendas': val('f-ref-tiendas'),
+          'f-ref-vibe': val('f-ref-vibe'),
+          'f-cont-propuesta': val('f-cont-propuesta'),
+          'f-cont-sobre': val('f-cont-sobre'),
+          'f-cont-envios': val('f-cont-envios'),
+          'f-extra-descuentos': val('f-extra-descuentos')
+        },
+        single: {
+          estilo_tono: single('estilo_tono'),
+          estilo_tipografia: single('estilo_tipografia'),
+          extra_idioma: single('extra_idioma')
+        },
+        multi: {
+          layout_secciones: multi('layout_secciones'),
+          extra_pagos: multi('extra_pagos')
+        },
+        productos: collectProductos()
+      };
+      try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); }catch(e){}
+    }
+    function loadState(){
+      let raw; try{ raw = localStorage.getItem(STORE_KEY); }catch(e){ return false; }
+      if (!raw) return false;
+      let st; try{ st = JSON.parse(raw); }catch(e){ return false; }
+      Object.entries(st.fields || {}).forEach(([id,v]) => { const el = document.getElementById(id); if (el) el.value = v; });
+      Object.entries(st.single || {}).forEach(([name,v]) => {
+        if (!v) return;
+        const g = document.querySelector('[data-single="'+name+'"]');
+        if (g) g.querySelectorAll('.option-btn').forEach(b => { if (b.dataset.value === v) b.classList.add('selected'); });
+      });
+      Object.entries(st.multi || {}).forEach(([name,vals]) => {
+        const g = document.querySelector('[data-multi="'+name+'"]');
+        if (g && Array.isArray(vals)) g.querySelectorAll('.multi-opt').forEach(b => { if (vals.includes(b.dataset.value)) b.classList.add('selected'); });
+      });
+      (st.productos || []).forEach(p => addProducto(p));
+      return true;
+    }
+
+    document.getElementById('btnReset').addEventListener('click', () => {
+      try{ localStorage.removeItem(STORE_KEY); }catch(e){}
+      location.reload();
+    });
+
+    // ---------- Init ----------
+    document.querySelectorAll('.text-input').forEach(el => el.addEventListener('input', saveState));
+    document.querySelectorAll('input[type=color]').forEach(el => el.addEventListener('input', saveState));
+
+    const restored = loadState();
+    if (prodList.children.length === 0) addProducto(); // siempre al menos una tarjeta
+    show(0); // siempre arranca en intro
+  </script>
+</body>
+</html>
