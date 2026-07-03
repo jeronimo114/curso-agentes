@@ -93,7 +93,15 @@
     // ============================================================
 
     const params = new URLSearchParams(location.search);
-    const src = params.get('src') || WHEP_URL;
+    // Preferred: ?h=<tunnel-host> — just the hostname, so the /live/whep path is
+    // built here in code and can't be mangled by the browser/extensions in transit.
+    // Optional: ?stream=<name> if the MediaMTX path isn't the default "live".
+    // Fallbacks: ?src=<full-whep-url>, then the hardcoded constant.
+    const host = (params.get('h') || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    const streamName = params.get('stream') || 'live';
+    const src = host
+      ? ('https://' + host + '/' + streamName + '/whep')
+      : (params.get('src') || WHEP_URL);
 
     const video = document.getElementById('video');
     const statusEl = document.getElementById('status');
