@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Transmisión en vivo — Jerónimo Martínez">
+  <title>En vivo — Jerónimo Martínez</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--black:#111;--white:#fafafa;--gray-400:#a1a1aa;--gray-600:#52525b;--live:#e0245e}
+    html,body{height:100%}
+    body{font-family:system-ui,-apple-system,sans-serif;background:#000;color:var(--white);overflow:hidden}
+
+    #stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000}
+    video{width:100%;height:100%;object-fit:contain;background:#000}
+
+    /* Top bar */
+    .bar{position:fixed;top:0;left:0;right:0;display:flex;align-items:center;gap:.75rem;
+         padding:1rem 1.25rem;z-index:20;
+         background:linear-gradient(180deg,rgba(0,0,0,.6),transparent);
+         opacity:1;transition:opacity .4s}
+    .bar.hidden{opacity:0;pointer-events:none}
+    .status{display:inline-flex;align-items:center;gap:.5rem;font-size:.8rem;font-weight:600;
+            letter-spacing:.03em;padding:.4rem .8rem;border-radius:999px;
+            background:rgba(0,0,0,.5);backdrop-filter:blur(6px)}
+    .dot{width:9px;height:9px;border-radius:50%;background:var(--gray-400)}
+    .status.live .dot{background:var(--live);box-shadow:0 0 8px var(--live);animation:pulse 1.6s infinite}
+    .status.connecting .dot{background:#f5a623;animation:pulse 1s infinite}
+    .status.offline .dot{background:var(--gray-600)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+    .spacer{flex:1}
+    .btn{cursor:pointer;border:none;background:rgba(0,0,0,.5);backdrop-filter:blur(6px);
+         color:var(--white);width:40px;height:40px;border-radius:10px;display:inline-flex;
+         align-items:center;justify-content:center;transition:background .15s}
+    .btn:hover{background:rgba(255,255,255,.18)}
+    .btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;
+             stroke-linecap:round;stroke-linejoin:round}
+
+    /* Center overlay (start / offline messages) */
+    .overlay{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;
+             align-items:center;justify-content:center;gap:1.25rem;text-align:center;padding:2rem;
+             background:radial-gradient(circle at center,rgba(0,0,0,.55),rgba(0,0,0,.9))}
+    .overlay.hidden{display:none}
+    .overlay h1{font-size:clamp(1.5rem,5vw,2.25rem);font-weight:600;letter-spacing:-0.02em}
+    .overlay p{color:var(--gray-400);font-size:1rem;max-width:420px;line-height:1.6}
+    .play-btn{cursor:pointer;border:none;background:var(--white);color:var(--black);
+              font-family:inherit;font-size:1.05rem;font-weight:600;padding:.9rem 2rem;
+              border-radius:999px;display:inline-flex;align-items:center;gap:.6rem;
+              transition:transform .2s}
+    .play-btn:hover{transform:translateY(-2px)}
+    .play-btn svg{width:20px;height:20px;fill:currentColor}
+    .spinner{width:34px;height:34px;border:3px solid rgba(255,255,255,.2);
+             border-top-color:var(--white);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Unmute nudge */
+    .unmute{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);z-index:25;
+            cursor:pointer;border:none;background:rgba(0,0,0,.65);backdrop-filter:blur(6px);
+            color:var(--white);font-family:inherit;font-size:.9rem;font-weight:600;
+            padding:.7rem 1.4rem;border-radius:999px;display:none;align-items:center;gap:.5rem}
+    .unmute.show{display:inline-flex}
+    .unmute svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <video id="video" playsinline autoplay></video>
+  </div>
+
+  <div class="bar" id="bar">
+    <span class="status connecting" id="status"><span class="dot"></span><span id="statusText">Conectando…</span></span>
+    <span class="spacer"></span>
+    <button class="btn" id="fsBtn" title="Pantalla completa">
+      <svg viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3M3 16v3a2 2 0 002 2h3m13-5v3a2 2 0 01-2 2h-3"/></svg>
+    </button>
+  </div>
+
+  <button class="unmute" id="unmuteBtn"><svg viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/></svg>Activar sonido</button>
+
+  <div class="overlay" id="overlay">
+    <h1 id="overlayTitle">Transmisión en vivo</h1>
+    <p id="overlayText">Toca para empezar a ver.</p>
+    <button class="play-btn" id="playBtn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Ver en vivo</button>
+  </div>
+
+  <script>
+    // ============================================================
+    //  CONFIG — the only thing you ever edit.
+    //  Paste your WHEP playback URL below (from Cloudflare Stream,
+    //  MediaMTX, etc.), OR pass it in the URL: /live?src=<whep-url>
+    // ============================================================
+    const WHEP_URL = "PEGA_AQUI_TU_URL_WHEP";
+    // ============================================================
+
+    const params = new URLSearchParams(location.search);
+    const src = params.get('src') || WHEP_URL;
+
+    const video = document.getElementById('video');
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('statusText');
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayText = document.getElementById('overlayText');
+    const playBtn = document.getElementById('playBtn');
+    const unmuteBtn = document.getElementById('unmuteBtn');
+    const bar = document.getElementById('bar');
+
+    let pc = null, retry = 0, started = false, reconnectTimer = null;
+
+    function setStatus(state, text) {
+      statusEl.className = 'status ' + state;
+      statusText.textContent = text;
+    }
+    function showOverlay(title, text, spinning) {
+      overlayTitle.textContent = title;
+      overlayText.textContent = text;
+      playBtn.innerHTML = spinning
+        ? '<span class="spinner"></span>'
+        : '<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>Reintentar';
+      playBtn.style.display = spinning ? 'none' : '';
+      overlay.classList.remove('hidden');
+    }
+    function hideOverlay(){ overlay.classList.add('hidden'); }
+
+    // ---- WHEP: send SDP offer, receive SDP answer ----
+    async function waitIceGathering(pc) {
+      if (pc.iceGatheringState === 'complete') return;
+      await new Promise((resolve) => {
+        const check = () => {
+          if (pc.iceGatheringState === 'complete') {
+            pc.removeEventListener('icegatheringstatechange', check);
+            resolve();
+          }
+        };
+        pc.addEventListener('icegatheringstatechange', check);
+        // Safety timeout so we never hang forever on a stuck candidate.
+        setTimeout(resolve, 2000);
+      });
+    }
+
+    async function connect() {
+      if (!src || src === 'PEGA_AQUI_TU_URL_WHEP') {
+        setStatus('offline', 'Sin configurar');
+        showOverlay('Falta configurar la transmisión',
+          'Edita live.html y pega tu URL WHEP, o abre /live?src=TU_URL', false);
+        playBtn.style.display = 'none';
+        return;
+      }
+      clearTimeout(reconnectTimer);
+      setStatus('connecting', 'Conectando…');
+
+      try {
+        pc = new RTCPeerConnection({
+          iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }]
+        });
+        pc.addTransceiver('video', { direction: 'recvonly' });
+        pc.addTransceiver('audio', { direction: 'recvonly' });
+
+        const remote = new MediaStream();
+        pc.ontrack = (e) => {
+          remote.addTrack(e.track);
+          video.srcObject = remote;
+        };
+
+        pc.onconnectionstatechange = () => {
+          const s = pc.connectionState;
+          if (s === 'connected') {
+            retry = 0;
+            setStatus('live', 'EN VIVO');
+            hideOverlay();
+          } else if (s === 'failed' || s === 'disconnected' || s === 'closed') {
+            scheduleReconnect();
+          }
+        };
+
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        await waitIceGathering(pc);
+
+        const res = await fetch(src, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/sdp' },
+          body: pc.localDescription.sdp,
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const answer = await res.text();
+        await pc.setRemoteDescription({ type: 'answer', sdp: answer });
+      } catch (err) {
+        console.error('WHEP connect failed:', err);
+        scheduleReconnect();
+      }
+    }
+
+    function scheduleReconnect() {
+      if (pc) { try { pc.close(); } catch(_){} pc = null; }
+      if (!started) return; // don't loop before the user has pressed play
+      retry++;
+      const delay = Math.min(1000 * retry, 8000);
+      setStatus('connecting', 'Reconectando…');
+      if (retry >= 3) {
+        showOverlay('Transmisión no disponible',
+          'Esperando la señal. Se reintenta automáticamente.', true);
+      }
+      clearTimeout(reconnectTimer);
+      reconnectTimer = setTimeout(connect, delay);
+    }
+
+    // ---- Start (browsers require a user gesture for sound) ----
+    async function start() {
+      started = true;
+      video.muted = false;
+      showOverlay('Conectando…', 'Buscando la transmisión.', true);
+      await connect();
+      try {
+        await video.play();
+      } catch (_) {
+        // Autoplay-with-sound blocked: play muted, offer an unmute button.
+        video.muted = true;
+        try { await video.play(); } catch(__){}
+        unmuteBtn.classList.add('show');
+      }
+    }
+
+    playBtn.onclick = start;
+    unmuteBtn.onclick = () => {
+      video.muted = false;
+      video.play();
+      unmuteBtn.classList.remove('show');
+    };
+
+    // Fullscreen
+    document.getElementById('fsBtn').onclick = () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else document.documentElement.requestFullscreen().catch(()=>{});
+    };
+
+    // Auto-hide the top bar during playback
+    let hideTimer = null;
+    function nudgeBar() {
+      bar.classList.remove('hidden');
+      clearTimeout(hideTimer);
+      hideTimer = setTimeout(() => {
+        if (started) bar.classList.add('hidden');
+      }, 3000);
+    }
+    document.addEventListener('mousemove', nudgeBar);
+    document.addEventListener('touchstart', nudgeBar);
+    nudgeBar();
+  </script>
+</body>
+</html>
