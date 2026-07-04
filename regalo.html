@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="Gana una suscripción a Claude Code">
+<meta name="theme-color" content="#111111">
+<title>Regalo Claude · Jerónimo Martínez</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --ink:#111;--paper:#fafafa;--g100:#f4f4f5;--g400:#a1a1aa;--g600:#52525b;
+    --clay:#d97757;--clay-deep:#c15f3c;--ok:#3f9d6d;
+  }
+  html,body{height:100%}
+  body{
+    font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+    background:var(--paper);color:var(--ink);line-height:1.6;
+    -webkit-font-smoothing:antialiased;overflow-x:hidden;
+  }
+  /* animated warm backdrop */
+  .bg{position:fixed;inset:0;z-index:-1;overflow:hidden;background:var(--paper)}
+  .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.5;animation:drift 18s ease-in-out infinite}
+  .blob.a{width:60vw;height:60vw;left:-15vw;top:-10vw;background:radial-gradient(circle,#f6c9b3,transparent 70%)}
+  .blob.b{width:55vw;height:55vw;right:-15vw;bottom:-12vw;background:radial-gradient(circle,#f3d9cb,transparent 70%);animation-delay:-6s}
+  .blob.c{width:40vw;height:40vw;left:30vw;bottom:-5vw;background:radial-gradient(circle,#e9d5ff55,transparent 70%);animation-delay:-11s}
+  @keyframes drift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(4vw,3vw) scale(1.08)}66%{transform:translate(-3vw,2vw) scale(.96)}}
+
+  .wrap{max-width:520px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;justify-content:center;padding:2rem 1.4rem 3rem}
+
+  .kicker{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--clay-deep);margin-bottom:1rem}
+  .kicker .spark{width:8px;height:8px;border-radius:50%;background:var(--clay);box-shadow:0 0 12px var(--clay);animation:pulse 1.8s infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.7)}}
+
+  h1{font-size:clamp(2rem,9vw,2.9rem);font-weight:600;letter-spacing:-.03em;line-height:1.05;margin-bottom:.9rem}
+  h1 em{font-style:normal;color:var(--clay-deep)}
+  .lede{color:var(--g600);font-size:1.02rem;margin-bottom:2rem;max-width:44ch}
+  .lede b{color:var(--ink);font-weight:600}
+
+  form{display:flex;flex-direction:column;gap:1rem}
+  .field label{display:block;font-size:.78rem;font-weight:600;letter-spacing:.02em;margin-bottom:.4rem;color:var(--g600)}
+  .field input,.field textarea{
+    width:100%;font-family:inherit;font-size:1.05rem;color:var(--ink);
+    background:rgba(255,255,255,.75);border:1.5px solid #e6e2dd;border-radius:14px;
+    padding:.9rem 1rem;transition:border-color .18s, box-shadow .18s, background .18s;
+    -webkit-appearance:none;backdrop-filter:blur(4px);
+  }
+  .field textarea{resize:none;min-height:120px;line-height:1.5}
+  .field input:focus,.field textarea:focus{
+    outline:none;border-color:var(--clay);background:#fff;
+    box-shadow:0 0 0 4px rgba(217,119,87,.15);
+  }
+  .field input::placeholder,.field textarea::placeholder{color:#bbb4ac}
+  .counter{text-align:right;font-size:.72rem;color:var(--g400);margin-top:.3rem;font-variant-numeric:tabular-nums}
+  .counter.warn{color:var(--clay-deep)}
+
+  button.submit{
+    margin-top:.5rem;cursor:pointer;border:none;font-family:inherit;font-size:1.08rem;font-weight:600;
+    color:#fff;background:var(--ink);border-radius:999px;padding:1.05rem 1.5rem;
+    display:inline-flex;align-items:center;justify-content:center;gap:.6rem;
+    transition:transform .15s, background .2s, opacity .2s;
+  }
+  button.submit:hover{transform:translateY(-2px);background:#000}
+  button.submit:disabled{opacity:.55;cursor:not-allowed;transform:none}
+  button.submit .spin{width:19px;height:19px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+  button.submit.loading .spin{display:inline-block}
+  button.submit.loading .label{opacity:.85}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .fineprint{margin-top:1.1rem;font-size:.74rem;color:var(--g400);text-align:center;line-height:1.5}
+
+  .err{display:none;background:#fdecec;color:#b4362f;border:1px solid #f5c6c2;border-radius:12px;padding:.7rem .9rem;font-size:.85rem}
+  .err.show{display:block}
+
+  /* success state */
+  .done{position:fixed;inset:0;background:var(--paper);z-index:20;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;opacity:0;transition:opacity .5s}
+  .done.show{display:flex}
+  .done.in{opacity:1}
+  .check{width:96px;height:96px;border-radius:50%;background:var(--ink);display:flex;align-items:center;justify-content:center;margin-bottom:1.6rem;animation:pop .5s cubic-bezier(.2,1.3,.5,1) both}
+  .check svg{width:46px;height:46px;stroke:#fff;stroke-width:3;fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:40;stroke-dashoffset:40;animation:draw .5s .25s forwards}
+  @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+  @keyframes draw{to{stroke-dashoffset:0}}
+  .done h2{font-size:clamp(1.7rem,7vw,2.4rem);font-weight:600;letter-spacing:-.02em;margin-bottom:.7rem}
+  .done p{color:var(--g600);font-size:1.05rem;max-width:32ch;margin:0 auto .4rem}
+  .done .echo{margin-top:1.6rem;background:#fff;border:1px solid #ece7e1;border-radius:16px;padding:1rem 1.2rem;max-width:34ch;font-size:.95rem;color:var(--ink);text-align:left;box-shadow:0 8px 30px rgba(0,0,0,.05)}
+  .done .echo .lbl{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--clay-deep);font-weight:600;margin-bottom:.35rem;display:flex;align-items:center;gap:.4rem}
+  .done .again{margin-top:1.8rem;font-size:.85rem;color:var(--g600);background:none;border:none;font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+  .done .again:hover{color:var(--ink)}
+  .scanline{display:inline-flex;align-items:center;gap:.45rem;margin-top:1rem;font-size:.82rem;color:var(--g600)}
+  .scanline .d{width:6px;height:6px;border-radius:50%;background:var(--clay);animation:pulse 1.4s infinite}
+</style>
+</head>
+<body>
+  <div class="bg"><div class="blob a"></div><div class="blob b"></div><div class="blob c"></div></div>
+
+  <main class="wrap">
+    <span class="kicker"><span class="spark"></span>Regalo en vivo</span>
+    <h1>Gánate <em>Claude&nbsp;Code</em> por un año.</h1>
+    <p class="lede">Hoy regalo <b>2 suscripciones</b>. Déjame tu nombre, tu correo y —lo más importante— <b>por qué la quieres</b>. Una IA leerá todas las respuestas en vivo y elegirá a los ganadores en la pantalla. Sé original. 👀</p>
+
+    <form id="form" novalidate>
+      <div class="err" id="err"></div>
+      <div class="field">
+        <label for="nombre">Tu nombre</label>
+        <input id="nombre" name="nombre" type="text" autocomplete="name" placeholder="¿Cómo te llamas?" maxlength="80" required>
+      </div>
+      <div class="field">
+        <label for="email">Tu correo</label>
+        <input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="tu@correo.com" maxlength="120" required>
+      </div>
+      <div class="field">
+        <label for="razon">¿Por qué quieres Claude Code?</label>
+        <textarea id="razon" name="razon" placeholder="Sorpréndeme. ¿Qué construirías? ¿Para qué te cambiaría la vida?" maxlength="600" required></textarea>
+        <div class="counter" id="counter">0 / 600</div>
+      </div>
+      <button class="submit" id="submit" type="submit">
+        <span class="spin"></span><span class="label">Entrar al sorteo</span>
+      </button>
+      <p class="fineprint">Tu correo solo se usa para avisarte si ganas. Nada de spam.</p>
+    </form>
+  </main>
+
+  <section class="done" id="done">
+    <div class="check"><svg viewBox="0 0 24 24"><path d="M4 12l6 6L20 6"/></svg></div>
+    <h2>¡Estás dentro!</h2>
+    <p>Mira la pantalla grande. La IA está leyendo todas las respuestas ahora mismo.</p>
+    <div class="echo" id="echo">
+      <div class="lbl"><span class="spark" style="width:7px;height:7px"></span>Tu respuesta</div>
+      <div id="echoText"></div>
+    </div>
+    <div class="scanline"><span class="d"></span>Analizando originalidad…</div>
+    <button class="again" id="again">Enviar otra respuesta</button>
+  </section>
+
+<script>
+  // ====== CONFIG ======
+  const ENDPOINT = "https://n8n.jeroooo.com/webhook/regalo-claude";
+  // ====================
+
+  const form=document.getElementById('form');
+  const nombre=document.getElementById('nombre');
+  const email=document.getElementById('email');
+  const razon=document.getElementById('razon');
+  const counter=document.getElementById('counter');
+  const submit=document.getElementById('submit');
+  const err=document.getElementById('err');
+  const done=document.getElementById('done');
+  const echoText=document.getElementById('echoText');
+  const again=document.getElementById('again');
+
+  razon.addEventListener('input',()=>{
+    const n=razon.value.length;
+    counter.textContent=n+' / 600';
+    counter.classList.toggle('warn',n>540);
+  });
+
+  function showErr(msg){err.textContent=msg;err.classList.add('show');}
+  function clearErr(){err.classList.remove('show');}
+
+  form.addEventListener('submit',async(e)=>{
+    e.preventDefault();clearErr();
+    const data={
+      nombre:nombre.value.trim(),
+      email:email.value.trim(),
+      razon:razon.value.trim()
+    };
+    if(!data.nombre){showErr('Escribe tu nombre.');nombre.focus();return;}
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)){showErr('Escribe un correo válido.');email.focus();return;}
+    if(data.razon.length<8){showErr('Cuéntame un poco más — mínimo una frase.');razon.focus();return;}
+
+    submit.classList.add('loading');submit.disabled=true;
+    try{
+      const res=await fetch(ENDPOINT,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+      });
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      // success
+      echoText.textContent='“'+data.razon+'”';
+      done.classList.add('show');
+      requestAnimationFrame(()=>requestAnimationFrame(()=>done.classList.add('in')));
+    }catch(ex){
+      console.error(ex);
+      showErr('No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.');
+    }finally{
+      submit.classList.remove('loading');submit.disabled=false;
+    }
+  });
+
+  again.addEventListener('click',()=>{
+    done.classList.remove('in');
+    setTimeout(()=>{
+      done.classList.remove('show');
+      form.reset();counter.textContent='0 / 600';counter.classList.remove('warn');
+      nombre.focus();
+    },300);
+  });
+</script>
+</body>
+</html>
