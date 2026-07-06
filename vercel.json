@@ -2,6 +2,7 @@
   "rewrites": [
     { "source": "/alemautos", "destination": "/brief-alemautos.html" },
     { "source": "/tienda-shopify", "destination": "/tienda-shopify.html" },
+    { "source": "/guion-shopify", "destination": "/guion-shopify.html" },
     { "source": "/live", "destination": "/live.html" },
     { "source": "/regalo", "destination": "/regalo.html" },
     { "source": "/reveal", "destination": "/reveal.html" }
