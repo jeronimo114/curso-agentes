@@ -19,15 +19,62 @@
   body.reading .marker,body.reading .intencion,body.reading .refwrap,body.reading .meta-row{display:none!important}
   body.reading .spoken{font-size:2rem;line-height:1.55}
   body.reading .dictar{border-color:#d8cfbe}
+
+  /* Teleprompter */
+  body.tp{background:#0b0b0c;overflow-x:hidden}
+  body.tp .fixedtoggles,body.tp .refwrap,body.tp .meta-row,body.tp .marker,body.tp .intencion{display:none!important}
+  body.tp main{max-width:62rem;padding-top:45vh;padding-bottom:62vh}
+  body.tp h1{color:#f2ede2}
+  body.tp .blkhead{border-color:#26262a!important;opacity:.5}
+  body.tp .blkhead span,body.tp .blkhead h2,body.tp .blkhead p{color:#9a927f!important}
+  body.tp .spoken{color:#f4efe4;font-size:var(--tp-fs,3rem);line-height:1.5;margin:.2rem 0 1.15rem}
+  body.tp .dictar{border-color:#8a4636!important}
+  body.tp .spoken-dictar{color:#ffd7a0;font-size:calc(var(--tp-fs,3rem) * .82)}
+  body.tp.mirror main{transform:scaleX(-1)}
+  .tp-vignette,.tp-line,.tp-controls{display:none}
+  .tp-vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:linear-gradient(180deg,#0b0b0c 3%,rgba(11,11,12,0) 24%,rgba(11,11,12,0) 76%,#0b0b0c 97%)}
+  body.tp .tp-vignette{display:block}
+  .tp-line{position:fixed;left:0;right:0;top:42%;z-index:6;pointer-events:none;
+    border-top:2px solid rgba(201,167,106,.28);box-shadow:0 0 30px rgba(201,167,106,.10)}
+  body.tp .tp-line{display:block}
+  .tp-controls{position:fixed;left:0;right:0;bottom:0;z-index:10;
+    align-items:center;justify-content:center;gap:.4rem;flex-wrap:wrap;padding:12px 14px;
+    background:linear-gradient(transparent,rgba(0,0,0,.72));transition:opacity .45s;
+    font-family:'IBM Plex Mono',monospace}
+  body.tp .tp-controls{display:flex}
+  body.tp.tp-idle .tp-controls{opacity:0}
+  .tp-controls button{background:#1b1b1e;color:#e9e3d5;border:1px solid #34343b;
+    padding:7px 11px;border-radius:3px;font-size:12px;letter-spacing:.04em;cursor:pointer}
+  .tp-controls button:hover{background:#26262b}
+  .tp-controls .val{color:#c9a76a;min-width:3em;text-align:center;font-size:12px}
+  .tp-controls .hint{color:#6f6a5e;font-size:11px;margin-left:.5rem;max-width:22rem}
+  .tp-play{background:#c9a76a!important;color:#161512!important;font-weight:600;min-width:5.2em}
+
 </style>
 </head>
 <body class="bg-ivory text-ink font-sans antialiased">
-  <div class="fixed top-4 right-4 z-20">
+  <div class="fixedtoggles fixed top-4 right-4 z-20 flex items-center gap-2">
+    <button id="tpbtn" class="bg-ink text-ivory px-3 py-1.5 rounded-[3px] text-[11px] tracking-[.22em] uppercase hover:opacity-90">Teleprompter</button>
     <label class="flex items-center gap-2 cursor-pointer select-none bg-paper/80 backdrop-blur px-3 py-1.5 rounded-[3px] border border-line">
       <input id="rd" type="checkbox" class="accent-[#191713]">
       <span class="text-[11px] tracking-[.22em] uppercase text-taupe">Modo lectura</span>
     </label>
   </div>
+
+  <div class="tp-vignette"></div>
+  <div class="tp-line"></div>
+  <div class="tp-controls" id="tpc">
+    <button id="tp-play" class="tp-play">Play</button>
+    <button data-act="slower">vel &minus;</button><span class="val" id="tp-speed">60</span><button data-act="faster">vel &plus;</button>
+    <button data-act="smaller">A &minus;</button><button data-act="bigger">A &plus;</button>
+    <button data-act="mirror">Espejo</button>
+    <button data-act="full">Pantalla</button>
+    <button data-act="restart">Reinicio</button>
+    <button data-act="exit">Salir</button>
+    <span class="hint">Espacio: play/pausa &middot; flechas: velocidad y tamaño &middot; F: pantalla &middot; M: espejo &middot; Esc: salir</span>
+  </div>
+
 
   <main class="max-w-3xl mx-auto px-6 sm:px-8 py-16 rise">
     <p class="text-[11px] tracking-[.28em] uppercase text-bronze">Guion de video · 05</p>
@@ -36,7 +83,7 @@
 
     <div class="mt-14">
       <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">00:00</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 1 · 85s</p>
@@ -59,7 +106,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">arrancamos.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">01:25</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 2 · 90s</p>
@@ -85,7 +132,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">me dice que la tienda está vacía, que todavía no tengo productos. perfecto. eso significa que ya está conectado y puede entrar. ahora la vamos a llenar.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">02:55</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 3 · 95s</p>
@@ -108,7 +155,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">esta herramienta te la voy a dejar gratis. ya vas a ver dónde. la llenas en cinco minutos y te queda el brief listo para tu tienda. ahora se lo paso a Claude.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">04:30</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 4 · 165s</p>
@@ -136,7 +183,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">y fíjate lo que pasó. no llené un solo formulario. armé el brief en la herramienta, se lo pasé a Claude, y él hizo todo el trabajo dentro de la tienda. esa es la diferencia entre pedirle cosas sueltas y darle un brief ordenado.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">07:15</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 5 · 70s</p>
@@ -157,7 +204,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">esa es la diferencia. cuando Claude tiene las llaves de tu tienda, manejarla se vuelve una conversación. no horas de clics.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">08:25</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 6 · 60s</p>
@@ -177,7 +224,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">pasamos de una tienda vacía a una tienda lista para vender. con productos, fotos y descripciones. en lo que toma llenar un brief y dejar que Claude construya.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">09:25</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 7 · 70s</p>
@@ -194,7 +241,7 @@
 <p class="spoken text-[1.6rem] leading-[1.5] text-ink mt-4 mb-4">ese es el método. no le pidas a Claude tareas sueltas. dale el brief con la información de tu negocio y tu cliente. así, todo lo que construya va a salir apuntando a lo que de verdad vende.</p>
 </section>
 <section class="blk pt-10">
-<div class="flex items-baseline gap-5 border-t border-line pt-5">
+<div class="blkhead flex items-baseline gap-5 border-t border-line pt-5">
 <span class="font-display text-3xl md:text-4xl text-ink tabular-nums">10:35</span>
 <div>
 <p class="text-[11px] tracking-[.28em] uppercase text-bronze">BLOQUE 8 · 70s</p>
@@ -317,9 +364,54 @@
   </main>
 
   <script>
-    document.getElementById('rd').addEventListener('change',function(e){
+  (function(){
+    var rd=document.getElementById('rd');
+    if(rd)rd.addEventListener('change',function(e){
       document.body.classList.toggle('reading',e.target.checked);
       window.scrollTo({top:0,behavior:'smooth'});
     });
-  </script>
+    var tp={on:false,playing:false,speed:60,fs:3,raf:null,last:0};
+    var speedEl=document.getElementById('tp-speed');
+    var playBtn=document.getElementById('tp-play');
+    function apply(){document.documentElement.style.setProperty('--tp-fs',tp.fs.toFixed(2)+'rem');}
+    function updUI(){if(speedEl)speedEl.textContent=tp.speed;if(playBtn)playBtn.textContent=tp.playing?'Pausa':'Play';}
+    var idleT;
+    function wake(){document.body.classList.remove('tp-idle');clearTimeout(idleT);idleT=setTimeout(function(){if(tp.on&&tp.playing)document.body.classList.add('tp-idle');},2600);}
+    function step(ts){
+      if(tp.playing){
+        var dt=(ts-tp.last)/1000; if(dt>0.1)dt=0.1;
+        window.scrollBy(0,tp.speed*dt);
+        if(window.innerHeight+window.scrollY>=document.body.scrollHeight-2){tp.playing=false;updUI();}
+      }
+      tp.last=ts; tp.raf=requestAnimationFrame(step);
+    }
+    function enter(){document.body.classList.add('tp');tp.on=true;apply();updUI();window.scrollTo(0,0);wake();if(!tp.raf)tp.raf=requestAnimationFrame(step);}
+    function exit(){tp.on=false;tp.playing=false;document.body.classList.remove('tp','mirror','tp-idle');updUI();}
+    function toggle(){if(tp.on){tp.playing=!tp.playing;tp.last=performance.now();updUI();wake();}}
+    function full(){try{if(!document.fullscreenElement){(document.documentElement.requestFullscreen||document.documentElement.webkitRequestFullscreen).call(document.documentElement);}else if(document.exitFullscreen){document.exitFullscreen();}}catch(e){}}
+    function faster(){tp.speed=Math.min(320,tp.speed+10);updUI();wake();}
+    function slower(){tp.speed=Math.max(10,tp.speed-10);updUI();wake();}
+    function bigger(){tp.fs=Math.min(7,tp.fs+0.2);apply();wake();}
+    function smaller(){tp.fs=Math.max(1.4,tp.fs-0.2);apply();wake();}
+    var tpbtn=document.getElementById('tpbtn'); if(tpbtn)tpbtn.addEventListener('click',enter);
+    var acts={slower:slower,faster:faster,smaller:smaller,bigger:bigger,mirror:function(){document.body.classList.toggle('mirror');},full:full,restart:function(){window.scrollTo(0,0);},exit:exit};
+    document.querySelectorAll('.tp-controls [data-act]').forEach(function(b){b.addEventListener('click',function(){var f=acts[b.getAttribute('data-act')];if(f)f();});});
+    if(playBtn)playBtn.addEventListener('click',toggle);
+    document.addEventListener('mousemove',function(){if(tp.on)wake();});
+    document.addEventListener('keydown',function(e){
+      if(!tp.on)return;
+      var k=e.key;
+      if(k===' '){e.preventDefault();toggle();}
+      else if(k==='ArrowUp'){e.preventDefault();faster();}
+      else if(k==='ArrowDown'){e.preventDefault();slower();}
+      else if(k==='ArrowRight'){e.preventDefault();bigger();}
+      else if(k==='ArrowLeft'){e.preventDefault();smaller();}
+      else if(k==='f'||k==='F'){full();}
+      else if(k==='m'||k==='M'){document.body.classList.toggle('mirror');}
+      else if(k==='r'||k==='R'||k==='Home'){window.scrollTo(0,0);}
+      else if(k==='Escape'){exit();}
+    });
+    if(/[?&]tp=1/.test(location.search)||location.hash==='#teleprompter'){enter();}
+  })();
+</script>
 </body></html>
