@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Level Up con Claude — Plan del curso (Día 1, 2 y 3)</title>
+  <title>Level Up con Claude — Programa del curso</title>
+  <meta name="description" content="Level Up con Claude: en 3 sesiones aprendes a construir con IA lanzando una marca de café desde cero, de la idea al sitio web publicado. Curso práctico de ESIC Medellín.">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Sofia+Sans+Extra+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -46,68 +47,87 @@
       text-transform: uppercase; letter-spacing: 3px; font-size: 0.8rem;
       color: var(--brand-blue); margin-bottom: 0.8rem;
     }
-    h1.title { font-size: clamp(2.4rem, 7vw, 4.5rem); letter-spacing: -1.5px; margin-bottom: 1rem; }
-    .intro { font-size: 1.05rem; color: rgba(0, 19, 63, 0.6); max-width: 620px; margin-bottom: 3rem; }
+    h1.title { font-size: clamp(2.6rem, 8vw, 5rem); letter-spacing: -1.5px; margin-bottom: 1.1rem; }
+    .lead {
+      font-size: clamp(1.15rem, 2.8vw, 1.55rem); font-weight: 500;
+      color: var(--brand-blue-dark); max-width: 660px; margin-bottom: 1.8rem; line-height: 1.3;
+    }
+    .lead b { color: var(--brand-blue); }
+
+    /* Meta chips */
+    .meta-row { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2.8rem; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-family: var(--display-font); font-weight: 700; text-transform: uppercase;
+      letter-spacing: 1px; font-size: 0.74rem; color: var(--brand-blue-dark);
+      background: #fff; border: 1px solid rgba(0, 19, 63, 0.1); border-radius: 20px;
+      padding: 0.45rem 0.85rem;
+    }
+    .chip.accent { background: var(--brand-blue); color: #fff; border-color: var(--brand-blue); }
+
+    /* Context sections */
+    h2.sec { font-size: clamp(1.5rem, 4.5vw, 2.3rem); letter-spacing: -0.5px; margin: 0 0 1.1rem; }
+    .ctx { margin-bottom: 2.6rem; }
+    .ctx > p { font-size: 1.04rem; color: rgba(0, 19, 63, 0.72); max-width: 680px; }
+    .ctx > p + p { margin-top: 0.9rem; }
+
+    .obj { list-style: none; display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem 1.5rem; margin-top: 0.3rem; }
+    .obj li { display: flex; gap: 0.6rem; align-items: flex-start; font-size: 0.98rem; color: var(--brand-blue-dark); }
+    .obj svg { flex: 0 0 auto; width: 20px; height: 20px; stroke: var(--brand-blue); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; margin-top: 2px; }
+
+    .two { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+    .ctx-card { background: #fff; border: 1px solid rgba(0, 19, 63, 0.08); border-radius: 16px; padding: 1.4rem 1.5rem; box-shadow: 0 8px 26px rgba(0, 19, 63, 0.05); }
+    .ctx-card .blocklabel {
+      display: block; font-family: var(--display-font); font-weight: 800; text-transform: uppercase;
+      letter-spacing: 1.5px; font-size: 0.82rem; color: var(--brand-blue); margin-bottom: 0.55rem;
+    }
+    .ctx-card p { font-size: 0.96rem; color: rgba(0, 19, 63, 0.7); }
+    .ctx-card p + p { margin-top: 0.7rem; }
+
+    /* Outcome */
+    .outcome { background: var(--brand-blue-dark); color: #fff; border-radius: 20px; padding: clamp(1.6rem, 4vw, 2.4rem); margin: 2.8rem 0 1rem; }
+    .outcome h2 { color: #fff; font-size: clamp(1.4rem, 4vw, 2rem); margin-bottom: 1.1rem; letter-spacing: -0.5px; }
+    .outcome ul { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
+    .outcome li { display: flex; gap: 0.75rem; align-items: flex-start; font-size: 1.02rem; color: rgba(255, 255, 255, 0.92); }
+    .outcome svg { flex: 0 0 auto; width: 20px; height: 20px; stroke: var(--brand-teal); fill: none; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; margin-top: 3px; }
+
+    /* Divider */
+    .divider { display: flex; align-items: center; gap: 1rem; margin: 3.4rem 0 2.2rem; }
+    .divider .line { flex: 1; height: 1px; background: rgba(0, 19, 63, 0.14); }
+    .divider .lbl { font-family: var(--display-font); font-weight: 800; text-transform: uppercase; letter-spacing: 2px; font-size: 0.85rem; color: rgba(0, 19, 63, 0.42); }
+    .intro { font-size: 1.02rem; color: rgba(0, 19, 63, 0.6); max-width: 640px; margin-bottom: 2.4rem; }
 
     /* Day block */
     .day {
-      position: relative;
-      background: #fff;
-      border: 1px solid rgba(0, 19, 63, 0.08);
-      border-radius: 20px;
-      padding: clamp(1.5rem, 4vw, 2.5rem);
-      margin-bottom: 1.5rem;
-      box-shadow: 0 12px 36px rgba(0, 19, 63, 0.06);
-      overflow: hidden;
+      position: relative; background: #fff; border: 1px solid rgba(0, 19, 63, 0.08);
+      border-radius: 20px; padding: clamp(1.5rem, 4vw, 2.5rem); margin-bottom: 1.5rem;
+      box-shadow: 0 12px 36px rgba(0, 19, 63, 0.06); overflow: hidden;
     }
-    .day::before {
-      content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 6px;
-      background: var(--brand-blue);
-    }
+    .day::before { content: ""; position: absolute; top: 0; left: 0; bottom: 0; width: 6px; background: var(--brand-blue); }
     .day-head { display: flex; align-items: baseline; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.4rem; }
-    .day-num {
-      font-family: var(--display-font); font-weight: 800;
-      font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--brand-blue);
-      line-height: 0.8; letter-spacing: -1px;
-    }
-    .day-tool {
-      font-family: var(--display-font); font-weight: 700; text-transform: uppercase;
-      letter-spacing: 1px; font-size: 0.75rem; color: #fff;
-      background: var(--brand-blue-dark); padding: 0.3rem 0.7rem; border-radius: 20px;
-    }
+    .day-num { font-family: var(--display-font); font-weight: 800; font-size: clamp(2.2rem, 6vw, 3.4rem); color: var(--brand-blue); line-height: 0.8; letter-spacing: -1px; }
+    .day-date { font-family: var(--display-font); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.72rem; color: var(--brand-blue); background: rgba(0, 71, 233, 0.08); padding: 0.3rem 0.7rem; border-radius: 20px; }
+    .day-tool { font-family: var(--display-font); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; color: #fff; background: var(--brand-blue-dark); padding: 0.3rem 0.7rem; border-radius: 20px; }
     .day h2 { font-size: clamp(1.5rem, 4vw, 2.1rem); letter-spacing: -0.5px; margin: 0.6rem 0 0.3rem; }
     .day .sub { font-size: 0.98rem; color: rgba(0, 19, 63, 0.55); margin-bottom: 1.4rem; }
 
     .blocks { list-style: none; display: flex; flex-direction: column; gap: 0.9rem; margin-bottom: 1.5rem; }
     .blocks li { display: flex; gap: 0.9rem; align-items: flex-start; }
-    .blocks .t {
-      flex: 0 0 auto; min-width: 64px;
-      font-family: var(--display-font); font-weight: 700; font-size: 0.8rem;
-      letter-spacing: 0.5px; color: var(--brand-blue);
-      background: rgba(0, 71, 233, 0.08); border-radius: 8px;
-      padding: 0.25rem 0.55rem; text-align: center; margin-top: 0.1rem;
-    }
+    .blocks .t { flex: 0 0 auto; min-width: 64px; font-family: var(--display-font); font-weight: 700; font-size: 0.8rem; letter-spacing: 0.5px; color: var(--brand-blue); background: rgba(0, 71, 233, 0.08); border-radius: 8px; padding: 0.25rem 0.55rem; text-align: center; margin-top: 0.1rem; }
     .blocks .d { flex: 1 1 auto; }
     .blocks .d strong { display: block; font-weight: 700; font-size: 1rem; color: var(--brand-blue-dark); margin-bottom: 0.1rem; }
     .blocks .d span { font-size: 0.93rem; color: rgba(0, 19, 63, 0.6); }
 
-    .deliverable {
-      display: flex; gap: 0.8rem; align-items: flex-start;
-      background: rgba(10, 228, 195, 0.12);
-      border: 1px solid rgba(10, 228, 195, 0.4);
-      border-radius: 14px; padding: 1rem 1.2rem;
-    }
+    .deliverable { display: flex; gap: 0.8rem; align-items: flex-start; background: rgba(10, 228, 195, 0.12); border: 1px solid rgba(10, 228, 195, 0.4); border-radius: 14px; padding: 1rem 1.2rem; }
     .deliverable svg { flex: 0 0 auto; width: 22px; height: 22px; stroke: #06b59b; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
-    .deliverable .dl-txt strong {
-      display: block; font-family: var(--display-font); text-transform: uppercase;
-      letter-spacing: 1px; font-size: 0.75rem; color: #06937f; margin-bottom: 0.2rem;
-    }
+    .deliverable .dl-txt strong { display: block; font-family: var(--display-font); text-transform: uppercase; letter-spacing: 1px; font-size: 0.75rem; color: #06937f; margin-bottom: 0.2rem; }
     .deliverable .dl-txt span { font-size: 0.95rem; color: var(--brand-blue-dark); }
 
-    footer {
-      margin-top: 3rem; padding-top: 2rem;
-      border-top: 1px solid rgba(0, 19, 63, 0.1);
-      font-size: 0.8rem; color: rgba(0, 19, 63, 0.4);
+    footer { margin-top: 3rem; padding-top: 2rem; border-top: 1px solid rgba(0, 19, 63, 0.1); font-size: 0.8rem; color: rgba(0, 19, 63, 0.4); }
+
+    @media (max-width: 620px) {
+      .obj { grid-template-columns: 1fr; }
+      .two { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -115,14 +135,74 @@
   <div class="wrap">
     <a href="index.html" class="home-link">← Level Up con Claude</a>
 
-    <span class="kicker">Plan del curso</span>
-    <h1 class="title">Qué hacemos<br>cada día</h1>
-    <p class="intro">El curso es un solo proyecto que avanza sesión a sesión: lanzar una marca de café desde cero. Cada día construye sobre los entregables del anterior. Los tiempos son aproximados.</p>
+    <span class="kicker">Programa del curso</span>
+    <h1 class="title">Level Up<br>con Claude</h1>
+    <p class="lead">Aprende a <b>construir con IA de verdad</b>. En 3 sesiones lanzas una marca de café desde cero: de la idea al sitio web publicado y conectado a su base de datos.</p>
+
+    <div class="meta-row">
+      <span class="chip accent">3 sesiones · 4 h c/u</span>
+      <span class="chip">22 ago · 29 ago · 5 sep 2026</span>
+      <span class="chip">Presencial · Medellín</span>
+      <span class="chip">100% práctico</span>
+      <span class="chip">Sin saber programar</span>
+    </div>
+
+    <!-- DE QUÉ VA -->
+    <div class="ctx">
+      <h2 class="sec">De qué va el curso</h2>
+      <p>Casi todo el mundo ya usa la IA para <em>preguntar</em>. Este curso te lleva al siguiente nivel: usar la IA para <strong>construir</strong>. Aprendes a manejar las herramientas fundamentales de Claude —Chat, Cowork, Design y Code— trabajando sobre un solo proyecto real que crece sesión a sesión.</p>
+      <p>Ese proyecto es lanzar una <strong>marca de café colombiano</strong> desde cero: investigar el mercado, estudiar a la competencia, diseñar la marca, construir el sitio web y publicarlo en internet. Al final no te llevas teoría: te llevas algo funcionando, y el método para volver a hacerlo con cualquier idea tuya.</p>
+    </div>
+
+    <!-- QUÉ VAS A APRENDER -->
+    <div class="ctx">
+      <h2 class="sec">Qué vas a aprender</h2>
+      <ul class="obj">
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Las herramientas fundamentales de Claude: Chat, Cowork, Design y Code, y cuándo usar cada una.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Prompting efectivo y Markdown para darle el mejor contexto al modelo.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Investigar un mercado y analizar a la competencia con IA.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Diseñar una marca y un manual de marca para web y redes.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Construir y publicar un sitio web real con base de datos.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Crear tus propias herramientas internas para trabajar mejor con IA.</span></li>
+      </ul>
+    </div>
+
+    <!-- CÓMO FUNCIONA / PARA QUIÉN -->
+    <div class="ctx">
+      <h2 class="sec">Cómo funciona</h2>
+      <div class="two">
+        <div class="ctx-card">
+          <span class="blocklabel">La dinámica</span>
+          <p>Tres sesiones de cuatro horas, <strong>100% prácticas</strong>: aprendes construyendo. Todo gira en torno a un mismo proyecto, y cada sesión deja entregables concretos que alimentan la siguiente.</p>
+          <p>Presencial y con acompañamiento de los instructores en cada paso.</p>
+        </div>
+        <div class="ctx-card">
+          <span class="blocklabel">Para quién es</span>
+          <p>Para perfiles de <strong>negocio y técnicos</strong> por igual. <strong>No necesitas saber programar</strong>: las herramientas están pensadas para que cualquiera construya.</p>
+          <p>Ideal para emprendedores, marketers, líderes y equipos que quieren pasar de usar la IA a crear con ella.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- CON QUÉ SALES -->
+    <div class="outcome">
+      <h2>Con qué sales</h2>
+      <ul>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Una tienda de café <strong>funcional y publicada</strong> en internet, con su base de datos.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Un <strong>manual de marca</strong> reutilizable para web y redes sociales.</span></li>
+        <li><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>Un <strong>método y un kit de prompts y herramientas</strong> para seguir construyendo lo que quieras.</span></li>
+      </ul>
+    </div>
+
+    <!-- DÍA A DÍA -->
+    <div class="divider"><span class="lbl">Qué hacemos cada día</span><span class="line"></span></div>
+    <p class="intro">El curso es un solo proyecto que avanza sesión a sesión. Cada día construye sobre los entregables del anterior. Los tiempos son aproximados.</p>
 
     <!-- DÍA 1 -->
     <div class="day">
       <div class="day-head">
         <span class="day-num">Día 1</span>
+        <span class="day-date">22 ago</span>
         <span class="day-tool">Claude Web · Chat</span>
       </div>
       <h2>Contexto, prompting y primer research</h2>
@@ -149,6 +229,7 @@
     <div class="day">
       <div class="day-head">
         <span class="day-num">Día 2</span>
+        <span class="day-date">29 ago</span>
         <span class="day-tool">Claude Cowork · Design</span>
       </div>
       <h2>Investiga a la competencia y diseña tu marca</h2>
@@ -175,6 +256,7 @@
     <div class="day">
       <div class="day-head">
         <span class="day-num">Día 3</span>
+        <span class="day-date">5 sep</span>
         <span class="day-tool">Claude Code</span>
       </div>
       <h2>Construye, despliega y conecta tu tienda</h2>
@@ -197,7 +279,7 @@
     </div>
 
     <footer>
-      Plan del curso · Level Up con Claude · 2026
+      Programa del curso · Level Up con Claude · ESIC Medellín · 2026
     </footer>
   </div>
 </body>
