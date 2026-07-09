@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Automatiza tu primera tarea con un agente de IA | Jerónimo Martínez</title>
+  <meta name="description" content="La guía para automatizar tu primera tarea con un agente de IA (Claude Code, Codex o Antigravity): un reporte, una hoja de Excel o un PDF. Con el generador del prompt exacto para la tuya.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg:#0a0a0a;--bg-soft:#141414;--white:#FAFAFA;
+      --accent:#fbbf24;--accent-dark:#d99e0b;--claude:#D97757;
+      --gray-300:#d4d4d8;--gray-400:#a1a1aa;--gray-600:#52525b;
+      --success:#10B981;--line:rgba(255,255,255,0.1);
+    }
+    html{scroll-behavior:smooth}
+    body{
+      font-family:'Space Grotesk',system-ui,-apple-system,sans-serif;
+      background:var(--bg);color:var(--white);overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;line-height:1.5;
+    }
+    .wrap{max-width:940px;margin:0 auto;padding:0 1.5rem}
+    a{color:inherit}
+    .mono{font-family:'JetBrains Mono',monospace}
+
+    /* Header */
+    .brand{position:fixed;top:1.3rem;right:1.6rem;font-weight:600;font-size:0.9rem;color:var(--gray-400);z-index:100}
+    .brand b{color:var(--accent)}
+
+    /* Hero */
+    header.hero{padding:6rem 0 2.5rem;text-align:center}
+    .kicker{font-size:0.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.16em;font-weight:600;margin-bottom:1.1rem}
+    h1{font-size:clamp(2rem,5.4vw,3.4rem);font-weight:700;line-height:1.08;letter-spacing:-0.03em;margin-bottom:1.1rem}
+    h1 .hl{background:linear-gradient(transparent 62%,rgba(251,191,36,0.4) 62%)}
+    .sub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--gray-300);max-width:620px;margin:0 auto 2rem}
+
+    /* Video */
+    .video-card{position:relative;max-width:900px;margin:0 auto;border-radius:18px;overflow:hidden;
+      border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,0.5),0 0 0 1px rgba(251,191,36,0.08)}
+    .video-card video{display:block;width:100%;height:auto;background:#f3ebdc}
+
+    /* Secciones */
+    section{padding:3.2rem 0}
+    .s-head{text-align:center;margin-bottom:2.2rem}
+    .s-head .kicker{margin-bottom:0.7rem}
+    h2{font-size:clamp(1.5rem,3.6vw,2.1rem);font-weight:700;letter-spacing:-0.02em;line-height:1.15}
+    .s-head p{color:var(--gray-400);margin-top:0.6rem;max-width:560px;margin-left:auto;margin-right:auto}
+
+    /* Pasos */
+    .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .step{background:var(--bg-soft);border:1px solid var(--line);border-radius:16px;padding:1.6rem 1.4rem}
+    .step .n{width:44px;height:44px;border-radius:12px;background:var(--accent);color:#0a0a0a;font-weight:700;
+      font-size:1.3rem;display:flex;align-items:center;justify-content:center;margin-bottom:1rem}
+    .step h3{font-size:1.2rem;font-weight:600;margin-bottom:0.4rem}
+    .step p{color:var(--gray-400);font-size:0.94rem}
+
+    /* Ejemplos */
+    .examples{display:flex;flex-direction:column;gap:1rem}
+    .ex{background:var(--bg-soft);border:1px solid var(--line);border-radius:16px;padding:1.5rem 1.5rem 1.3rem}
+    .ex-top{display:flex;align-items:center;gap:0.8rem;margin-bottom:0.9rem}
+    .ex-tag{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--accent);
+      border:1px solid rgba(251,191,36,0.35);padding:0.25rem 0.6rem;border-radius:999px}
+    .ex h3{font-size:1.15rem;font-weight:600}
+    .prompt-box{position:relative;background:#0d0d0d;border:1px solid var(--line);border-radius:12px;
+      padding:1.05rem 1.15rem;font-size:0.92rem;color:var(--gray-300);line-height:1.55}
+    .prompt-box .gt{color:var(--claude);font-weight:700}
+    .copy-btn{position:absolute;top:0.7rem;right:0.7rem;background:rgba(255,255,255,0.06);border:1px solid var(--line);
+      color:var(--gray-300);font-family:'JetBrains Mono',monospace;font-size:0.72rem;padding:0.35rem 0.65rem;
+      border-radius:8px;cursor:pointer;transition:all 0.2s}
+    .copy-btn:hover{border-color:var(--accent);color:var(--accent)}
+    .copy-btn.ok{color:var(--success);border-color:var(--success)}
+
+    /* Generador */
+    .gen{background:linear-gradient(180deg,rgba(251,191,36,0.06),rgba(251,191,36,0.01));
+      border:1px solid rgba(251,191,36,0.2);border-radius:20px;padding:2rem 1.8rem}
+    .gen label{display:block;font-size:0.85rem;color:var(--gray-300);margin:1.1rem 0 0.5rem;font-weight:500}
+    .gen label:first-child{margin-top:0}
+    .gen input,.gen textarea,.gen select{width:100%;padding:0.9rem 1.1rem;background:rgba(255,255,255,0.04);
+      border:2px solid var(--line);border-radius:12px;color:var(--white);font-size:1rem;font-family:inherit;
+      outline:none;transition:all 0.2s}
+    .gen input:focus,.gen textarea:focus,.gen select:focus{border-color:var(--accent);background:rgba(251,191,36,0.06)}
+    .gen textarea{min-height:80px;resize:vertical;line-height:1.5}
+    .gen select{appearance:none;cursor:pointer}
+    .gen-btn{margin-top:1.5rem;width:100%;padding:1rem;background:var(--accent);color:#0a0a0a;border:none;
+      border-radius:12px;font-family:inherit;font-size:1.05rem;font-weight:700;cursor:pointer;transition:all 0.2s}
+    .gen-btn:hover{background:var(--accent-dark)}
+    .gen-out{margin-top:1.5rem;display:none}
+    .gen-out.show{display:block}
+    .gen-out .prompt-box{background:#0d0d0d}
+
+    /* Herramientas */
+    .tools{display:flex;gap:0.7rem;justify-content:center;flex-wrap:wrap;margin-top:0.4rem}
+    .tool{background:var(--bg-soft);border:1px solid var(--line);border-radius:999px;padding:0.6rem 1.3rem;
+      font-weight:600;font-size:0.95rem}
+    .tool span{color:var(--accent)}
+
+    /* CTA */
+    .cta{background:var(--bg-soft);border:1px solid var(--line);border-radius:22px;padding:2.6rem 2rem;text-align:center;margin-bottom:1rem}
+    .cta h2{margin-bottom:0.7rem}
+    .cta p{color:var(--gray-400);max-width:520px;margin:0 auto 1.6rem}
+    .cta-btn{display:inline-block;background:var(--accent);color:#0a0a0a;font-weight:700;font-size:1.05rem;
+      padding:1rem 2rem;border-radius:12px;text-decoration:none;transition:all 0.2s}
+    .cta-btn:hover{transform:translateY(-2px);background:var(--accent-dark)}
+
+    footer{text-align:center;padding:2.5rem 0 3rem;color:var(--gray-600);font-size:0.85rem}
+    footer a{color:var(--gray-400);text-decoration:none}
+    footer a:hover{color:var(--accent)}
+
+    @media(max-width:720px){
+      .steps{grid-template-columns:1fr}
+      header.hero{padding:5rem 0 1.5rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="brand"><a href="https://jeroooo.com">jeroooo<b>.com</b></a></div>
+
+  <header class="hero">
+    <div class="wrap">
+      <div class="kicker">Guía gratis</div>
+      <h1>Automatiza tu <span class="hl">primera tarea</span><br>con un agente de IA</h1>
+      <p class="sub">No necesitas saber programar. Necesitas saber explicar. Mira el video, copia el método y genera el prompt exacto para tu tarea.</p>
+    </div>
+    <div class="wrap">
+      <div class="video-card">
+        <video controls playsinline preload="metadata" poster="vox-primera-poster.jpg">
+          <source src="vox-primera-tarea.mp4" type="video/mp4">
+          Tu navegador no soporta video.
+        </video>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker">El método</div>
+        <h2>Tres pasos, con cualquier herramienta</h2>
+        <p>Sirve igual con Claude Code, Codex o Antigravity. Lo que cambia no es la herramienta, es cómo le hablas.</p>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="n">1</div>
+          <h3>Dale contexto</h3>
+          <p>Dile quién eres y en qué trabajas. Entre más sepa de ti, mejor hace la tarea.</p>
+        </div>
+        <div class="step">
+          <div class="n">2</div>
+          <h3>Dile la tarea</h3>
+          <p>Explícala con palabras normales, como se la dirías a un asistente nuevo. Sin términos técnicos.</p>
+        </div>
+        <div class="step">
+          <div class="n">3</div>
+          <h3>Déjalo trabajar</h3>
+          <p>El agente lo hace de principio a fin y te entrega el resultado listo para usar.</p>
+        </div>
+      </div>
+      <div class="tools">
+        <div class="tool"><span>#</span> Claude Code</div>
+        <div class="tool"><span>#</span> Codex</div>
+        <div class="tool"><span>#</span> Antigravity</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker">Tres ejemplos</div>
+        <h2>Copia estos prompts y pruébalos</h2>
+        <p>Pega el prompt en tu agente, cambia lo que está entre corchetes por lo tuyo, y déjalo trabajar.</p>
+      </div>
+      <div class="examples">
+        <div class="ex">
+          <div class="ex-top"><span class="ex-tag">Reporte</span><h3>Un informe listo en minutos</h3></div>
+          <div class="prompt-box">
+            <button class="copy-btn" data-copy="p1">Copiar</button>
+            <span id="p1"><span class="gt">&gt; </span>Con base en estos datos [pégalos aquí], arma el informe de ventas de esta semana: el total, la comparación con la semana pasada y los tres productos que más se vendieron. Dámelo en una tabla clara con un resumen de tres líneas arriba.</span>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-top"><span class="ex-tag">Excel</span><h3>Una hoja de cálculo ordenada</h3></div>
+          <div class="prompt-box">
+            <button class="copy-btn" data-copy="p2">Copiar</button>
+            <span id="p2"><span class="gt">&gt; </span>Toma estos datos [pégalos aquí] y ordénalos en una tabla con encabezados, ordenada por fecha. Crea el archivo Ventas.xlsx listo para abrir en Excel.</span>
+          </div>
+        </div>
+        <div class="ex">
+          <div class="ex-top"><span class="ex-tag">PDF</span><h3>Un documento limpio para enviar</h3></div>
+          <div class="prompt-box">
+            <button class="copy-btn" data-copy="p3">Copiar</button>
+            <span id="p3"><span class="gt">&gt; </span>Con este texto [pégalo aquí], arma un documento profesional con título y secciones claras, y expórtalo en PDF listo para enviar por correo.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="s-head">
+        <div class="kicker">Tu turno</div>
+        <h2>Genera el prompt de tu primera tarea</h2>
+        <p>Responde tres cosas y te armo el prompt exacto para pegarle a tu agente.</p>
+      </div>
+      <div class="gen">
+        <label for="g-rol">¿A qué te dedicas?</label>
+        <input id="g-rol" type="text" placeholder="Ej: llevo la contabilidad de un restaurante">
+        <label for="g-tarea">¿Qué tarea repetitiva quieres automatizar?</label>
+        <textarea id="g-tarea" placeholder="Ej: cada semana junto las ventas y hago un resumen para el dueño"></textarea>
+        <label for="g-formato">¿Qué quieres que te entregue?</label>
+        <select id="g-formato">
+          <option value="un reporte claro con un resumen arriba">Un reporte</option>
+          <option value="una hoja de cálculo de Excel ordenada">Una hoja de Excel</option>
+          <option value="un documento en PDF listo para enviar">Un PDF</option>
+          <option value="un documento limpio y ordenado">Un documento</option>
+          <option value="el resultado listo para usar">Otro / no estoy seguro</option>
+        </select>
+        <button class="gen-btn" id="g-run">Generar mi prompt</button>
+        <div class="gen-out" id="g-out">
+          <div class="prompt-box">
+            <button class="copy-btn" data-copy="g-text">Copiar</button>
+            <span id="g-text"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="cta">
+        <div class="kicker">Sigue con la comunidad</div>
+        <h2>Todo esto, y gente construyendo contigo</h2>
+        <p>Club IA es mi comunidad gratuita. Plantillas nuevas cada semana, los prompts de cada video listos para copiar, y Q&amp;A en vivo los sábados. Entra gratis.</p>
+        <a class="cta-btn" href="https://www.skool.com/club-ia-2314" target="_blank" rel="noopener">Entrar a Club IA (gratis)</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">
+      Jerónimo Martínez. Medellín, Colombia. <a href="https://jeroooo.com">jeroooo.com</a>
+    </div>
+  </footer>
+
+  <script>
+    // Copiar
+    function flash(btn){const t=btn.textContent;btn.textContent="Copiado";btn.classList.add("ok");setTimeout(()=>{btn.textContent=t;btn.classList.remove("ok")},1600);}
+    document.querySelectorAll(".copy-btn").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const el=document.getElementById(btn.dataset.copy);
+        const txt=(el.innerText||el.textContent).trim();
+        navigator.clipboard.writeText(txt).then(()=>flash(btn)).catch(()=>{
+          const r=document.createRange();r.selectNode(el);const s=getSelection();s.removeAllRanges();s.addRange(r);
+          try{document.execCommand("copy");flash(btn)}catch(e){}s.removeAllRanges();
+        });
+      });
+    });
+    // Generador
+    document.getElementById("g-run").addEventListener("click",()=>{
+      const rol=(document.getElementById("g-rol").value||"").trim();
+      const tarea=(document.getElementById("g-tarea").value||"").trim();
+      const formato=document.getElementById("g-formato").value;
+      const rolTxt=rol?("Contexto: "+rol+". "):"";
+      const tareaTxt=tarea||"[describe aquí la tarea que haces seguido]";
+      const prompt="> "+rolTxt+"Quiero que automatices esta tarea que hago seguido: "+tareaTxt+". "+
+        "Entrégamelo como "+formato+". "+
+        "Trabaja de principio a fin: entiende lo que necesito, hazlo, y muéstrame el resultado listo para usar. "+
+        "Si te falta algún dato para empezar, pregúntame primero.";
+      document.getElementById("g-text").textContent=prompt;
+      document.getElementById("g-out").classList.add("show");
+      document.getElementById("g-out").scrollIntoView({behavior:"smooth",block:"center"});
+    });
+  </script>
+</body>
+</html>
