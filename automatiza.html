@@ -117,26 +117,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     footer a{color:var(--gray-400);text-decoration:none}
     footer a:hover{color:var(--accent)}
 
-    /* Gate / captura de lead */
-    .gate-lock{position:relative}
-    .gate-lock .gen{filter:blur(5px);pointer-events:none;user-select:none}
-    .gate-veil{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-      z-index:5;padding:1rem;text-align:center}
-    .gate-veil .gate-cta{background:var(--bg-soft);border:1px solid var(--line);border-radius:16px;
-      padding:1.8rem 1.6rem;max-width:360px;box-shadow:0 24px 60px rgba(0,0,0,0.55)}
-    .gate-veil .lockico{width:44px;height:44px;border-radius:12px;background:var(--accent);color:#0a0a0a;
-      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
-    .gate-veil h3{font-size:1.15rem;font-weight:700;margin-bottom:0.4rem}
-    .gate-veil p{color:var(--gray-400);font-size:0.9rem;margin-bottom:1.2rem}
-    .gate-veil button{width:100%;padding:0.9rem;background:var(--accent);color:#0a0a0a;border:none;
-      border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer;font-family:inherit;transition:background 0.2s}
-    .gate-veil button:hover{background:var(--accent-dark)}
-
-    .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.72);backdrop-filter:blur(4px);
-      z-index:200;display:none;align-items:center;justify-content:center;padding:1.2rem}
+    /* Gate de entrada / captura de lead (bloquea toda la web) */
+    body.gated{overflow:hidden}
+    .modal-back{position:fixed;inset:0;background:rgba(10,10,10,0.55);backdrop-filter:blur(9px);
+      -webkit-backdrop-filter:blur(9px);z-index:200;display:none;align-items:center;justify-content:center;padding:1.2rem}
     .modal-back.show{display:flex}
-    .modal{background:var(--bg-soft);border:1px solid var(--line);border-radius:20px;
-      padding:2rem 1.8rem;max-width:420px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.6);position:relative}
+    .modal{background:var(--bg-soft);border:1px solid var(--line);border-radius:20px;text-align:center;
+      padding:2.2rem 1.8rem;max-width:420px;width:100%;box-shadow:0 30px 80px rgba(0,0,0,0.6);position:relative}
+    .modal .lockico{width:48px;height:48px;border-radius:13px;background:var(--accent);color:#0a0a0a;
+      display:flex;align-items:center;justify-content:center;margin:0 auto 1rem}
+    .modal form{text-align:left}
     .modal .kicker{margin-bottom:0.6rem}
     .modal h3{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;margin-bottom:0.5rem}
     .modal>p{color:var(--gray-400);font-size:0.92rem;margin-bottom:1.4rem}
@@ -257,15 +247,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <h2>Genera el prompt de tu primera tarea</h2>
         <p>Responde tres cosas y te armo el prompt exacto para pegarle a tu agente.</p>
       </div>
-      <div class="gen-lock gate-lock" id="gen-lock">
-      <div class="gate-veil" id="gate-veil">
-        <div class="gate-cta">
-          <div class="lockico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
-          <h3>Desbloquea el generador</h3>
-          <p>Déjame tu nombre y correo y te abro la herramienta. Gratis, sin spam.</p>
-          <button id="gate-open">Desbloquear gratis</button>
-        </div>
-      </div>
       <div class="gen">
         <label for="g-rol">¿A qué te dedicas?</label>
         <input id="g-rol" type="text" placeholder="Ej: llevo la contabilidad de un restaurante">
@@ -287,24 +268,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           </div>
         </div>
       </div>
-      </div>
     </div>
   </section>
 
-  <!-- Modal de captura de lead -->
+  <!-- Modal de captura de lead (gate de entrada, toda la web) -->
   <div class="modal-back" id="lead-modal">
     <div class="modal">
-      <button class="x" id="lead-x" aria-label="Cerrar">&times;</button>
-      <div class="kicker">Casi listo</div>
-      <h3>Te abro el generador</h3>
-      <p>Escribe tu nombre y correo. Te mando plantillas y los prompts de cada video. Cero spam.</p>
+      <div class="lockico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+      <div class="kicker">Acceso gratis</div>
+      <h3>Entra a la guía</h3>
+      <p>Escribe tu nombre y correo para abrir la guía completa y el generador de prompts. Gratis, sin spam.</p>
       <form id="lead-form" novalidate>
         <label for="lead-nombre">Tu nombre</label>
         <input id="lead-nombre" type="text" autocomplete="name" placeholder="Ej: Jerónimo">
         <label for="lead-correo">Tu correo</label>
         <input id="lead-correo" type="email" autocomplete="email" placeholder="tucorreo@ejemplo.com">
         <div class="err" id="lead-err">Revisa tu nombre y un correo válido.</div>
-        <button type="submit" class="submit" id="lead-submit">Desbloquear generador</button>
+        <button type="submit" class="submit" id="lead-submit">Entrar a la guía</button>
         <div class="fine">Al continuar aceptas recibir correos de Jerónimo. Puedes salirte cuando quieras.</div>
       </form>
     </div>
@@ -356,12 +336,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       document.getElementById("g-out").scrollIntoView({behavior:"smooth",block:"center"});
     });
 
-    // Gate de captura de lead
+    // Gate de entrada: bloquea toda la web hasta capturar nombre + correo
     (function(){
       const WEBHOOK="https://n8n.jeroooo.com/webhook/guia-automatizacion-lead";
       const KEY="guia_lead_ok";
-      const lock=document.getElementById("gen-lock");
-      const veil=document.getElementById("gate-veil");
       const modal=document.getElementById("lead-modal");
       const form=document.getElementById("lead-form");
       const err=document.getElementById("lead-err");
@@ -369,16 +347,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const inNombre=document.getElementById("lead-nombre");
       const inCorreo=document.getElementById("lead-correo");
 
-      function unlock(){lock.classList.remove("gate-lock");veil.style.display="none";}
-      // Ya desbloqueado antes en este navegador
-      try{if(localStorage.getItem(KEY)==="1"){unlock();}}catch(e){}
+      function openGate(){modal.classList.add("show");document.body.classList.add("gated");setTimeout(()=>inNombre.focus(),80);}
+      function closeGate(){modal.classList.remove("show");document.body.classList.remove("gated");}
 
-      function openModal(){modal.classList.add("show");setTimeout(()=>inNombre.focus(),50);}
-      function closeModal(){modal.classList.remove("show");}
-      document.getElementById("gate-open").addEventListener("click",openModal);
-      document.getElementById("lead-x").addEventListener("click",closeModal);
-      modal.addEventListener("click",e=>{if(e.target===modal)closeModal();});
-      document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+      // Si ya entró antes en este navegador, no volvemos a pedir datos
+      let already=false;try{already=localStorage.getItem(KEY)==="1";}catch(e){}
+      if(!already){openGate();}
 
       const emailRe=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       form.addEventListener("submit",e=>{
@@ -387,21 +361,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const correo=inCorreo.value.trim();
         if(nombre.length<2||!emailRe.test(correo)){err.classList.add("show");return;}
         err.classList.remove("show");
-        submit.disabled=true;submit.textContent="Enviando…";
+        submit.disabled=true;submit.textContent="Entrando…";
         const done=()=>{
           try{localStorage.setItem(KEY,"1");}catch(e){}
-          closeModal();unlock();
-          submit.disabled=false;submit.textContent="Desbloquear generador";
-          document.getElementById("g-rol").focus();
+          closeGate();
+          submit.disabled=false;submit.textContent="Entrar a la guía";
         };
         fetch(WEBHOOK,{
           method:"POST",
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({nombre:nombre,correo:correo,origen:"guia-automatizacion"})
-        }).then(done).catch(()=>{
-          // Aunque falle la red, no bloqueamos al usuario
-          done();
-        });
+        }).then(done).catch(done); // aunque falle la red, dejamos entrar
       });
     })();
   </script>
