@@ -347,7 +347,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const inNombre=document.getElementById("lead-nombre");
       const inCorreo=document.getElementById("lead-correo");
 
-      function openGate(){modal.classList.add("show");document.body.classList.add("gated");setTimeout(()=>inNombre.focus(),80);}
+      // Embudo del pop-up hacia GTM/GA4 (dataLayer)
+      window.dataLayer=window.dataLayer||[];
+      function dl(name){window.dataLayer.push({event:name});}
+      // Cada paso se cuenta una sola vez por visita
+      const fired={};
+      function once(name){if(fired[name])return;fired[name]=true;dl(name);}
+      inNombre.addEventListener("input",()=>once("gate_escribe_nombre"),{once:true});
+      inCorreo.addEventListener("input",()=>once("gate_escribe_correo"),{once:true});
+
+      function openGate(){modal.classList.add("show");document.body.classList.add("gated");once("gate_view");setTimeout(()=>inNombre.focus(),80);}
       function closeGate(){modal.classList.remove("show");document.body.classList.remove("gated");}
 
       // Si ya entró antes en este navegador, no volvemos a pedir datos
@@ -361,6 +370,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         const correo=inCorreo.value.trim();
         if(nombre.length<2||!emailRe.test(correo)){err.classList.add("show");return;}
         err.classList.remove("show");
+        once("gate_entrar");
         submit.disabled=true;submit.textContent="Entrando…";
         const done=()=>{
           try{localStorage.setItem(KEY,"1");}catch(e){}
