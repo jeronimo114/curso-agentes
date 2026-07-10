@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal de Visitas · Demo</title>
+<meta name="robots" content="noindex">
+<style>
+  :root{
+    --ink:#0B0B0F; --muted:#6b6b73; --line:#e6e3dd;
+    --bg:#F8F6F2; --card:#ffffff; --accent:#1E5BE6;
+    --ok:#12855b; --ok-bg:#e6f6ee; --no:#c0392b; --no-bg:#fdecea;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    min-height:100vh; display:flex; align-items:flex-start; justify-content:center;
+    padding:40px 20px;
+  }
+  .wrap{width:100%; max-width:520px}
+  .eyebrow{font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); font-weight:700; margin:0 0 8px}
+  h1{font-size:28px; line-height:1.1; margin:0 0 6px; letter-spacing:-.02em}
+  .sub{color:var(--muted); margin:0 0 28px; font-size:15px}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:18px; padding:26px 24px}
+  label{display:block; font-size:13px; font-weight:600; margin:0 0 7px}
+  .field{margin-bottom:18px}
+  input,textarea{
+    width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:11px;
+    font-size:15px; font-family:inherit; background:#fbfaf8; color:var(--ink);
+    transition:border-color .15s, box-shadow .15s;
+  }
+  input:focus,textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(30,91,230,.12)}
+  textarea{resize:vertical; min-height:78px}
+  .decision{display:flex; gap:12px; margin-top:4px}
+  .pick{
+    flex:1; padding:14px; border:1.5px solid var(--line); border-radius:12px; background:#fbfaf8;
+    font-size:15px; font-weight:600; cursor:pointer; color:var(--ink); text-align:center;
+    transition:.15s;
+  }
+  .pick:hover{border-color:#cfccc5}
+  .pick.sel-ok{border-color:var(--ok); background:var(--ok-bg); color:var(--ok)}
+  .pick.sel-no{border-color:var(--no); background:var(--no-bg); color:var(--no)}
+  button.submit{
+    width:100%; margin-top:24px; padding:15px; border:none; border-radius:12px;
+    background:var(--ink); color:#fff; font-size:16px; font-weight:600; cursor:pointer; transition:.15s;
+  }
+  button.submit:hover{background:#000}
+  button.submit:disabled{opacity:.5; cursor:not-allowed}
+  .msg{margin-top:16px; padding:13px 15px; border-radius:11px; font-size:14px; display:none}
+  .msg.show{display:block}
+  .msg.good{background:var(--ok-bg); color:var(--ok)}
+  .msg.bad{background:var(--no-bg); color:var(--no)}
+  .foot{text-align:center; color:var(--muted); font-size:12px; margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Demo · Registro de visitas</p>
+  <h1>Portal de Visitas</h1>
+  <p class="sub">Registra una visita a cliente y marca la aprobación. Se envía directo a la hoja de cálculo.</p>
+
+  <form class="card" id="form">
+    <div class="field">
+      <label for="cliente">Nombre del cliente</label>
+      <input type="text" id="cliente" name="cliente" placeholder="Ej: Acassa S.A." required>
+    </div>
+
+    <div class="field">
+      <label for="fecha">Fecha de visita</label>
+      <input type="date" id="fecha" name="fecha" required>
+    </div>
+
+    <div class="field">
+      <label for="nota">Nota (por si falta algo)</label>
+      <textarea id="nota" name="nota" placeholder="Ej: Falta firma del acta, pendiente cotización…"></textarea>
+    </div>
+
+    <div class="field">
+      <label>Decisión</label>
+      <div class="decision">
+        <div class="pick" data-val="Aprobado" id="pOk">Aprobado</div>
+        <div class="pick" data-val="Desaprobado" id="pNo">Desaprobado</div>
+      </div>
+      <input type="hidden" id="decision" name="decision" required>
+    </div>
+
+    <button type="submit" class="submit" id="btn">Enviar registro</button>
+    <div class="msg" id="msg"></div>
+  </form>
+
+  <p class="foot">Demo interno · sin login</p>
+</div>
+
+<script>
+  // 🔧 Pega aquí la URL del webhook de n8n cuando esté lista.
+  //    Mientras esté vacío, el demo simula el envío para mostrar el flujo.
+  const WEBHOOK_URL = "";
+
+  const okBtn = document.getElementById('pOk');
+  const noBtn = document.getElementById('pNo');
+  const decision = document.getElementById('decision');
+  const msg = document.getElementById('msg');
+  const btn = document.getElementById('btn');
+
+  okBtn.addEventListener('click', () => {
+    decision.value = "Aprobado";
+    okBtn.classList.add('sel-ok'); noBtn.classList.remove('sel-no');
+  });
+  noBtn.addEventListener('click', () => {
+    decision.value = "Desaprobado";
+    noBtn.classList.add('sel-no'); okBtn.classList.remove('sel-ok');
+  });
+
+  function flash(text, ok){
+    msg.textContent = text;
+    msg.className = 'msg show ' + (ok ? 'good' : 'bad');
+  }
+
+  document.getElementById('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if(!decision.value){ flash('Elige Aprobado o Desaprobado.', false); return; }
+
+    const payload = {
+      cliente: document.getElementById('cliente').value.trim(),
+      fecha: document.getElementById('fecha').value,
+      nota: document.getElementById('nota').value.trim(),
+      decision: decision.value,
+      enviado_en: new Date().toISOString()
+    };
+
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    try{
+      if(WEBHOOK_URL){
+        const res = await fetch(WEBHOOK_URL, {
+          method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
+        });
+        if(!res.ok) throw new Error('HTTP '+res.status);
+      } else {
+        await new Promise(r => setTimeout(r, 600)); // demo sin webhook
+      }
+      flash('✓ Registro enviado' + (WEBHOOK_URL ? ' a Google Sheets.' : ' (demo — conecta el webhook de n8n).'), true);
+      e.target.reset();
+      decision.value = ''; okBtn.classList.remove('sel-ok'); noBtn.classList.remove('sel-no');
+    }catch(err){
+      flash('Error al enviar: ' + err.message, false);
+    }finally{
+      btn.disabled = false; btn.textContent = 'Enviar registro';
+    }
+  });
+</script>
+</body>
+</html>
