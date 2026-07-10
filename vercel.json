@@ -4,6 +4,7 @@
     { "source": "/tienda-shopify", "destination": "/tienda-shopify.html" },
     { "source": "/automatiza", "destination": "/automatiza.html" },
     { "source": "/guiones", "destination": "/guiones.html" },
+    { "source": "/guion-hoy", "destination": "/guion-hoy.html" },
     { "source": "/guion-shopify", "destination": "/guion-shopify.html" },
     { "source": "/live", "destination": "/live.html" },
     { "source": "/regalo", "destination": "/regalo.html" },
