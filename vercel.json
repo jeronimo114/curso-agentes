@@ -7,7 +7,6 @@
     { "source": "/guion-shopify", "destination": "/guion-shopify.html" },
     { "source": "/live", "destination": "/live.html" },
     { "source": "/regalo", "destination": "/regalo.html" },
-    { "source": "/reveal", "destination": "/reveal.html" },
-    { "source": "/portal-visitas", "destination": "/portal-visitas.html" }
+    { "source": "/reveal", "destination": "/reveal.html" }
   ]
 }
