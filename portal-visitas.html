@@ -51,6 +51,30 @@
   .msg.show{display:block}
   .msg.good{background:var(--ok-bg); color:var(--ok)}
   .msg.bad{background:var(--no-bg); color:var(--no)}
+  select{
+    width:100%; padding:13px 14px; border:1px solid var(--line); border-radius:11px;
+    font-size:15px; font-family:inherit; background:#fbfaf8; color:var(--ink); appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%236b6b73' d='M6 8 0 0h12z'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 14px center;
+  }
+  select:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(30,91,230,.12)}
+  .prod-row{display:flex; gap:10px; align-items:flex-end}
+  .prod-row .grow{flex:1}
+  .prod-row .qty{width:78px}
+  .add{
+    padding:13px 16px; border:1.5px solid var(--accent); border-radius:11px; background:#fff;
+    color:var(--accent); font-weight:600; font-size:14px; cursor:pointer; white-space:nowrap; transition:.15s;
+  }
+  .add:hover{background:var(--accent); color:#fff}
+  .cart{list-style:none; margin:14px 0 0; padding:0}
+  .cart li{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    padding:11px 13px; border:1px solid var(--line); border-radius:10px; background:#fbfaf8; margin-bottom:8px; font-size:14px;
+  }
+  .cart li .n{font-weight:600}
+  .cart li .q{color:var(--muted); margin-left:auto; margin-right:10px}
+  .cart li .x{border:none; background:none; color:var(--no); font-size:18px; cursor:pointer; line-height:1; padding:0 4px}
+  .cart-empty{color:var(--muted); font-size:13px; margin:12px 0 0}
   .foot{text-align:center; color:var(--muted); font-size:12px; margin-top:20px}
 </style>
 </head>
@@ -69,6 +93,21 @@
     <div class="field">
       <label for="fecha">Fecha de visita</label>
       <input type="date" id="fecha" name="fecha" required>
+    </div>
+
+    <div class="field">
+      <label for="producto">Productos despachados</label>
+      <div class="prod-row">
+        <div class="grow">
+          <select id="producto">
+            <option value="">Selecciona un producto…</option>
+          </select>
+        </div>
+        <input class="qty" type="number" id="cantidad" min="1" value="1" aria-label="Cantidad">
+        <button type="button" class="add" id="addProd">Agregar</button>
+      </div>
+      <ul class="cart" id="cart"></ul>
+      <p class="cart-empty" id="cartEmpty">Aún no has agregado productos.</p>
     </div>
 
     <div class="field">
@@ -97,6 +136,52 @@
   //    Mientras esté vacío, el demo simula el envío para mostrar el flujo.
   const WEBHOOK_URL = "";
 
+  // 25 productos capilares de ejemplo
+  const PRODUCTOS = [
+    "Shampoo Hidratación Profunda 500ml","Acondicionador Reparador 500ml","Mascarilla Nutritiva Keratina 250ml",
+    "Serum Anti-Frizz 100ml","Aceite de Argán Capilar 60ml","Tratamiento Sin Enjuague Bifásico 200ml",
+    "Shampoo Anticaída Cafeína 400ml","Ampolla Reconstructora x12","Crema para Peinar Rizos 300ml",
+    "Spray Termoprotector 200ml","Shampoo Matizador Violeta 300ml","Mascarilla Matizadora Rubios 250ml",
+    "Gel Fijación Extrema 250ml","Cera Modeladora Mate 100ml","Laca Fijadora Fuerte 400ml",
+    "Shampoo Sólido Natural 90g","Acondicionador en Barra 80g","Tónico Capilar Fortalecedor 120ml",
+    "Keratina Alisado Profesional 1L","Botox Capilar 500ml","Shampoo Neutro pH Balance 1L",
+    "Protector de Color Post-Tinte 250ml","Exfoliante de Cuero Cabelludo 200ml","Sérum Puntas Abiertas 50ml",
+    "Kit de Viaje Capilar (4 piezas)"
+  ];
+
+  const selProd = document.getElementById('producto');
+  PRODUCTOS.forEach(p => {
+    const o = document.createElement('option'); o.value = p; o.textContent = p; selProd.appendChild(o);
+  });
+
+  const cart = [];
+  const cartUl = document.getElementById('cart');
+  const cartEmpty = document.getElementById('cartEmpty');
+  const cantidadInput = document.getElementById('cantidad');
+
+  function renderCart(){
+    cartUl.innerHTML = '';
+    cartEmpty.style.display = cart.length ? 'none' : 'block';
+    cart.forEach((item, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = '<span class="n"></span><span class="q">x'+item.cantidad+'</span><button type="button" class="x" aria-label="Quitar">&times;</button>';
+      li.querySelector('.n').textContent = item.producto;
+      li.querySelector('.x').addEventListener('click', () => { cart.splice(i,1); renderCart(); });
+      cartUl.appendChild(li);
+    });
+  }
+
+  document.getElementById('addProd').addEventListener('click', () => {
+    const producto = selProd.value;
+    const cantidad = parseInt(cantidadInput.value, 10);
+    if(!producto){ flash('Selecciona un producto de la lista.', false); return; }
+    if(!cantidad || cantidad < 1){ flash('Indica una cantidad válida.', false); return; }
+    const existing = cart.find(i => i.producto === producto);
+    if(existing){ existing.cantidad += cantidad; } else { cart.push({producto, cantidad}); }
+    selProd.value = ''; cantidadInput.value = 1;
+    msg.className = 'msg'; renderCart();
+  });
+
   const okBtn = document.getElementById('pOk');
   const noBtn = document.getElementById('pNo');
   const decision = document.getElementById('decision');
@@ -124,6 +209,9 @@
     const payload = {
       cliente: document.getElementById('cliente').value.trim(),
       fecha: document.getElementById('fecha').value,
+      productos: cart.map(i => ({producto: i.producto, cantidad: i.cantidad})),
+      productos_texto: cart.map(i => i.producto + ' (x' + i.cantidad + ')').join('; '),
+      total_unidades: cart.reduce((s,i) => s + i.cantidad, 0),
       nota: document.getElementById('nota').value.trim(),
       decision: decision.value,
       enviado_en: new Date().toISOString()
@@ -142,6 +230,7 @@
       flash('✓ Registro enviado' + (WEBHOOK_URL ? ' a Google Sheets.' : ' (demo — conecta el webhook de n8n).'), true);
       e.target.reset();
       decision.value = ''; okBtn.classList.remove('sel-ok'); noBtn.classList.remove('sel-no');
+      cart.length = 0; renderCart();
     }catch(err){
       flash('Error al enviar: ' + err.message, false);
     }finally{
