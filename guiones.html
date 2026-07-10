@@ -11,7 +11,7 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{--bg:#0a0a0a;--bg-soft:#141414;--white:#FAFAFA;--accent:#fbbf24;--accent-dark:#d99e0b;
-      --p1:#fbbf24;--p2:#3ecf8e;--p3:#d97757;--p4:#8b8cf7;
+      --p1:#fbbf24;--p2:#3ecf8e;--p3:#d97757;--p4:#8b8cf7;--ship:#3ecf8e;
       --gray-300:#d4d4d8;--gray-400:#a1a1aa;--gray-600:#52525b;--line:rgba(255,255,255,0.1)}
     html{scroll-behavior:smooth}
     body{font-family:'Space Grotesk',system-ui,sans-serif;background:var(--bg);color:var(--white);
@@ -36,19 +36,24 @@
     li{padding-left:1.4rem;position:relative;margin-bottom:0.5rem;color:var(--gray-300)}
     li::before{content:"";position:absolute;left:0;top:0.6rem;width:7px;height:7px;border-radius:2px;background:var(--accent)}
     li b{color:var(--white)}
+    .quote{color:var(--gray-400);font-style:italic;border-left:2px solid var(--accent);padding-left:0.9rem;margin:0.3rem 0}
     table{width:100%;border-collapse:collapse;margin-top:0.6rem}
     th,td{text-align:left;padding:0.7rem 0.8rem;border-bottom:1px solid var(--line);font-size:0.94rem;vertical-align:top}
     th{color:var(--gray-400);font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;font-weight:600}
     td.n{color:var(--gray-600);font-family:'JetBrains Mono',monospace;width:2rem}
+    tr.done td{color:var(--gray-600)}
+    tr.done td b{color:var(--gray-400)}
     .pill{display:inline-block;font-size:0.68rem;font-weight:700;padding:0.15rem 0.55rem;border-radius:999px;white-space:nowrap}
     .p1{background:rgba(251,191,36,0.16);color:var(--p1)}
     .p2{background:rgba(62,207,142,0.16);color:var(--p2)}
     .p3{background:rgba(217,119,87,0.18);color:var(--p3)}
     .p4{background:rgba(139,140,247,0.18);color:var(--p4)}
+    .ship{background:rgba(62,207,142,0.16);color:var(--ship);border:1px solid rgba(62,207,142,0.4)}
     .lm{font-family:'JetBrains Mono',monospace;font-size:0.82rem;color:var(--gray-400)}
     .lm.yt{color:var(--p2)}
     .day{font-size:0.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:1.6rem 0 0.5rem}
-    .day.today{color:#fff;background:var(--accent);color:#0a0a0a;display:inline-block;padding:0.25rem 0.8rem;border-radius:8px}
+    .day.today{background:var(--accent);color:#0a0a0a;display:inline-block;padding:0.25rem 0.8rem;border-radius:8px}
+    .day.shipped{background:rgba(62,207,142,0.16);color:var(--ship);display:inline-block;padding:0.25rem 0.8rem;border-radius:8px}
     footer{text-align:center;padding:2.5rem 0 3rem;color:var(--gray-600);font-size:0.85rem}
     footer a{color:var(--gray-400);text-decoration:none}
     @media(max-width:640px){th:nth-child(3),td:nth-child(3){display:none}}
@@ -61,7 +66,7 @@
     <div class="wrap">
       <div class="kicker">Uso interno</div>
       <h1>Guiones y <span class="hl">plan de reels</span></h1>
-      <p class="sub">7 días, 3 reels diarios (21 en total). Cada reel es TOFU calificado que manda a un lead magnet en el sitio y alimenta la escalera de oferta.</p>
+      <p class="sub">3 reels diarios de TOFU calificado que mandan a un lead magnet en el sitio. Los ganchos van en tu voz (sacada de tus propios reels).</p>
     </div>
   </header>
 
@@ -72,14 +77,31 @@
       <ul>
         <li><b>A quién:</b> consultores, freelancers, dueños de PYME y creadores con un problema con plata de por medio. No al curioso.</li>
         <li><b>El filtro va en el gancho:</b> cada reel insinúa un resultado de negocio (cobra, ahorra, vende, entrega a un cliente).</li>
-        <li><b>Correo con gate suave:</b> muestra valor primero, pide el correo para desbloquear el pack o el generador. Lista propia, sin ESP pesado por ahora.</li>
+        <li><b>Correo con gate suave:</b> muestra valor primero, pide el correo para desbloquear el pack o el generador.</li>
         <li><b>Escalera:</b> LM gratis → Club IA free → Premium USD 9 / VIP USD 47 → cohorte o servicio productizado.</li>
       </ul>
     </div>
   </section>
 
   <section class="wrap">
-    <h2><span class="num">02</span>Los 4 pilares</h2>
+    <h2><span class="num">02</span>Tu voz (de tus reels)</h2>
+    <p class="lead">Destilado de tus reels ya grabados (Shopify, hack de imágenes, tier list, "comenta trabajo", la guía). Escribe los guiones así.</p>
+    <div class="card">
+      <ul>
+        <li><b>Aperturas:</b> result-first o promesa directa. "Este fue el resultado...", "Hoy te voy a enseñar a...", "Hack secreto para...", "Tier list de...", "Conecté X a Y y este fue el resultado".</li>
+        <li><b>Conectores tuyos:</b> "vamos a", "le vas a decir", "con base a", "entonces", "pues", "acá", "primero... luego...". Prosa que fluye, nada de bullets tipo Apple.</li>
+        <li><b>Tono:</b> directo y honesto, con opiniones fuertes. Enseñas como un amigo que ya lo hizo, sin humo.</li>
+        <li><b>Siempre atas a un resultado:</b> tiempo ("venir a tomar más café"), plata ("para tu marca o para un cliente"), o "este fue el resultado".</li>
+        <li><b>Paso a paso:</b> explicas el mecanismo y luego el beneficio.</li>
+        <li><b>CTA:</b> "déjame en los comentarios la palabra X y te mando la info", "me cuentan qué X en los comentarios", "ve a mi canal de YouTube", "te lo dejé en mi sitio".</li>
+      </ul>
+      <p class="quote">"Si quieres empezar a automatizar tu trabajo, déjame acá en los comentarios 'trabajo' y te mando la info."</p>
+      <p class="quote">"Cloud, también tiene un muy buen modelo, es bastante bueno, pero no puede hacer muchas cosas. Codex, ya estamos hablando de agentes de otro nivel."</p>
+    </div>
+  </section>
+
+  <section class="wrap">
+    <h2><span class="num">03</span>Los 4 pilares</h2>
     <table>
       <tr><th>Pilar</th><th>Persona</th><th>Lead magnet</th></tr>
       <tr><td><span class="pill p1">P1 Automatiza</span></td><td>Profesional/PYME con tareas repetitivas</td><td class="lm">/automatiza</td></tr>
@@ -90,61 +112,61 @@
   </section>
 
   <section class="wrap">
-    <h2><span class="num">03</span>Plan de 7 días</h2>
+    <h2><span class="num">04</span>Plan de 7 días</h2>
 
-    <div class="day today">Día 1 · Hoy</div>
+    <div class="day shipped">Día 1 · Listo (grabados)</div>
     <table>
-      <tr><th></th><th>Hook</th><th>Pilar</th><th>CTA</th></tr>
-      <tr><td class="n">1</td><td>Conecté Claude a mi Shopify y montó la tienda solo. Una así se cobra hasta 15.000 dólares</td><td><span class="pill p2">P2</span></td><td class="lm yt">CTA YouTube</td></tr>
-      <tr><td class="n">2</td><td>Cómo saco 20 thumbnails de una sola vez en ChatGPT</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
-      <tr><td class="n">3</td><td>Niveles de IA: de buscar en Google a tener un asistente personal. ¿En cuál estás?</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
+      <tr><th></th><th>Hook</th><th></th><th>CTA</th></tr>
+      <tr class="done"><td class="n">1</td><td>Conecté Claude a mi tienda de Shopify y este fue el resultado <span class="pill ship">LISTO · 5348</span></td><td><span class="pill p2">P2</span></td><td class="lm yt">CTA YouTube</td></tr>
+      <tr class="done"><td class="n">2</td><td>Hack secreto: cientos de imágenes de una vez con Claude controlando tu navegador <span class="pill ship">LISTO · 5350</span></td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr class="done"><td class="n">3</td><td>Tier list de IA: si usas esto, no estás usando IA de verdad <span class="pill ship">LISTO · 5351</span></td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
     </table>
 
     <div class="day">Día 2</div>
     <table>
-      <tr><td class="n">1</td><td>3 tareas que dejé de hacer a mano desde que uso un agente</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">2</td><td>El error que hace que tus imágenes de IA se vean baratas (y cómo se ven caras)</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
-      <tr><td class="n">3</td><td>La diferencia entre USAR IA y CONSTRUIR con IA (y por qué una da plata)</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
+      <tr><td class="n">1</td><td>Estas 3 tareas ya no las hago a mano, las hace un agente por mí</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">2</td><td>Por esto tus imágenes de IA se ven baratas, y así se ven caras</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr><td class="n">3</td><td>Usar IA no es lo mismo que construir con IA, y una sí da plata</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
     </table>
 
     <div class="day">Día 3</div>
     <table>
-      <tr><td class="n">1</td><td>Le pasé un Excel a un agente y me devolvió el reporte hecho</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">2</td><td>Le entregué una web a un cliente sin escribir una línea de código</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
-      <tr><td class="n">3</td><td>Estás usando ChatGPT como en 2023. Esto es lo que cambió</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
+      <tr><td class="n">1</td><td>Le pasé mi Excel a un agente y me devolvió el reporte hecho</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">2</td><td>Le entregué una web a un cliente sin escribir una sola línea de código</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
+      <tr><td class="n">3</td><td>Estás usando ChatGPT como en 2023, mira lo que cambió</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
     </table>
 
     <div class="day">Día 4</div>
     <table>
-      <tr><td class="n">1</td><td>Genera 50 fotos de producto sin sesión de fotos</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
-      <tr><td class="n">2</td><td>Un agente de IA no es un chatbot. La diferencia lo cambia todo</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">3</td><td>El brief que hace que la IA te monte la tienda BIEN (no un desastre)</td><td><span class="pill p2">P2</span></td><td class="lm">/tienda-shopify</td></tr>
+      <tr><td class="n">1</td><td>Genera 50 fotos de producto sin sesión de fotos, todo con IA</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr><td class="n">2</td><td>Un agente de IA no es un chatbot, y esa diferencia lo cambia todo</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">3</td><td>El brief que hace que la IA te monte la tienda bien, no un desastre</td><td><span class="pill p2">P2</span></td><td class="lm">/tienda-shopify</td></tr>
     </table>
 
     <div class="day">Día 5</div>
     <table>
-      <tr><td class="n">1</td><td>El primer prompt exacto para automatizar tu reporte semanal</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">2</td><td>De idea a producto digital vendible en una tarde con IA</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
-      <tr><td class="n">3</td><td>Así hago mis reels con IA: el pipeline completo</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr><td class="n">1</td><td>Este es el primer prompt exacto para automatizar tu reporte de la semana</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">2</td><td>De una idea a un producto que vende en una tarde, con IA</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
+      <tr><td class="n">3</td><td>Así hago mis reels con IA, te muestro el paso a paso</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
     </table>
 
     <div class="day">Día 6</div>
     <table>
-      <tr><td class="n">1</td><td>Qué herramienta de IA usar según lo que quieres lograr (mapa)</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
-      <tr><td class="n">2</td><td>Deja de copiar y pegar en ChatGPT: dale acceso a tus archivos</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">3</td><td>Monté una landing que vende en 20 minutos</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
+      <tr><td class="n">1</td><td>¿Qué IA usar? Depende de lo que quieras lograr, te hago el mapa</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
+      <tr><td class="n">2</td><td>Deja de copiar y pegar en ChatGPT, dale acceso a tus archivos</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">3</td><td>Monté una landing que vende en 20 minutos, te muestro cómo</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
     </table>
 
     <div class="day">Día 7</div>
     <table>
-      <tr><td class="n">1</td><td>Clona tu estilo visual para TODO tu contenido con IA</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
-      <tr><td class="n">2</td><td>Cómo le doy mi contexto a la IA para que trabaje como yo</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">3</td><td>El mapa para pasar de curioso a constructor con IA (empieza aquí)</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
+      <tr><td class="n">1</td><td>Clona tu estilo visual para todo tu contenido con IA</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr><td class="n">2</td><td>Así le doy mi contexto a la IA para que trabaje como yo</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
+      <tr><td class="n">3</td><td>El mapa para pasar de curioso a construir con IA, empieza acá</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
     </table>
   </section>
 
   <section class="wrap">
-    <h2><span class="num">04</span>Lead magnets a montar</h2>
+    <h2><span class="num">05</span>Lead magnets a montar</h2>
     <table>
       <tr><th>Lead magnet</th><th>Estado</th><th>Qué es</th></tr>
       <tr><td class="lm">/automatiza</td><td>Existe (con gate de correo)</td><td>Guía + generador de prompt</td></tr>
@@ -156,7 +178,7 @@
   </section>
 
   <section class="wrap">
-    <h2><span class="num">05</span>Guiones de video</h2>
+    <h2><span class="num">06</span>Guiones de video</h2>
     <div class="card">
       <ul>
         <li><a href="/guion-shopify" style="color:var(--accent);text-decoration:none">Guion Shopify (video 05)</a> · teleprompter</li>
