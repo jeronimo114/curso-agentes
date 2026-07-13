@@ -54,6 +54,12 @@
     .day{font-size:0.72rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.12em;font-weight:700;margin:1.6rem 0 0.5rem}
     .day.today{background:var(--accent);color:#0a0a0a;display:inline-block;padding:0.25rem 0.8rem;border-radius:8px}
     .day.shipped{background:rgba(62,207,142,0.16);color:var(--ship);display:inline-block;padding:0.25rem 0.8rem;border-radius:8px}
+    details.guion{background:var(--bg-soft);border:1px solid var(--line);border-radius:12px;padding:0.85rem 1.1rem;margin-bottom:0.6rem}
+    details.guion summary{cursor:pointer;font-size:0.95rem;color:var(--white)}
+    details.guion summary:hover{color:var(--accent)}
+    .glabel{font-size:0.68rem;color:var(--accent);text-transform:uppercase;letter-spacing:0.14em;font-weight:700;margin:0.9rem 0 0.2rem}
+    .gtext{color:var(--gray-300);font-size:1.05rem;line-height:1.6;margin-bottom:0.3rem}
+    .gnote{font-size:0.8rem;color:var(--gray-600);margin-top:0.5rem}
     footer{text-align:center;padding:2.5rem 0 3rem;color:var(--gray-600);font-size:0.85rem}
     footer a{color:var(--gray-400);text-decoration:none}
     @media(max-width:640px){th:nth-child(3),td:nth-child(3){display:none}}
@@ -86,18 +92,20 @@
 
   <section class="wrap">
     <h2><span class="num">02</span>Tu voz (de tus reels)</h2>
-    <p class="lead">Destilado de tus reels ya grabados (Shopify, hack de imágenes, tier list, "comenta trabajo", la guía). Escribe los guiones así.</p>
+    <p class="lead">Destilado de las transcripciones reales de tus 18 reels de IG (19 may a 13 jul). Documento completo con las 12 reglas: <span class="lm">youtube-ai-es/TONO-REELS.md</span>. Escribe los guiones así.</p>
     <div class="card">
       <ul>
-        <li><b>Aperturas:</b> result-first o promesa directa. "Este fue el resultado...", "Hoy te voy a enseñar a...", "Hack secreto para...", "Tier list de...", "Conecté X a Y y este fue el resultado".</li>
-        <li><b>Conectores tuyos:</b> "vamos a", "le vas a decir", "con base a", "entonces", "pues", "acá", "primero... luego...". Prosa que fluye, nada de bullets tipo Apple.</li>
-        <li><b>Tono:</b> directo y honesto, con opiniones fuertes. Enseñas como un amigo que ya lo hizo, sin humo.</li>
-        <li><b>Siempre atas a un resultado:</b> tiempo ("venir a tomar más café"), plata ("para tu marca o para un cliente"), o "este fue el resultado".</li>
-        <li><b>Paso a paso:</b> explicas el mecanismo y luego el beneficio.</li>
-        <li><b>CTA:</b> "déjame en los comentarios la palabra X y te mando la info", "me cuentan qué X en los comentarios", "ve a mi canal de YouTube", "te lo dejé en mi sitio".</li>
+        <li><b>Los 9 hooks que ya usaste:</b> resultado en frío, contrarian directo ("estás usando una basura"), noticia + beneficio, configuración que te daña, analogía absurda (empanadas), persona-play (Ay pero si soy), hack con nombre, diálogo simulado ("ay Jero, ¿será que...?"), promesa con premio humano (café).</li>
+        <li><b>Conectores tuyos:</b> "entonces", "pues", "acá", "vamos a", "le vas a decir", "con base a", "un montón de", "se llama X" para presentar herramientas, "como estás viendo en este momento" para anclar la demo.</li>
+        <li><b>Paisa suave es firma (solo reels):</b> "pues", "vea", "ay", "¿será que?", diminutivos ("miradita", "organizadito", "normalito"). Máximo 1 por reel. Slang duro sigue prohibido (parcero, chimba). Voseo solo en captions escritas.</li>
+        <li><b>Opinión dura sobre productos, con nombre:</b> "Copilot es una basura", "Gemini normalito". Nunca sobre personas.</li>
+        <li><b>Siempre atas a plata o tiempo:</b> "venir a tomar más café", "para tu marca o para un cliente", "por el 5% de lo que vale un empleado".</li>
+        <li><b>CTA rotado y con beneficio:</b> comenta palabra cotidiana + premio real (el de "trabajo" dio 12 comentarios), deja tu profesión (alimenta la serie), carrusel en el feed, canal de YouTube. Prohibido "sígueme" solo, sin beneficio.</li>
+        <li><b>Cierre corto:</b> máximo 2 frases. El reel no se despide, corta. Una sola toma de CTA al grabar.</li>
       </ul>
       <p class="quote">"Si quieres empezar a automatizar tu trabajo, déjame acá en los comentarios 'trabajo' y te mando la info."</p>
-      <p class="quote">"Cloud, también tiene un muy buen modelo, es bastante bueno, pero no puede hacer muchas cosas. Codex, ya estamos hablando de agentes de otro nivel."</p>
+      <p class="quote">"Pero, ¡ay! Claude no puede hacer imágenes. Sí puede."</p>
+      <p class="quote">"Ay Jero, ¿será que yo puedo conectar Claude a Shopify? Sí, sí, sí puedes. No estamos mandando cohetes al espacio."</p>
     </div>
   </section>
 
@@ -136,51 +144,286 @@
       </ul>
     </div>
 
-    <div class="day">Día 2 · Masivo</div>
+    <div class="day shipped">Sábado 11 jul · Subidos</div>
     <table>
-      <tr><td class="n">1</td><td>El 90 por ciento usa ChatGPT mal: estos 3 errores te dan respuestas mediocres</td><td><span class="pill p4">P4</span></td><td class="lm">sígueme</td></tr>
-      <tr><td class="n">2</td><td>ChatGPT tiene modo incógnito y casi nadie lo usa</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
-      <tr><td class="n">3</td><td>Dile esto a ChatGPT antes de pedirle cualquier cosa y todo mejora</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
+      <tr class="done"><td class="n">1</td><td>La IA no puede hacer empanadas, pero Claude sí <span class="pill ship">LISTO</span></td><td><span class="pill p4">P4</span></td><td class="lm">sígueme</td></tr>
+      <tr class="done"><td class="n">2</td><td>La pregunta que siempre me hacen: ¿puedo conectar Claude a lo que sea? <span class="pill ship">LISTO</span></td><td><span class="pill p2">P2</span></td><td class="lm">sígueme</td></tr>
+      <tr class="done"><td class="n">3</td><td>Descubre cómo implementamos herramientas de IA para construir nuestra infra <span class="pill ship">LISTO</span></td><td><span class="pill p1">P1</span></td><td class="lm">talking-head 30s</td></tr>
     </table>
 
-    <div class="day">Día 3 · Masivo</div>
+    <div class="day shipped">Domingo 12 jul · Subidos</div>
     <table>
-      <tr><td class="n">1</td><td>5 cosas gratis que no sabías que ChatGPT hace por ti</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
-      <tr><td class="n">2</td><td>Así detectas cuando la IA te está mintiendo</td><td><span class="pill p4">P4</span></td><td class="lm">comenta</td></tr>
-      <tr><td class="n">3</td><td>Deja de escribir prompts larguísimos: háblale así</td><td><span class="pill p4">P4</span></td><td class="lm">sígueme</td></tr>
+      <tr class="done"><td class="n">1</td><td>Hacer contenido es como hacer empanadas: la estrategia con Claude <span class="pill ship">LISTO</span></td><td><span class="pill p3">P3</span></td><td class="lm">comenta papitas</td></tr>
+      <tr class="done"><td class="n">2</td><td>Ay Jero, ¿será que puedo conectar Claude a X? Sí, no estamos mandando cohetes <span class="pill ship">LISTO</span></td><td><span class="pill p2">P2</span></td><td class="lm">pregúntale a Claude</td></tr>
+      <tr class="done"><td class="n">3</td><td>Parches de IA #5: 1 de agosto en ESIC <span class="pill ship">LISTO</span></td><td><span class="pill p4">P4</span></td><td class="lm">link en bio + DM</td></tr>
     </table>
 
-    <div class="day">Día 4 · Masivo</div>
+    <div class="day shipped">Lunes 13 jul · Subidos</div>
     <table>
-      <tr><td class="n">1</td><td>ChatGPT, Claude o Gemini: cuál sí para cada cosa</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
-      <tr><td class="n">2</td><td>La IA ya puede ver tu pantalla y usar tu computador por ti</td><td><span class="pill p1">P1</span></td><td class="lm">sígueme</td></tr>
-      <tr><td class="n">3</td><td>Esto es un agente de IA, explicado con un domicilio</td><td><span class="pill p1">P1</span></td><td class="lm">comenta "agente"</td></tr>
+      <tr class="done"><td class="n">1</td><td>ChatGPT acaba de cambiar por completo: ahora es ChatGPT Work <span class="pill ship">LISTO</span></td><td><span class="pill p1">P1</span></td><td class="lm">link descripción</td></tr>
+      <tr class="done"><td class="n">2</td><td>Ay pero si soy ingeniero agrónomo (serie #1) <span class="pill ship">LISTO</span></td><td><span class="pill p4">P4</span></td><td class="lm">comenta tu profesión</td></tr>
     </table>
 
-    <div class="day">Día 5 · Transición</div>
+    <div class="day today">Semana 14 a 20 jul · Tanda 03 (21 reels)</div>
+    <div class="card" style="margin-top:0.6rem">
+      <ul>
+        <li><b>Mezcla diaria:</b> 1 masivo + 1 personalidad (serie, diálogo, opinión, meta) + 1 builder con demo. Guiones palabra por palabra de los 9 validados en <span class="lm">reels/tanda-02-plan-validado.md</span>; hooks nuevos y pasada de voz en <span class="lm">reels/tanda-03-plan.md</span>.</li>
+        <li><b>Serie Ay pero si soy:</b> 1 cada 2 días. La profesión la eligen los comentarios del anterior; si piden otra, los comentarios ganan sobre la parrilla.</li>
+        <li><b>Ningún CTA promete recursos que no existen.</b> Si el recurso no está, se degrada a guardar el reel.</li>
+      </ul>
+    </div>
+
+    <div class="day">Lunes 14</div>
     <table>
-      <tr><td class="n">1</td><td>Conecta la IA a tu correo y deja de responder tú</td><td><span class="pill p1">P1</span></td><td class="lm">comenta "correo"</td></tr>
-      <tr><td class="n">2</td><td>Tu primer agente sin saber programar, en 10 minutos</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">3</td><td>La IA que entra a páginas y hace tareas por ti mientras trabajas</td><td><span class="pill p1">P1</span></td><td class="lm">sígueme</td></tr>
+      <tr><td class="n">1</td><td>ChatGPT, Claude o Gemini: cuál para qué (tanda-02 #1)</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
+      <tr><td class="n">2</td><td>Ay pero si soy contador (serie #2)</td><td><span class="pill p4">P4</span></td><td class="lm">comenta tu profesión</td></tr>
+      <tr><td class="n">3</td><td>Estás pagando demasiadas herramientas de IA (tanda-02 #4)</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
     </table>
 
-    <div class="day">Día 6 · Ennichando</div>
+    <div class="day">Martes 15</div>
     <table>
-      <tr><td class="n">1</td><td>3 tareas de tu trabajo que un agente ya hace mejor que tú</td><td><span class="pill p1">P1</span></td><td class="lm">/automatiza</td></tr>
-      <tr><td class="n">2</td><td>Monté una tienda online completa con IA en una tarde</td><td><span class="pill p2">P2</span></td><td class="lm">/tienda-shopify</td></tr>
-      <tr><td class="n">3</td><td>Todas las imágenes de mi marca las hace la IA, así</td><td><span class="pill p3">P3</span></td><td class="lm">/imagenes-ia</td></tr>
+      <tr><td class="n">1</td><td>No necesitas el prompt perfecto: que te pregunte (tanda-02 #7)</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
+      <tr><td class="n">2</td><td>Ay Jero, ¿será que la IA me quita el trabajo? (diálogo)</td><td><span class="pill p4">P4</span></td><td class="lm">sígueme + beneficio</td></tr>
+      <tr><td class="n">3</td><td>Claude sin MCP y con MCP (tanda-02 #6)</td><td><span class="pill p1">P1</span></td><td class="lm yt">canal YouTube</td></tr>
     </table>
 
-    <div class="day">Día 7 · Ennichando</div>
+    <div class="day">Miércoles 16</div>
     <table>
-      <tr><td class="n">1</td><td>Esto cobré por una automatización que me tomó 2 horas</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
-      <tr><td class="n">2</td><td>El mapa para pasar de curioso a construir con IA, empieza acá</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia</td></tr>
-      <tr><td class="n">3</td><td>Cómo entrego proyectos a clientes usando agentes</td><td><span class="pill p2">P2</span></td><td class="lm">/construye</td></tr>
+      <tr><td class="n">1</td><td>El chat temporal de ChatGPT (tanda-02 #9)</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
+      <tr><td class="n">2</td><td>Ay pero si soy médico (serie #3)</td><td><span class="pill p4">P4</span></td><td class="lm">comenta tu profesión</td></tr>
+      <tr><td class="n">3</td><td>3 tareas que le delegué a ChatGPT Work esta semana</td><td><span class="pill p1">P1</span></td><td class="lm">carrusel en el feed</td></tr>
     </table>
+
+    <div class="day">Jueves 17</div>
+    <table>
+      <tr><td class="n">1</td><td>Cómo detectar cuando la IA inventa (tanda-02 #8)</td><td><span class="pill p4">P4</span></td><td class="lm">guarda el reel</td></tr>
+      <tr><td class="n">2</td><td>Empanadas parte 2: la skill que edita mis reels</td><td><span class="pill p3">P3</span></td><td class="lm">comenta skill *</td></tr>
+      <tr><td class="n">3</td><td>Chat, automatización y agente en 3 niveles (tanda-02 #2)</td><td><span class="pill p1">P1</span></td><td class="lm">sígueme + beneficio</td></tr>
+    </table>
+
+    <div class="day">Viernes 18</div>
+    <table>
+      <tr><td class="n">1</td><td>Ranking de habilidades de IA (tanda-02 #5)</td><td><span class="pill p4">P4</span></td><td class="lm">sígueme + beneficio</td></tr>
+      <tr><td class="n">2</td><td>Ay pero si soy abogado (serie #4)</td><td><span class="pill p4">P4</span></td><td class="lm">comenta tu profesión</td></tr>
+      <tr><td class="n">3</td><td>La IA ya usa mi computador: computer use (tanda-02 #3)</td><td><span class="pill p1">P1</span></td><td class="lm">sígueme + beneficio</td></tr>
+    </table>
+
+    <div class="day">Sábado 19</div>
+    <table>
+      <tr><td class="n">1</td><td>Tier list de agentes: cuál está sobrevalorado</td><td><span class="pill p4">P4</span></td><td class="lm">sígueme + beneficio</td></tr>
+      <tr><td class="n">2</td><td>Parches de IA #5: por qué existe este parche</td><td><span class="pill p4">P4</span></td><td class="lm">link en bio + DM</td></tr>
+      <tr><td class="n">3</td><td>Claude organizó 3 años de archivos mientras me tomaba un café</td><td><span class="pill p1">P1</span></td><td class="lm">guarda el reel</td></tr>
+    </table>
+
+    <div class="day">Domingo 20 · Arranca transición a nicho</div>
+    <table>
+      <tr><td class="n">1</td><td>Ay pero si soy profesor (serie #5)</td><td><span class="pill p4">P4</span></td><td class="lm">comenta tu profesión</td></tr>
+      <tr><td class="n">2</td><td>Esto cobré por una automatización que me tomó 2 horas</td><td><span class="pill p2">P2</span></td><td class="lm">comenta construye</td></tr>
+      <tr><td class="n">3</td><td>El mapa: de curioso a construir con IA</td><td><span class="pill p4">P4</span></td><td class="lm">/niveles-ia *</td></tr>
+    </table>
+    <div class="card" style="margin-top:0.8rem">
+      <ul>
+        <li><b>* CTA condicionado:</b> solo si el recurso existe al publicar; si no, cambia a guardar el reel.</li>
+        <li><b>Reserva (si un guion se cae):</b> Ay pero si soy arquitecto u odontólogo, "Mi papá no sabía nada de IA y ya usa esto", "Deja de pagar cursos de prompts", el hack de imágenes pero para videos. Detalle en <span class="lm">reels/tanda-03-plan.md</span>.</li>
+      </ul>
+    </div>
   </section>
 
   <section class="wrap">
-    <h2><span class="num">05</span>Lead magnets a montar</h2>
+    <h2><span class="num">05</span>Guiones listos para grabar (semana 14 a 20 jul)</h2>
+    <p class="lead">Palabra por palabra, en tu voz (reglas completas en TONO-REELS.md). Recordatorios de grabación: molde del reel 1885 (cara solo en hook y CTA, takeovers en el medio, reveal gigante), UNA sola toma de CTA por reel, máximo 1 elemento paisa suave por guion, anclar demos con "como estás viendo en este momento".</p>
+
+    <div class="day">Lunes 14</div>
+    <details class="guion"><summary><b>1 · ChatGPT, Claude o Gemini: cuál para qué</b> · <span class="pill p4">P4</span> · reveal CUÁL PARA QUÉ · guarda</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Yo uso ChatGPT, Claude y Gemini casi todos los días, pero no sirven para lo mismo. Te digo cuál uso para cada cosa."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"ChatGPT lo uso para el día a día porque junta conversación, archivos, imágenes y búsqueda en un solo lugar, bastante bien. Claude es mi favorito para construir, escribir y trabajar sobre proyectos largos sin perder el contexto. Y Gemini, normalito, pero cuando la tarea vive en Google o necesito entender un video, cumple. Entonces no hay uno que gane en todo. La pregunta correcta es cuál te sirve para la tarea que tienes al frente."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel para la próxima vez que no sepas cuál abrir."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Ay pero si soy contador (serie #2)</b> · <span class="pill p4">P4</span> · comenta tu profesión</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Ay, pero si soy contador público, estas son las herramientas de inteligencia artificial que yo utilizaría."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"La primera se llama Dext: le tomas una foto a cualquier factura y te extrae los datos listos para tu software contable. La segunda es Claude: le subes el extracto y el auxiliar en Excel y le pides la conciliación bancaria, con las diferencias marcadas y explicadas. Y por último, para los informes de fin de mes, le das la data del cliente y te arma el borrador con las cifras clave, tú solo revisas y firmas. Eso son horas de digitación que no vuelves a hacer a mano."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Déjame tu profesión en los comentarios para ser parte del próximo video."</p>
+    </details>
+    <details class="guion"><summary><b>3 · Estás pagando demasiadas herramientas</b> · <span class="pill p4">P4</span> · reveal PAGAS DE MÁS · guarda</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Si pagas una aplicación para resumir archivos, otra para ordenar datos y otra para crear imágenes, probablemente estás pagando de más."</p>
+      <p class="glabel">Cuerpo [voz + demo]</p>
+      <p class="gtext">"La versión gratuita de ChatGPT ya puede buscar en internet, analizar datos, recibir archivos e imágenes y crear imágenes. Todo tiene límites, claro, pero hay un montón de aplicaciones cobrándote por cosas que tu herramienta principal ya hace. Antes de sumar otra suscripción, prueba si la que ya tienes resuelve la tarea. Yo solo pago una nueva cuando me ahorra suficiente tiempo o hace algo que la mía no puede hacer bien."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel y revisa hoy cuáles suscripciones sí estás usando."</p>
+    </details>
+
+    <div class="day">Martes 15</div>
+    <details class="guion"><summary><b>1 · No necesitas el prompt perfecto</b> · <span class="pill p4">P4</span> · reveal QUE PREGUNTE · guarda</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Deja de perseguir el prompt perfecto. Haz que ChatGPT te pregunte lo que le falta antes de responder."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"Al final de tu instrucción dile: antes de responder, hazme las preguntas que necesites para entender bien la tarea. Esto funciona porque el modelo deja de rellenar algunos huecos por su cuenta y te pregunta por el público, el formato o el objetivo. No arregla una mala idea ni garantiza una respuesta perfecta, pero sí te ayuda a darle el contexto que olvidaste."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda el reel y pruébalo hoy, pues."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Ay Jero, ¿será que la IA me quita el trabajo?</b> · <span class="pill p4">P4</span> · sígueme + beneficio</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Me llegan mensajes todos los días: ay Jero, ¿será que la inteligencia artificial me va a quitar el trabajo? Te voy a responder sin rodeos."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"La inteligencia artificial no te va a quitar el trabajo. Te lo va a quitar una persona que la usa mejor que tú. Piénsalo así: el contador que digita facturas a mano compite contra el que las procesa con una herramienta en segundos. Mismo cargo, velocidades distintas. Entonces la jugada no es esconderse, es elegir hoy una tarea repetitiva de tu trabajo y delegársela a la herramienta. Una sola. Cuando esa funcione, sigues con la siguiente."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Sígueme, que acá te enseño a ponerla a trabajar por ti antes de que lo haga otro."</p>
+    </details>
+    <details class="guion"><summary><b>3 · Claude sin MCP y con MCP</b> · <span class="pill p1">P1</span> · reveal MCP · canal YouTube</summary>
+      <p class="glabel">Hook [pantalla + voz]</p>
+      <p class="gtext">"Sin esto Claude puede responderte. Con esto puede entrar a tus herramientas y hacer el trabajo."</p>
+      <p class="glabel">Cuerpo [demo + voz]</p>
+      <p class="gtext">"Se llama MCP y es como un cable entre Claude y aplicaciones como Notion, Slack o tu calendario. Sin el cable, Claude te explica cómo crear un evento. Con el cable, revisa tu agenda, encuentra un espacio y lo crea, como estás viendo en este momento en pantalla. Entonces el salto no está en escribir un prompt más largo, está en darle acceso controlado a la herramienta donde ocurre la tarea."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"En mi canal te muestro cómo conectarlo y probarlo paso a paso. Link en la bio."</p>
+    </details>
+
+    <div class="day">Miércoles 16</div>
+    <details class="guion"><summary><b>1 · El chat temporal de ChatGPT</b> · <span class="pill p4">P4</span> · reveal CHAT TEMPORAL · guarda</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Este chat no aparece en tu historial, no crea memorias y no se usa para entrenar el modelo."</p>
+      <p class="glabel">Cuerpo [voz + demo]</p>
+      <p class="gtext">"Se llama chat temporal y lo activas desde este botón cuando abres una conversación nueva. Úsalo para pruebas o preguntas de una sola vez que no quieres mezclar con tus próximas conversaciones. Ojo, no es una caja fuerte: OpenAI puede conservar una copia hasta treinta días por seguridad y, si usas una acción externa, aplican también las reglas de ese tercero."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel para que no se te olvide dónde se activa."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Ay pero si soy médico (serie #3)</b> · <span class="pill p4">P4</span> · comenta tu profesión</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Ay, pero si soy médico, estas son las herramientas de inteligencia artificial que yo utilizaría."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"La primera se llama Heidi Health: escucha la consulta y te arma la nota clínica sola, para que mires al paciente y no a la pantalla. La segunda es UpToDate con su asistente de inteligencia artificial, para resolver dudas clínicas con evidencia y referencias, no con inventos de internet. Y por último usaría Claude, pero no para diagnosticar: para la carga administrativa, resúmenes de historias, cartas de remisión y consentimientos con la data que ya tienes. Ojo, la decisión clínica siempre es tuya. Esto te devuelve el tiempo que hoy se va en papeleo."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Déjame tu profesión en los comentarios para ser parte del próximo video."</p>
+    </details>
+    <details class="guion"><summary><b>3 · 3 tareas que le delegué a ChatGPT Work</b> · <span class="pill p1">P1</span> · carrusel en el feed</summary>
+      <p class="glabel">Hook [pantalla + voz]</p>
+      <p class="gtext">"Llevo una semana con ChatGPT Work instalado y estas son las tres tareas que ya no hago yo."</p>
+      <p class="glabel">Cuerpo [demo + voz]</p>
+      <p class="gtext">"La primera, llenar formularios y reportes: le doy la data y él los completa, como estás viendo en este momento en pantalla. La segunda, organizar mis archivos: le pido que revise la carpeta de descargas y me deje todo organizadito por proyecto. Y la tercera, la investigación previa de cada reunión: me arma el resumen del cliente antes de que yo entre a la llamada. Entre las tres son unas seis horas a la semana que volvieron a ser mías."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Te dejo un carrusel en mi feed con el paso a paso de cada una."</p>
+      <p class="gnote">Ajusta las 3 tareas y las horas a lo que de verdad hayas delegado esta semana.</p>
+    </details>
+
+    <div class="day">Jueves 17</div>
+    <details class="guion"><summary><b>1 · Cómo detectar cuando la IA inventa</b> · <span class="pill p4">P4</span> · reveal ALUCINACIÓN · guarda</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"La inteligencia artificial puede inventarse una fuente y ponerle hasta un enlace. Así la pillas antes de usarla."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"Primero abre cada fuente, porque citar un enlace no significa que diga lo que el modelo afirma. Luego busca el mismo dato en una fuente independiente. Y si hay números, fechas o nombres propios, verifícalos por fuera antes de publicarlos. La inteligencia artificial puede ayudarte a investigar, pero no puede ser al mismo tiempo la respuesta y la única prueba de que esa respuesta es cierta."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel para la próxima investigación que hagas con inteligencia artificial."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Empanadas parte 2: la skill que edita mis reels</b> · <span class="pill p3">P3</span> · comenta skill *</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Les debía la parte dos de las empanadas: esta es la skill con la que Claude me edita estos reels mientras yo hago otras cosas."</p>
+      <p class="glabel">Cuerpo [demo + voz]</p>
+      <p class="gtext">"Yo grabo el video con el celular y se lo paso a Claude. La skill transcribe lo que dije, corta las retomas y los silencios dejando siempre la última versión, pone los subtítulos sincronizados y agrega los stickers y los zooms, como estás viendo en este momento. Yo solo reviso el resultado y publico. Entonces la receta de las empanadas ya no solo está escrita: la cocina se está haciendo sola."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Comenta skill y te aviso cuando publique el detalle."</p>
+      <p class="gnote">* Solo si vas a publicar el detalle. Si no, cierre alterno: "Guarda este reel, que esta es la forma más fácil de sacar contenido sin editar."</p>
+    </details>
+    <details class="guion"><summary><b>3 · Chat, automatización y agente en 3 niveles</b> · <span class="pill p1">P1</span> · reveal 3 NIVELES · sígueme + beneficio</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Ay, pero es que todo el mundo le dice agente a cualquier chatbot. En realidad son tres niveles y solo el último decide qué hacer."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"Nivel uno, el chat: tú preguntas y te responde. Nivel dos, la automatización: sigue una ruta que alguien dejó armada, como recibir un formulario y mandar un correo. Nivel tres, el agente: le das un objetivo, revisa qué herramientas tiene y decide la ruta para llegar al resultado. Es como un domicilio: una cosa es tomar el pedido, otra seguir instrucciones y otra resolver solo cuando la tienda está cerrada."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Sígueme, que acá te enseño a construir los del nivel tres."</p>
+    </details>
+
+    <div class="day">Viernes 18</div>
+    <details class="guion"><summary><b>1 · Ranking de habilidades de IA</b> · <span class="pill p4">P4</span> · reveal 10 DE 10 · sígueme + beneficio</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Te rankeo cinco habilidades de inteligencia artificial de menos a más valiosas para trabajar de verdad con ella."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"Copiar prompts, tres de diez, porque cualquiera puede hacerlo. Crear imágenes, cuatro de diez, útil pero fácil de reemplazar. Investigar y verificar fuentes, seis de diez. Construir una herramienta que resuelva una tarea, ocho de diez. Y automatizar un proceso real de un negocio, diez de diez, porque ahí la inteligencia artificial deja de ser entretenimiento y empieza a devolver tiempo o dinero."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Sígueme si quieres aprender las habilidades que están del ocho para arriba."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Ay pero si soy abogado (serie #4)</b> · <span class="pill p4">P4</span> · comenta tu profesión</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Ay, pero si soy abogado, estas son las herramientas de inteligencia artificial que yo utilizaría."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"La primera se llama Harvey: está pensada para firmas y te ayuda a revisar contratos y encontrar riesgos en minutos. La segunda, para investigación jurídica en español, es vLex con su asistente Vincent, que te trae jurisprudencia con la cita real, no inventada. Y por último Claude: le subes tus modelos de contratos y la información del caso y te arma borradores, resúmenes de expedientes y comparaciones de versiones. Todo lo revisas tú, pero llegas a la revisión con el ochenta por ciento hecho."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Déjame tu profesión en los comentarios para ser parte del próximo video."</p>
+    </details>
+    <details class="guion"><summary><b>3 · La IA ya usa mi computador (computer use)</b> · <span class="pill p1">P1</span> · reveal COMPUTER USE · sígueme + beneficio</summary>
+      <p class="glabel">Hook [pantalla + voz]</p>
+      <p class="gtext">"Esta inteligencia artificial acaba de leer tres archivos de un negocio y convertirlos en un plan de automatización."</p>
+      <p class="glabel">Cuerpo [demo + voz]</p>
+      <p class="gtext">"En esta demo en español, Claude recibe una carpeta con una auditoría. Sin que la persona vaya archivo por archivo, lee tres documentos, ejecuta comandos y va marcando las tareas que termina, como estás viendo en este momento. Primero detecta qué procesos se pueden automatizar. Luego crea un tablero para ver el trabajo del equipo. Y al final arma una matriz para decidir qué automatizar primero. Ahí está el cambio: ya no le pides una respuesta, le das el trabajo y revisas lo que te entrega."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Sígueme, que acá te muestro qué tareas ya vale la pena delegarle."</p>
+      <p class="gnote">Cortes sugeridos de la demo minuto a minuto en reels/tanda-02-plan-validado.md (reel 3).</p>
+    </details>
+
+    <div class="day">Sábado 19</div>
+    <details class="guion"><summary><b>1 · Tier list de agentes</b> · <span class="pill p4">P4</span> · sígueme + beneficio</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Tier list de agentes de inteligencia artificial. Y sí, voy a decir cuál me parece sobrevalorado."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"ChatGPT Work: acaba de salir, promete un montón y para tareas de oficina está muy bien, pero todavía le falta madurar. Codex: muy bueno si programas, pero si no eres técnico no es para ti. Antigravity: interesante, aunque por ahora se siente más demo que herramienta de trabajo. Y Claude Code: mi favorito, es el que uso todos los días para construir, conectarme a mis herramientas y automatizar trabajo real. ¿Y el sobrevalorado? El que instalas, le haces dos preguntas de Google y sales a decir que ya usas agentes."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Sígueme, que acá los pongo a trabajar de verdad, no solo a responder."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Parches de IA #5: por qué existe este parche</b> · <span class="pill p4">P4</span> · link en bio + DM</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"En Medellín nos estamos juntando una vez al mes a mostrar lo que cada uno construye con inteligencia artificial. Sin humo y gratis."</p>
+      <p class="glabel">Cuerpo [clips del parche 4 + voz]</p>
+      <p class="gtext">"Se llama Parches de IA y ya vamos para la quinta edición. Van personas de todos los niveles, desde los que apenas están empezando hasta perfiles técnicos mostrando implementaciones reales, y la regla es una sola: acá no se viene a teorizar, se viene a mostrar lo que se construyó. La próxima es el sábado primero de agosto en ESIC."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"El link para entrar está en mi bio. Y si quieres apoyar como patrocinador, escríbeme al DM."</p>
+    </details>
+    <details class="guion"><summary><b>3 · Claude organizó 3 años de archivos</b> · <span class="pill p1">P1</span> · guarda</summary>
+      <p class="glabel">Hook [pantalla + voz]</p>
+      <p class="gtext">"Le di acceso a Claude a mi carpeta de descargas y me organizó tres años de desorden mientras me tomaba un café."</p>
+      <p class="glabel">Cuerpo [demo + voz]</p>
+      <p class="gtext">"Le dije: revisa todo lo que hay acá, agrupa por proyecto, renombra los archivos para que se entienda qué son y encuentra los duplicados, pero pregúntame antes de borrar cualquier cosa. Y empezó solo, como estás viendo en este momento en pantalla. Carpeta por carpeta, todo organizadito. Lo mismo aplica para los documentos de tu trabajo, tus facturas o las fotos del celular."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel para cuando te toque hacerlo."</p>
+      <p class="gnote">Graba la demo real antes: dale una carpeta de verdad y captura el proceso.</p>
+    </details>
+
+    <div class="day">Domingo 20 · Arranca transición a nicho</div>
+    <details class="guion"><summary><b>1 · Ay pero si soy profesor (serie #5)</b> · <span class="pill p4">P4</span> · comenta tu profesión</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Ay, pero si soy profesor, estas son las herramientas de inteligencia artificial que yo utilizaría."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"La primera se llama MagicSchool: tiene decenas de asistentes para planear clases, crear rúbricas y adaptar material según el nivel de cada estudiante. La segunda es NotebookLM: le subes tus lecturas del curso y les genera a tus estudiantes resúmenes, guías y hasta un podcast explicando el tema. Y por último Claude, para lo que más tiempo te roba: calificar con una rúbrica clara, redactar retroalimentación personalizada y preparar los informes del periodo. Tú sigues enseñando, la herramienta hace la papelería."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Déjame tu profesión en los comentarios para ser parte del próximo video."</p>
+    </details>
+    <details class="guion"><summary><b>2 · Esto cobré por una automatización de 2 horas</b> · <span class="pill p2">P2</span> · comenta construye</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Esta automatización me tomó dos horas y esto fue lo que cobré por ella."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"[AJUSTA CON TU CASO REAL] Un cliente perdía todas las mañanas revisando correos para sacar los pedidos a mano y pasarlos a una hoja de cálculo. Le armé un flujo que lee el correo, extrae los datos del pedido y los deja listos en su sistema, con un resumen diario por WhatsApp. Dos horas de trabajo mío, [MONTO REAL] de cobro. Y al cliente le sale barato, porque recupera una hora diaria de un empleado, todos los días. Entonces la plata no está en saber la herramienta, está en encontrar el proceso que duele."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Comenta construye si quieres que te muestre cómo la armé."</p>
+      <p class="gnote">Los datos del caso y el monto son placeholder: reemplázalos con un proyecto tuyo real antes de grabar. Nunca inventar cifras.</p>
+    </details>
+    <details class="guion"><summary><b>3 · El mapa: de curioso a construir con IA</b> · <span class="pill p4">P4</span> · reveal 4 NIVELES · guarda o /niveles-ia *</summary>
+      <p class="glabel">Hook [cámara]</p>
+      <p class="gtext">"Todo el mundo está en uno de estos cuatro niveles con la inteligencia artificial. Te digo cómo pasar al siguiente."</p>
+      <p class="glabel">Cuerpo [voz + takeover]</p>
+      <p class="gtext">"Nivel uno: le haces preguntas, la usas como un Google con estilo. Nivel dos: ya le das contexto, archivos e instrucciones, y te devuelve trabajo útil. Nivel tres: la conectas a tus herramientas para que ejecute tareas por ti. Y nivel cuatro: construyes sistemas que trabajan solos y le resuelves problemas a otros. Acá es donde aparece la plata. Entonces el salto nunca es de golpe: identifica en cuál estás y sube uno solo."</p>
+      <p class="glabel">Cierre [cámara]</p>
+      <p class="gtext">"Guarda este reel y dime en los comentarios en qué nivel estás."</p>
+      <p class="gnote">* Si el quiz /niveles-ia ya está montado al publicar, cierre alterno: "En mi sitio te dejé un test de dos minutos para saber tu nivel. Link en la bio."</p>
+    </details>
+  </section>
+
+  <section class="wrap">
+    <h2><span class="num">06</span>Lead magnets a montar</h2>
     <table>
       <tr><th>Lead magnet</th><th>Estado</th><th>Qué es</th></tr>
       <tr><td class="lm">/automatiza</td><td>Existe (con gate de correo)</td><td>Guía + generador de prompt</td></tr>
@@ -192,7 +435,7 @@
   </section>
 
   <section class="wrap">
-    <h2><span class="num">06</span>Guiones de video</h2>
+    <h2><span class="num">07</span>Guiones de video</h2>
     <div class="card">
       <ul>
         <li><a href="/guion-shopify" style="color:var(--accent);text-decoration:none">Guion Shopify (video 05)</a> · teleprompter</li>
