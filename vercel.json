@@ -8,6 +8,7 @@
     { "source": "/guion-shopify", "destination": "/guion-shopify.html" },
     { "source": "/live", "destination": "/live.html" },
     { "source": "/regalo", "destination": "/regalo.html" },
-    { "source": "/reveal", "destination": "/reveal.html" }
+    { "source": "/reveal", "destination": "/reveal.html" },
+    { "source": "/prompts", "destination": "/prompts-sitio-web-3d.pdf" }
   ]
 }
