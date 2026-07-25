@@ -10,6 +10,8 @@
     { "source": "/sorteo", "destination": "/sorteo-web.html" },
     { "source": "/regalo", "destination": "/regalo.html" },
     { "source": "/reveal", "destination": "/reveal.html" },
-    { "source": "/prompts", "destination": "/prompts-sitio-web-3d.pdf" }
+    { "source": "/prompts", "destination": "/prompts-sitio-web-3d.pdf" },
+    { "source": "/web", "destination": "/web.html" },
+    { "source": "/gracias", "destination": "/gracias.html" }
   ]
 }

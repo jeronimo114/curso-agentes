@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>¡Pago recibido! Agenda tu entrega · Jero</title>
+<meta name="robots" content="noindex" />
+
+<!-- Google Tag Manager (mismo contenedor del sitio) -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-P3CGJ65X');</script>
+<!-- End Google Tag Manager -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Caveat:wght@700&display=swap" rel="stylesheet" />
+<style>
+  :root{ --paper:#f3ebdc; --ink:#191510; --yellow:#fbbf24; --red:#d64a33; --card:#fffdf6; }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Montserrat',sans-serif;color:var(--ink);background:var(--paper);
+    background-image:radial-gradient(120% 90% at 50% 30%, rgba(255,255,255,.5) 0%, rgba(255,255,255,0) 45%, rgba(96,74,44,.14) 100%);}
+  .wrap{max-width:520px;margin:0 auto;padding:30px 20px 80px}
+  .hand{font-family:'Caveat',cursive;color:var(--red)}
+  .hi{background:linear-gradient(0deg, var(--yellow) 0%, var(--yellow) 45%, transparent 45%);padding:0 4px}
+  h1{font-weight:900;font-size:clamp(28px,7.5vw,36px);line-height:1.1;letter-spacing:-1px;text-align:center}
+  .sub{text-align:center;font-weight:700;font-size:15.5px;opacity:.75;margin:10px 0 26px}
+  .paso{font-weight:900;font-size:20px;margin:30px 0 12px}
+  .paso .n{display:inline-flex;width:32px;height:32px;border-radius:50%;background:var(--yellow);
+    border:3px solid var(--ink);align-items:center;justify-content:center;margin-right:8px;font-size:16px}
+  form{display:grid;gap:14px}
+  label{font-weight:700;font-size:14px}
+  input,textarea{width:100%;margin-top:6px;padding:13px 14px;font-family:'Montserrat';font-size:15px;
+    border:3px solid var(--ink);border-radius:12px;background:var(--card)}
+  textarea{min-height:70px;resize:vertical}
+  button{
+    background:var(--yellow);color:var(--ink);border:4px solid var(--ink);border-radius:16px;
+    box-shadow:7px 7px 0 var(--red);font-family:'Montserrat';font-weight:900;font-size:19px;
+    padding:17px 10px;cursor:pointer;margin-top:6px;
+  }
+  button:active{transform:scale(.97)}
+  .ok{display:none;background:var(--card);border:3px solid var(--ink);border-radius:14px;
+    box-shadow:5px 5px 0 var(--red);padding:16px;font-weight:700;font-size:15px;text-align:center;margin-top:10px}
+  .cal{border:4px solid var(--ink);border-radius:18px;overflow:hidden;box-shadow:8px 8px 0 var(--red);background:#fff}
+  footer{margin-top:44px;text-align:center;font-size:12px;font-weight:700;opacity:.55}
+</style>
+</head>
+<body>
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-P3CGJ65X" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="wrap">
+  <h1>🎉 ¡Listo! Tu página está <span class="hi">en camino</span></h1>
+  <p class="sub">Dos pasos y en 48 horas nos vemos en la reunión de entrega.</p>
+
+  <div class="paso"><span class="n">1</span> Cuéntame de tu negocio <span class="hand" style="font-size:22px">(2 minutos)</span></div>
+  <form id="brief">
+    <label>¿Cómo se llama tu negocio?
+      <input name="negocio" required placeholder="Ej: Barbería El Patrón" /></label>
+    <label>¿Qué vendes y a quién?
+      <textarea name="oferta" required placeholder="Ej: cortes y barba para hombres en Laureles"></textarea></label>
+    <label>Tu WhatsApp (el que va en la página)
+      <input name="whatsapp" required type="tel" placeholder="300 123 4567" /></label>
+    <label>¿Tienes logo y colores? ¿Instagram del negocio?
+      <input name="marca" placeholder="Ej: @barberiaelpatron, logo sí, negro y dorado" /></label>
+    <label>¿Qué es lo más importante que tu página debe lograr?
+      <input name="objetivo" placeholder="Ej: que me escriban por WhatsApp para agendar" /></label>
+    <button type="submit">ENVIAR Y PASAR AL PASO 2 →</button>
+  </form>
+  <div class="ok" id="ok">✔ Recibido. Ahora agenda tu reunión de entrega aquí abajo 👇</div>
+
+  <div class="paso"><span class="n">2</span> Agenda tu reunión de entrega</div>
+  <div class="cal">
+    <!-- CAMBIA la URL si creas un evento específico "Entrega página web" en Calendly -->
+    <div class="calendly-inline-widget" data-url="https://calendly.com/jerojerojerojero/demo-tu-propio-agente-ia?hide_gdpr_banner=1" style="min-width:280px;height:640px;"></div>
+    <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+  </div>
+
+  <footer>Jerónimo Martínez · jeroooo.com</footer>
+</div>
+
+<script>
+(function(){
+  var dl = window.dataLayer = window.dataLayer || [];
+  // ⚠️ PON AQUÍ TU NÚMERO DE WHATSAPP (con 57, sin + ni espacios), ej: "573001234567"
+  var WHATSAPP = "573XXXXXXXXX";
+
+  var utm = JSON.parse(localStorage.getItem('jero_utm')||'{}');
+  // Llegar aquí ≈ pago hecho (configura el back_url de MercadoPago hacia /gracias)
+  dl.push({event:'purchase_tripwire', value:50000, currency:'COP', utm:utm});
+
+  document.getElementById('brief').addEventListener('submit', function(e){
+    e.preventDefault();
+    var f = new FormData(e.target);
+    var msg = "🆕 BRIEF PÁGINA $50K%0A" +
+      "Negocio: " + encodeURIComponent(f.get('negocio')) + "%0A" +
+      "Oferta: " + encodeURIComponent(f.get('oferta')) + "%0A" +
+      "WhatsApp: " + encodeURIComponent(f.get('whatsapp')) + "%0A" +
+      "Marca/IG: " + encodeURIComponent(f.get('marca')) + "%0A" +
+      "Objetivo: " + encodeURIComponent(f.get('objetivo')) + "%0A" +
+      "Origen: " + encodeURIComponent(JSON.stringify(utm));
+    dl.push({event:'brief_submit', negocio:f.get('negocio'), utm:utm});
+    document.getElementById('ok').style.display = 'block';
+    e.target.querySelector('button').textContent = '✔ ENVIADO';
+    window.open('https://wa.me/' + WHATSAPP + '?text=' + msg, '_blank');
+    document.querySelector('.cal').scrollIntoView({behavior:'smooth'});
+  });
+
+  // Evento cuando agendan en Calendly
+  window.addEventListener('message', function(e){
+    if(e.data && e.data.event === 'calendly.event_scheduled'){
+      dl.push({event:'reunion_agendada', utm:utm});
+    }
+  });
+})();
+</script>
+</body>
+</html>
