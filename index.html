@@ -11,8 +11,71 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Jerónimo Martínez - Diseño sistemas que piensan">
-  <title>Jerónimo Martínez</title>
+  <meta name="description" content="Jerónimo Martínez — formador y consultor de IA aplicada en español, para profesionales y empresas de LATAM y España. Cursos de IA, consultoría, automatización con n8n y charlas.">
+  <link rel="canonical" href="https://jeroooo.com/">
+  <title>Jerónimo Martínez — Formador y consultor de IA en español</title>
+
+  <!-- Open Graph / redes -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Jerónimo Martínez">
+  <meta property="og:title" content="Jerónimo Martínez — Formador y consultor de IA en español">
+  <meta property="og:description" content="Formo a profesionales y empresas de LATAM y España en IA aplicada: cursos, consultoría, automatización con n8n y charlas.">
+  <meta property="og:url" content="https://jeroooo.com/">
+  <meta property="og:locale" content="es_ES">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Datos estructurados (GEO / AI visibility): entidad inequívoca para los modelos -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://jeroooo.com/#jeronimo",
+        "name": "Jerónimo Martínez",
+        "alternateName": "Jerónimo Martínez Jaramillo",
+        "url": "https://jeroooo.com/",
+        "description": "Jerónimo Martínez es formador y consultor de IA aplicada en español, para profesionales y empresas de LATAM y España.",
+        "jobTitle": "Formador y consultor de Inteligencia Artificial",
+        "knowsAbout": [
+          "Inteligencia Artificial aplicada",
+          "Formación y cursos de IA en español",
+          "Consultoría de IA para empresas",
+          "Automatización con n8n",
+          "Agentes de IA",
+          "ChatGPT y modelos generativos",
+          "Conferencias y charlas de IA"
+        ],
+        "knowsLanguage": ["es"],
+        "sameAs": [
+          "https://www.linkedin.com/in/jerónimo-martínez-jaramillo-91702b1b8",
+          "https://github.com/jeronimo114",
+          "https://www.youtube.com/@jeromartinezj",
+          "https://www.skool.com/club-ia-2314"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://jeroooo.com/#website",
+        "url": "https://jeroooo.com/",
+        "name": "Jerónimo Martínez",
+        "inLanguage": "es",
+        "publisher": { "@id": "https://jeroooo.com/#jeronimo" }
+      },
+      {
+        "@type": "ProfessionalService",
+        "@id": "https://jeroooo.com/#servicio",
+        "name": "Jerónimo Martínez — Formación y consultoría de IA",
+        "url": "https://jeroooo.com/",
+        "description": "Cursos, consultoría y charlas de inteligencia artificial aplicada en español para profesionales y empresas de LATAM y España, incluyendo automatización con n8n y agentes de IA.",
+        "provider": { "@id": "https://jeroooo.com/#jeronimo" },
+        "areaServed": ["Colombia", "Latinoamérica", "España"],
+        "availableLanguage": "es",
+        "founder": { "@id": "https://jeroooo.com/#jeronimo" }
+      }
+    ]
+  }
+  </script>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     html{scroll-behavior:smooth}
@@ -81,6 +144,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .story-photo img{width:100%;height:100%;object-fit:cover}
     .story-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#52525b;font-size:1rem}
 
+    nav a.live-link{display:inline-flex;align-items:center;gap:.4rem}
+    nav a.live-link::before{content:"";width:7px;height:7px;border-radius:50%;background:#e5484d;animation:livePulse 1.6s ease-in-out infinite}
+    @keyframes livePulse{0%,100%{opacity:1}50%{opacity:.25}}
+
     footer{padding:2rem;display:flex;justify-content:space-between;align-items:center;font-size:.75rem;color:var(--gray-400);border-top:1px solid var(--gray-100)}
 
     @media(max-width:768px){
@@ -111,6 +178,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <a href="materiales.html">Materiales</a>
       <a href="links.html">Links</a>
       <a href="#contacto">Contacto</a>
+      <a href="/live?h=requesting-snake-graphs-rehabilitation.trycloudflare.com" class="live-link">En vivo</a>
     </nav>
   </header>
 
@@ -122,41 +190,15 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <section class="work" id="trabajo">
     <div class="section-header">
       <span class="section-title">Proyectos</span>
-      <span class="section-count">11</span>
+      <span class="section-count">9</span>
     </div>
 
     <div class="projects">
 
       <article class="project">
-        <div class="project-image" style="background: linear-gradient(135deg, #00133F, #0047E9); display: flex; align-items: center; justify-content: center;">
-          <span style="font-family: system-ui; font-weight: 700; font-size: 2.5rem; color: #fff; letter-spacing: -0.02em;">IA Basica</span>
-        </div>
-        <div class="project-info">
-          <span class="project-number">01</span>
-          <h3 class="project-title">Curso IA Basica</h3>
-          <p class="project-description">Curso presencial de Inteligencia Artificial: historia, funcionamiento de LLMs, pensamiento critico y prompt engineering. Sesion 1: De Turing a GPT.</p>
-          <div class="project-tags"><span class="tag">Curso</span><span class="tag">IA</span><span class="tag">Presencial</span><span class="tag">2026</span></div>
-          <a href="cursos/ia-basica-presencial/sesion-1/sesion-1.html" class="project-link">Ver presentacion <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
-        </div>
-      </article>
-
-      <article class="project">
-        <div class="project-image" style="background: linear-gradient(135deg, #0047E9, #0AE4C3); display: flex; align-items: center; justify-content: center;">
-          <span style="font-family: system-ui; font-weight: 700; font-size: 2.5rem; color: #fff; letter-spacing: -0.02em;">IA Basica AGYL</span>
-        </div>
-        <div class="project-info">
-          <span class="project-number">02</span>
-          <h3 class="project-title">IA Basica — AGYL</h3>
-          <p class="project-description">Versión del curso para AGYL: De Turing a GPT con demos interactivos, ejercicios prácticos y framework de prompt engineering.</p>
-          <div class="project-tags"><span class="tag">Curso</span><span class="tag">IA</span><span class="tag">AGYL</span><span class="tag">2026</span></div>
-          <a href="cursos/ia-basica-agyl/sesion-1/sesion-1.html" class="project-link">Ver presentacion <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M17 7H7M17 7V17"/></svg></a>
-        </div>
-      </article>
-
-      <article class="project">
         <div class="project-image"><img src="esic.png" alt="ESIC"></div>
         <div class="project-info">
-          <span class="project-number">03</span>
+          <span class="project-number">01</span>
           <h3 class="project-title">ESIC Business School</h3>
           <p class="project-description">Rediseño completo y mantenimiento del sitio web institucional. Mejora de UX y optimización de rendimiento.</p>
           <div class="project-tags"><span class="tag">Rediseño Web</span><span class="tag">Mantenimiento</span><span class="tag">2025</span></div>
@@ -167,7 +209,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="ceipa.png" alt="CEIPA"></div>
         <div class="project-info">
-          <span class="project-number">04</span>
+          <span class="project-number">02</span>
           <h3 class="project-title">Diagnóstico de Madurez Digital</h3>
           <p class="project-description">Plataforma para CEIPA que permite a empresas conocer su nivel de madurez digital mediante un diagnóstico interactivo.</p>
           <div class="project-tags"><span class="tag">Plataforma Web</span><span class="tag">UX</span><span class="tag">2024</span></div>
@@ -178,7 +220,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="melo.png" alt="MELØ"></div>
         <div class="project-info">
-          <span class="project-number">05</span>
+          <span class="project-number">03</span>
           <h3 class="project-title">MELØ</h3>
           <p class="project-description">E-Commerce a la medida para marca de suplementos nootrópicos. Diseño y desarrollo completo de la tienda online.</p>
           <div class="project-tags"><span class="tag">E-Commerce</span><span class="tag">Desarrollo</span><span class="tag">2024</span></div>
@@ -188,7 +230,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="quimicosoma.png" alt="Químicos OMA"></div>
         <div class="project-info">
-          <span class="project-number">06</span>
+          <span class="project-number">04</span>
           <h3 class="project-title">Químicos OMA</h3>
           <p class="project-description">Sitio corporativo y catálogo para distribuidor de insumos agrícolas y químicos.</p>
           <div class="project-tags"><span class="tag">Web Corporativa</span><span class="tag">Catálogo</span></div>
@@ -199,7 +241,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="goldkong.png" alt="GoldKong"></div>
         <div class="project-info">
-          <span class="project-number">07</span>
+          <span class="project-number">05</span>
           <h3 class="project-title">GoldKong</h3>
           <p class="project-description">Tienda en línea de joyería en oro laminado y plata.</p>
           <div class="project-tags"><span class="tag">E-Commerce</span><span class="tag">Marca</span></div>
@@ -210,7 +252,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="gaviriacano.png" alt="Grupo Gaviria Cano"></div>
         <div class="project-info">
-          <span class="project-number">08</span>
+          <span class="project-number">06</span>
           <h3 class="project-title">Grupo Gaviria Cano</h3>
           <p class="project-description">Sitio corporativo para grupo de inversión con más de tres décadas en Colombia.</p>
           <div class="project-tags"><span class="tag">Web Corporativa</span><span class="tag">Desarrollo</span></div>
@@ -221,7 +263,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="mmas.png" alt="Innovaciones MMAS"></div>
         <div class="project-info">
-          <span class="project-number">09</span>
+          <span class="project-number">07</span>
           <h3 class="project-title">Innovaciones MMAS</h3>
           <p class="project-description">Sitio web para consultora de cumplimiento legal y corporativo.</p>
           <div class="project-tags"><span class="tag">Web Corporativa</span><span class="tag">Desarrollo</span></div>
@@ -232,7 +274,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="creo.png" alt="Creo"></div>
         <div class="project-info">
-          <span class="project-number">10</span>
+          <span class="project-number">08</span>
           <h3 class="project-title">Creo</h3>
           <p class="project-description">Sitio web a la medida, diseño y desarrollo completo.</p>
           <div class="project-tags"><span class="tag">Web</span><span class="tag">Desarrollo</span></div>
@@ -243,7 +285,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <article class="project">
         <div class="project-image"><img src="wangari.png" alt="Wangari"></div>
         <div class="project-info">
-          <span class="project-number">11</span>
+          <span class="project-number">09</span>
           <h3 class="project-title">Wangari</h3>
           <p class="project-description">Sitio web para proyecto inmobiliario y urbanístico.</p>
           <div class="project-tags"><span class="tag">Web</span><span class="tag">Desarrollo</span></div>
