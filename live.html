@@ -98,23 +98,43 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
   <script>
     // ============================================================
-    //  CONFIG — the only thing you ever edit.
-    //  Paste your WHEP playback URL below (from Cloudflare Stream,
-    //  MediaMTX, etc.), OR pass it in the URL: /live?src=<whep-url>
+    //  CONFIG
+    //  El link publico es SIEMPRE el mismo: jeroooo.com/live
+    //  El tunel actual (que cambia en cada arranque) se lee de este
+    //  "puntero" JSON, que el script `stream` actualiza automaticamente.
     // ============================================================
-    const WHEP_URL = "PEGA_AQUI_TU_URL_WHEP";
+    const POINTER_URL = "https://gist.githubusercontent.com/jeronimo114/5703cdbf436aa0164bac0b5bfb168039/raw/live.json";
+    const WHEP_URL = "";   // fallback fijo opcional (URL WHEP completa)
     // ============================================================
 
     const params = new URLSearchParams(location.search);
-    // Preferred: ?h=<tunnel-host> — just the hostname, so the /live/whep path is
-    // built here in code and can't be mangled by the browser/extensions in transit.
-    // Optional: ?stream=<name> if the MediaMTX path isn't the default "live".
-    // Fallbacks: ?src=<full-whep-url>, then the hardcoded constant.
-    const host = (params.get('h') || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    const cleanHost = (h) => (h || '').trim()
+      .replace(/^https?:\/\//, '').replace(/\/+$/, '');
+
+    // Overrides manuales (siguen funcionando por si el puntero falla):
+    //   ?h=<host-del-tunel>   ?src=<url-whep-completa>   ?stream=<nombre>
+    const forcedHost = cleanHost(params.get('h'));
+    const forcedSrc  = params.get('src') || '';
     const streamName = params.get('stream') || 'live';
-    const src = host
-      ? ('https://' + host + '/' + streamName + '/whep')
-      : (params.get('src') || WHEP_URL);
+    let src = '';
+
+    // Se resuelve en cada intento de conexion: si el tunel cambia a mitad
+    // de la transmision, el espectador se reconecta solo sin cambiar de link.
+    async function resolveSrc() {
+      if (forcedHost) return 'https://' + forcedHost + '/' + streamName + '/whep';
+      if (forcedSrc)  return forcedSrc;
+      try {
+        const res = await fetch(POINTER_URL + '?t=' + Date.now(), { cache: 'no-store' });
+        if (res.ok) {
+          const data = await res.json();
+          const h = cleanHost(data.host);
+          if (h) return 'https://' + h + '/' + (data.stream || streamName) + '/whep';
+        }
+      } catch (err) {
+        console.warn('No se pudo leer el puntero del stream:', err);
+      }
+      return WHEP_URL;
+    }
 
     const video = document.getElementById('video');
     const statusEl = document.getElementById('status');
@@ -160,15 +180,18 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
 
     async function connect() {
-      if (!src || src === 'PEGA_AQUI_TU_URL_WHEP') {
-        setStatus('offline', 'Sin configurar');
-        showOverlay('Falta configurar la transmisión',
-          'Edita live.html y pega tu URL WHEP, o abre /live?src=TU_URL', false);
-        playBtn.style.display = 'none';
-        return;
-      }
       clearTimeout(reconnectTimer);
       setStatus('connecting', 'Conectando…');
+
+      src = await resolveSrc();
+      if (!src) {
+        // Todavia no hay transmision activa: seguimos esperando y reintentando.
+        setStatus('offline', 'Sin señal');
+        showOverlay('La transmisión no ha empezado',
+          'Deja esta página abierta: se conecta sola en cuanto arranque.', true);
+        scheduleReconnect();
+        return;
+      }
 
       try {
         pc = new RTCPeerConnection({
@@ -219,8 +242,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       const delay = Math.min(1000 * retry, 8000);
       setStatus('connecting', 'Reconectando…');
       if (retry >= 3) {
-        showOverlay('Transmisión no disponible',
-          'Esperando la señal. Se reintenta automáticamente.', true);
+        showOverlay('Esperando la transmisión',
+          'Deja esta página abierta: se conecta sola en cuanto haya señal.', true);
       }
       clearTimeout(reconnectTimer);
       reconnectTimer = setTimeout(connect, delay);
