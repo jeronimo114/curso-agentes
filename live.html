@@ -120,20 +120,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     // Se resuelve en cada intento de conexion: si el tunel cambia a mitad
     // de la transmision, el espectador se reconecta solo sin cambiar de link.
-    async function resolveSrc() {
-      if (forcedHost) return 'https://' + forcedHost + '/' + streamName + '/whep';
-      if (forcedSrc)  return forcedSrc;
+    // 1) /api/whep  — proxy en este mismo dominio (inmune a redes que filtran
+    //    el DNS del tunel).  2) el tunel directo, leido del puntero.
+    async function candidates() {
+      if (forcedHost) return ['https://' + forcedHost + '/' + streamName + '/whep'];
+      if (forcedSrc)  return [forcedSrc];
+      const list = ['/api/whep'];
       try {
         const res = await fetch(POINTER_URL + '?t=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
           const data = await res.json();
           const h = cleanHost(data.host);
-          if (h) return 'https://' + h + '/' + (data.stream || streamName) + '/whep';
+          if (h) list.push('https://' + h + '/' + (data.stream || streamName) + '/whep');
         }
       } catch (err) {
         console.warn('No se pudo leer el puntero del stream:', err);
       }
-      return WHEP_URL;
+      if (WHEP_URL) list.push(WHEP_URL);
+      return list;
     }
 
     const video = document.getElementById('video');
@@ -179,60 +183,64 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       });
     }
 
+    async function attempt(url) {
+      const local = new RTCPeerConnection({
+        iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }]
+      });
+      pc = local;
+      local.addTransceiver('video', { direction: 'recvonly' });
+      local.addTransceiver('audio', { direction: 'recvonly' });
+
+      const remote = new MediaStream();
+      local.ontrack = (e) => {
+        remote.addTrack(e.track);
+        video.srcObject = remote;
+      };
+
+      local.onconnectionstatechange = () => {
+        if (pc !== local) return;            // conexion vieja: ignorar
+        const s = local.connectionState;
+        if (s === 'connected') {
+          retry = 0;
+          setStatus('live', 'EN VIVO');
+          hideOverlay();
+        } else if (s === 'failed' || s === 'disconnected' || s === 'closed') {
+          scheduleReconnect();
+        }
+      };
+
+      const offer = await local.createOffer();
+      await local.setLocalDescription(offer);
+      await waitIceGathering(local);
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/sdp' },
+        body: local.localDescription.sdp,
+      });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const answer = await res.text();
+      await local.setRemoteDescription({ type: 'answer', sdp: answer });
+    }
+
     async function connect() {
       clearTimeout(reconnectTimer);
       setStatus('connecting', 'Conectando…');
 
-      src = await resolveSrc();
-      if (!src) {
-        // Todavia no hay transmision activa: seguimos esperando y reintentando.
-        setStatus('offline', 'Sin señal');
-        showOverlay('La transmisión no ha empezado',
-          'Deja esta página abierta: se conecta sola en cuanto arranque.', true);
-        scheduleReconnect();
-        return;
+      const urls = await candidates();
+      for (const url of urls) {
+        try {
+          src = url;
+          await attempt(url);
+          return;                            // conectado (o negociando)
+        } catch (err) {
+          console.warn('WHEP falló con', url, err);
+          if (pc) { try { pc.close(); } catch (_) {} pc = null; }
+        }
       }
-
-      try {
-        pc = new RTCPeerConnection({
-          iceServers: [{ urls: 'stun:stun.cloudflare.com:3478' }]
-        });
-        pc.addTransceiver('video', { direction: 'recvonly' });
-        pc.addTransceiver('audio', { direction: 'recvonly' });
-
-        const remote = new MediaStream();
-        pc.ontrack = (e) => {
-          remote.addTrack(e.track);
-          video.srcObject = remote;
-        };
-
-        pc.onconnectionstatechange = () => {
-          const s = pc.connectionState;
-          if (s === 'connected') {
-            retry = 0;
-            setStatus('live', 'EN VIVO');
-            hideOverlay();
-          } else if (s === 'failed' || s === 'disconnected' || s === 'closed') {
-            scheduleReconnect();
-          }
-        };
-
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-        await waitIceGathering(pc);
-
-        const res = await fetch(src, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/sdp' },
-          body: pc.localDescription.sdp,
-        });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const answer = await res.text();
-        await pc.setRemoteDescription({ type: 'answer', sdp: answer });
-      } catch (err) {
-        console.error('WHEP connect failed:', err);
-        scheduleReconnect();
-      }
+      // Nada respondio: seguimos esperando la señal.
+      setStatus('offline', 'Sin señal');
+      scheduleReconnect();
     }
 
     function scheduleReconnect() {
